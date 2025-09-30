@@ -2,8 +2,6 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Developer Experience (DX) encompasses the practices, tools, and workflows that streamline software development, ensuring consistency, automation, and maintainability across environments and teams.
-
 - [1. Details](#1-details)
   - [1.1. Prerequisites](#11-prerequisites)
 - [2. Usage](#2-usage)
