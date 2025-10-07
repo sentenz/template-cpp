@@ -1,0 +1,92 @@
+﻿{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "displayName": "Base",
+      "description": "Common settings for all configurations",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/lib",
+        "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/lib",
+        "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/bin",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "META_PROJECT_NAME": "cpp-concept"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Configure Debug",
+      "description": "Configuration with debug information",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "META_BUILD_TESTING": false
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "release",
+      "displayName": "Configure Release",
+      "description": "Configuration with release optimization",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "META_BUILD_TESTING": false
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "test",
+      "displayName": "Configure Tests",
+      "description": "Configuration with tests",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "META_BUILD_TESTING": true
+      },
+      "inherits": [
+        "base"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "displayName": "Build Debug",
+      "description": "Build the project with debug information",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "displayName": "Build Release",
+      "description": "Build the project with release optimization",
+      "configurePreset": "release"
+    },
+    {
+      "name": "test",
+      "displayName": "Build Tests",
+      "description": "Build the project with tests",
+      "configurePreset": "test"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test",
+      "displayName": "Execute Tests",
+      "description": "Execute all tests from the build",
+      "configuration": "Debug",
+      "configurePreset": "test"
+    }
+  ]
+}

@@ -98,7 +98,7 @@ Sanitizers are runtime tools that detect various types of bugs in C/C++ programs
   > UndefinedBehaviorSanitizer is a fast undefined behavior detector.
 
 - [ThreadSanitizer (TSan)](https://clang.llvm.org/docs/ThreadSanitizer.html)
-  > hreadSanitizer is a tool that detects data races.
+  > ThreadSanitizer is a tool that detects data races.
 
 ### 2.5. Secret Manager
 

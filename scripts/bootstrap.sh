@@ -20,6 +20,7 @@ readonly -A APT_PACKAGES=(
   ["bash"]=""
   ["ca-certificates"]=""
   ["go"]=""
+  ["pipx"]=""
 )
 
 # Control Flow Logic
