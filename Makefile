@@ -96,6 +96,70 @@ else
 endif
 .PHONY: lint-pwsh-analyze
 
+# ── Package Manager ──────────────────────────────────────────────────────────────────────────────
+
+## Initialize Conan for package management
+pkg-conan-initialize:
+	conan profile detect --force
+	conan install . -s build_type=Debug --output-folder=build/test/conan --build=missing
+.PHONY: pkg-conan-initialize
+
+# ── Build System ─────────────────────────────────────────────────────────────────────────────────
+
+## Generate a CMake project configured for GCC-ARM in Debug mode
+cmake-gcc-debug-configure:
+	cmake --preset debug
+.PHONY: cmake-gcc-debug-configure
+
+## Compile the GCC-ARM project in Debug configuration
+cmake-gcc-debug-build: cmake-gcc-debug-configure
+	cmake --build --preset debug
+.PHONY: cmake-gcc-debug-build
+
+## Clean the GCC-ARM project in Debug configuration
+cmake-gcc-debug-clean:
+	cmake --build --preset debug --target clean
+.PHONY: cmake-gcc-debug-clean
+
+## Generate a CMake project configured for GCC-ARM in Release mode
+cmake-gcc-release-configure:
+	cmake --preset release
+.PHONY: cmake-gcc-release-configure
+
+## Compile the GCC-ARM project in Release configuration
+cmake-gcc-release-build: cmake-gcc-release-configure
+	cmake --build --preset release
+.PHONY: cmake-gcc-release-build
+
+## Clean the GCC-ARM project in Release configuration
+cmake-gcc-release-clean:
+	cmake --build --preset release --target clean
+.PHONY: cmake-gcc-release-clean
+
+## Generate a CMake project configured for unit tests
+# Note: Conan install is performed automatically by conan_bootstrap() during
+# CMake configure. The `pkg-conan-initialize` target is kept as a convenience
+# for users who want to run `conan profile detect` and install dependencies
+# manually before configuring.
+cmake-test-unit-configure:
+	cmake --preset test
+.PHONY: cmake-test-unit-configure
+
+## Compile the unit test
+cmake-test-unit-build: cmake-test-unit-configure
+	cmake --build --preset test
+.PHONY: cmake-test-unit-build
+
+## Run the unit tests
+cmake-test-unit-run: cmake-test-unit-build
+	ctest --preset test
+.PHONY: cmake-test-unit-run
+
+## Clean the unit test build artifacts
+cmake-test-unit-clean:
+	cmake --build --preset test --target clean
+.PHONY: cmake-test-unit-clean
+
 # ── Secret Manager ───────────────────────────────────────────────────────────────────────────────
 
 SOPS_UID ?= sops-c++
