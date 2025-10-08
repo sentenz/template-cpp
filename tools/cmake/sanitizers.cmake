@@ -1,25 +1,31 @@
 include_guard(GLOBAL)
 
-# Enable AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan).
-# This function adds the necessary compiler and linker flags and ensures a Debug build type.
-# It requires the GNU compiler.
+# sanitizers_enable
+#
+# Enables AddressSanitizer and UndefinedBehaviorSanitizer for the current CMake project by
+# appending the appropriate compiler and linker flags in an idempotent way and persisting them to
+# the CMake cache.
+#
+# Usage
+#   sanitizers_enable()
 function(sanitizers_enable)
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         message(FATAL_ERROR "Sanitizers are only supported with GNU compiler.")
     endif()
 
-    message(STATUS "Enabling ASan and UBSan")
+    set(_sanitize_compile_flags -fsanitize=address,undefined -fno-omit-frame-pointer)
+    if(NOT DEFINED SANITIZERS_ENABLED)
+        add_compile_options(${_sanitize_compile_flags})
 
-    # Add sanitizer flags to C and CXX
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address,undefined -fno-omit-frame-pointer" CACHE STRING "C compiler flags" FORCE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined -fno-omit-frame-pointer" CACHE STRING "C++ compiler flags" FORCE)
+        # Record that sanitizers have been enabled
+        set(SANITIZERS_ENABLED TRUE CACHE INTERNAL "Sanitizers enabled")
+    endif()
 
-    # Add linker flags
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address,undefined" CACHE STRING "Executable linker flags" FORCE)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address,undefined" CACHE STRING "Shared library linker flags" FORCE)
+    set(_sanitize_link_flags -fsanitize=address,undefined)
+    add_link_options(${_sanitize_link_flags})
 
     # Ensure debug build type for sanitizers
-    if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+    if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type")
     endif()
 endfunction()

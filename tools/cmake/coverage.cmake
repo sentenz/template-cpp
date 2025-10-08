@@ -1,21 +1,34 @@
 include_guard(GLOBAL)
 
-# Enable code coverage analysis using gcov.
-# This function adds the necessary compiler flags and ensures a Debug build type.
-# It requires the GNU compiler.
+# coverage_enable()
+#
+# Enables source-code coverage instrumentation for projects built with the GNU C/C++ compiler
+# (GCC). This function configures compiler and build settings so that produced binaries so that
+# produced binaries include coverage information compatible with gcov/lcov.
+#
+# Usage
+#   coverage_enable()
 function(coverage_enable)
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         message(FATAL_ERROR "Coverage is only supported with GNU compiler.")
     endif()
 
-    message(STATUS "Enabling coverage analysis")
+    # Compile flags (optimization and coverage instrumentation)
+    set(_coverage_flags --coverage -O0)
+    # Linker-only flags for coverage (ensure libgcov symbols are linked)
+    set(_coverage_link_flags --coverage)
 
-    # Add coverage flags to C and CXX
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -O0" CACHE STRING "C compiler flags" FORCE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0" CACHE STRING "C++ compiler flags" FORCE)
+    if(NOT DEFINED COVERAGE_ENABLED)
+        add_compile_options(${_coverage_flags})
+        # Add link options so the coverage runtime (libgcov) is pulled in at link time
+        add_link_options(${_coverage_link_flags})
+
+        # Record that coverage has been enabled
+        set(COVERAGE_ENABLED TRUE CACHE INTERNAL "Coverage instrumentation enabled")
+    endif()
 
     # Ensure debug build type for coverage
-    if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+    if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type")
     endif()
 endfunction()
