@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "bar.hpp"
+#include "bar/bar.hpp"
 
 using namespace cpp_concept;
 

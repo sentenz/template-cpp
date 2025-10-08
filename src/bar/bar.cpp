@@ -1,4 +1,4 @@
-#include "bar.hpp"
+#include "bar/bar.hpp"
 
 namespace cpp_concept
 {

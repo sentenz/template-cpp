@@ -4,6 +4,8 @@ if(META_BUILD_TESTING)
   include(conan)
   conan_bootstrap()
 
+  include(gtest)
+
   include(coverage)
   coverage_enable()
 

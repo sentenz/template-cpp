@@ -11,15 +11,13 @@ target_sources(${PROJECT_NAME}-bar
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
     FILES bar.hpp
 )
-
-policy_target_properties(${PROJECT_NAME}-bar)
-
 target_include_directories(${PROJECT_NAME}-bar
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include>
 )
 
+policy_target_properties(${PROJECT_NAME}-bar)
 policy_compiler_warnings(${PROJECT_NAME}-bar)
 
 # Namespaced alias for downstream consumption
@@ -28,8 +26,6 @@ if(NOT TARGET ${PROJECT_NAME}::bar)
 endif()
 
 # ── Install / Export ─────────────────────────────────────────────────────────────────────────────
-
-include(GNUInstallDirs)
 
 install(
   TARGETS ${PROJECT_NAME}-bar
