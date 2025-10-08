@@ -1,4 +1,4 @@
-find_package(GTest CONFIG REQUIRED)
+include_guard(GLOBAL)
 
 # gtest_add
 #
@@ -32,6 +32,15 @@ function(gtest_add)
 
   # Parse the argument list and normalize results under the GTEST prefix
   cmake_parse_arguments(PARSE_ARGV 0 GTEST "${options}" "${oneValueArgs}" "${multiValueArgs}")
+
+  # Ensure GTest imported targets are available in the caller's scope. We do
+  # this lazily here instead of at top-level so package discovery uses the
+  # caller's configuration (conan, CMAKE_PREFIX_PATH, etc.). Calling
+  # find_package multiple times is safe, it's idempotent when the package is
+  # found.
+  if(NOT TARGET GTest::gtest)
+    find_package(GTest CONFIG REQUIRED)
+  endif()
 
   # NOTE If the test configure preset requested testing, enable it at the top-level
   # so CTest generates the Testing/ directory and discovered tests are

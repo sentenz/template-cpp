@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # Minimal Conan v2 integration helper for CMake
 #
 # Usage:

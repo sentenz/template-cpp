@@ -1,6 +1,4 @@
-# Target property policies
-#
-# Helpers encapsulate project conventions so CMakeLists.txt can remain concise.
+include_guard(GLOBAL)
 
 # policy_compiler_warnings(target)
 #  - Purpose:
