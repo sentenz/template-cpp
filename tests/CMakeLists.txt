@@ -6,9 +6,6 @@ if(META_BUILD_TESTING)
 
   include(gtest)
 
-  include(coverage)
-  coverage_enable()
-
   include(sanitizers)
   sanitizers_enable()
 

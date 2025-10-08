@@ -156,7 +156,7 @@ cmake-test-unit-run: cmake-test-unit-build
 ## Generate code coverage report from unit tests
 cmake-test-unit-coverage: cmake-test-unit-run
 	@mkdir -p "$(CURDIR)/logs/coverage"
-	gcovr --xml-pretty --output "$(CURDIR)/logs/coverage/cobertura.xml" --html="$(CURDIR)/logs/coverage/"
+	gcovr --xml-pretty --output "$(CURDIR)/logs/coverage/cobertura.xml" --html="$(CURDIR)/logs/coverage/" --filter "src/"
 .PHONY: cmake-test-unit-coverage
 
 ## Clean the unit test build artifacts
