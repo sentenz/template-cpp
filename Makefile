@@ -98,6 +98,7 @@ endif
 
 # ── Package Manager ──────────────────────────────────────────────────────────────────────────────
 
+# NOTE Conan install is performed automatically by `conan_bootstrap()`
 ## Initialize Conan for package management
 pkg-conan-initialize:
 	conan profile detect --force
@@ -137,10 +138,6 @@ cmake-gcc-release-clean:
 .PHONY: cmake-gcc-release-clean
 
 ## Generate a CMake project configured for unit tests
-# Note: Conan install is performed automatically by conan_bootstrap() during
-# CMake configure. The `pkg-conan-initialize` target is kept as a convenience
-# for users who want to run `conan profile detect` and install dependencies
-# manually before configuring.
 cmake-test-unit-configure:
 	cmake --preset test
 .PHONY: cmake-test-unit-configure
@@ -152,8 +149,15 @@ cmake-test-unit-build: cmake-test-unit-configure
 
 ## Run the unit tests
 cmake-test-unit-run: cmake-test-unit-build
-	ctest --preset test
+	@mkdir -p "$(CURDIR)/logs/unit"
+	ctest --preset test --output-junit "$(CURDIR)/logs/unit/junit.xml" || true
 .PHONY: cmake-test-unit-run
+
+## Generate code coverage report from unit tests
+cmake-test-unit-coverage: cmake-test-unit-run
+	@mkdir -p "$(CURDIR)/logs/coverage"
+	gcovr --xml-pretty --output "$(CURDIR)/logs/coverage/cobertura.xml" --html="$(CURDIR)/logs/coverage/"
+.PHONY: cmake-test-unit-coverage
 
 ## Clean the unit test build artifacts
 cmake-test-unit-clean:

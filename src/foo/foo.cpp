@@ -1,4 +1,4 @@
-#include "foo.hpp"
+#include "foo/foo.hpp"
 
 namespace cpp_concept
 {

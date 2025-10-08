@@ -1,4 +1,6 @@
-# Minimal Conan v2 integration helper for CMake
+include_guard(GLOBAL)
+
+# Conan v2 integration helper for CMake
 #
 # Usage:
 #   include(${CMAKE_SOURCE_DIR}/tools/cmake/conan.cmake)

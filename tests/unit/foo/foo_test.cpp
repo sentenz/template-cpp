@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "foo.hpp"
+#include "foo/foo.hpp"
 
 using namespace cpp_concept;
 
