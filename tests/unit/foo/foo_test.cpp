@@ -1,6 +1,7 @@
 // foo_test.cpp
 #include "foo/foo.hpp"
 
+#include <climits>
 #include <filesystem>
 #include <fstream>
 #include <string>

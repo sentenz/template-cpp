@@ -16,7 +16,7 @@ namespace cpp_concept
       for (std::size_t i = 0; i < bytes; ++i)
         p[i] = static_cast<char>(i & 0xFF);
       (void)p; // keep p referenced to avoid optimization
-      msg = "Leaked 256 bytes";
+      msg = "Leaked " + std::to_string(bytes) + " bytes";
     }
 
     return msg;
