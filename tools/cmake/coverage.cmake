@@ -12,27 +12,21 @@ function(coverage_enable)
     message(FATAL_ERROR "coverage_enable(): coverage is only supported with the GNU compiler")
   endif()
 
-  # Compile and link flags used for gcov/lcov
+  # Compile flag guarded by a generator expression so each flag is emitted as its own
+  # argument for supported GNU compilations.
   set(_coverage_compile_flags --coverage -O0)
   list(TRANSFORM _coverage_compile_flags PREPEND "")
+  foreach(_cflag IN LISTS _coverage_compile_flags)
+    add_compile_options($<$<COMPILE_LANG_AND_ID:CXX,GNU>:${_cflag}>)
+    add_compile_options($<$<COMPILE_LANG_AND_ID:C,GNU>:${_cflag}>)
+  endforeach()
+
+  # Linker flags to ensure libgcov is linked in. Add each link flag guarded by a
+  # generator expression so other toolchains aren't impacted.
   set(_coverage_link_flags --coverage)
-
-  if(NOT DEFINED COVERAGE_ENABLED)
-    # Compile flag guarded by a generator expression so each flag is emitted as its own
-    # argument for supported GNU compilations.
-    foreach(_cflag IN LISTS _coverage_compile_flags)
-      add_compile_options($<$<COMPILE_LANG_AND_ID:CXX,GNU>:${_cflag}>)
-      add_compile_options($<$<COMPILE_LANG_AND_ID:C,GNU>:${_cflag}>)
-    endforeach()
-
-    # Linker flags to ensure libgcov is linked in. Add each link flag guarded by a
-    # generator expression so other toolchains aren't impacted.
-    foreach(_lflag IN LISTS _coverage_link_flags)
-      add_link_options($<$<CXX_COMPILER_ID:GNU>:${_lflag}>)
-    endforeach()
-
-    set(COVERAGE_ENABLED TRUE CACHE INTERNAL "Coverage instrumentation enabled")
-  endif()
+  foreach(_lflag IN LISTS _coverage_link_flags)
+    add_link_options($<$<CXX_COMPILER_ID:GNU>:${_lflag}>)
+  endforeach()
 
   # If not a multi-config generator, prefer Debug if unspecified to avoid optimizer interference
   # with coverage reporting.

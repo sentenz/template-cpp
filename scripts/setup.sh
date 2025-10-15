@@ -18,10 +18,6 @@ readonly -A PIP_PACKAGES=(
   ["conan"]="2.21.0"
 )
 
-readonly -A GO_PACKAGES=(
-  ["go.mozilla.org/sops/cmd/sops"]="3.4.0"
-)
-
 # Control Flow Logic
 
 function setup() {
@@ -31,12 +27,6 @@ function setup() {
   ((retval |= $?))
 
   pkg_pip_clean
-  ((retval |= $?))
-
-  pkg_go_install_list GO_PACKAGES
-  ((retval |= $?))
-
-  pkg_go_clean
   ((retval |= $?))
 
   return "${retval}"

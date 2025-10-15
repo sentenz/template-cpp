@@ -6,9 +6,6 @@ if(META_BUILD_TESTING)
 
   include(gtest)
 
-  include(sanitizers)
-  sanitizers_enable()
-
   # Subdirectories
   add_subdirectory(unit)
 endif()

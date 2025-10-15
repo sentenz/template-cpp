@@ -8,10 +8,10 @@ source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
 # Generic package list iteration.
 #
 # Arguments:
-#   $1 - function
-#   $@ - packages
+#   $1 - function name to call for each package (string)
+#   $2 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any package action failed
 function pkg_list() {
   local func="${1:?function is missing}"
   local -n packages="${2:?array is missing}"
@@ -19,7 +19,9 @@ function pkg_list() {
   local -i retval=0
   local -i result=0
 
+  # Iterate over associative array keys
   for key in "${!packages[@]}"; do
+    # Call function with package name and optional version
     "$func" "${key}" "${packages[$key]}"
     ((result = $?))
     ((retval |= "${result}"))
@@ -43,16 +45,16 @@ function pkg_apt_install() {
 
   local -i retval=0
 
-  # Check if package is already installed (any version)
-  if command -v "${package}" &>/dev/null; then
+  # Use dpkg-query to check if a package is installed (works for packages not exposing a binary)
+  if dpkg-query -W -f='${Status}' "${package}" 2>/dev/null | grep -q "install ok installed"; then
     return 0
   fi
 
   if util_string_exist "${version}"; then
-    apt install "${package}"="${version}" -qqq -y --no-install-recommends >/dev/null 2>&1
+    DEBIAN_FRONTEND=noninteractive apt install -y -qq --no-install-recommends "${package}=${version}" >/dev/null 2>&1
     ((retval = $?))
   else
-    apt install "${package}" -qqq -y --no-install-recommends >/dev/null 2>&1
+    DEBIAN_FRONTEND=noninteractive apt install -y -qq --no-install-recommends "${package}" >/dev/null 2>&1
     ((retval = $?))
   fi
 
@@ -70,12 +72,12 @@ function pkg_apt_uninstall() {
 
   local -i retval=0
 
-  # Check if package is installed (any version)
-  if ! command -v "${package}" &>/dev/null; then
+  # If package isn't installed according to dpkg, nothing to do
+  if ! dpkg-query -W -f='${Status}' "${package}" 2>/dev/null | grep -q "install ok installed"; then
     return 0
   fi
 
-  apt remove -y -qqq "${package}" >/dev/null 2>&1
+  DEBIAN_FRONTEND=noninteractive apt remove -y -qq "${package}" >/dev/null 2>&1
   ((retval = $?))
 
   return "${retval}"
@@ -88,7 +90,7 @@ function pkg_apt_uninstall() {
 # Returns:
 #   None
 function pkg_apt_update() {
-  apt update -qqq >/dev/null 2>&1
+  DEBIAN_FRONTEND=noninteractive apt update -qq >/dev/null 2>&1
 }
 
 # Cleanup apt package dependencies.
@@ -100,19 +102,19 @@ function pkg_apt_update() {
 function pkg_apt_clean() {
   local -i retval=0
 
-  apt -f install -y -qqq >/dev/null 2>&1
+  DEBIAN_FRONTEND=noninteractive apt -f install -y -qq >/dev/null 2>&1
   ((retval |= $?))
 
-  apt autoremove -y -qqq >/dev/null 2>&1
+  DEBIAN_FRONTEND=noninteractive apt autoremove -y -qq >/dev/null 2>&1
   ((retval |= $?))
 
-  apt clean -qqq >/dev/null 2>&1
+  DEBIAN_FRONTEND=noninteractive apt clean -qq >/dev/null 2>&1
   ((retval |= $?))
 
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* >/dev/null 2>&1
   ((retval |= $?))
 
-  log_message "clean" "apt" "${retval}"
+  log_message "cleanup" "apt" "${retval}"
 
   return "${retval}"
 }
@@ -120,16 +122,14 @@ function pkg_apt_clean() {
 # Install apt package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any install failed
 function pkg_apt_install_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
   pkg_apt_update
-  pkg_list pkg_apt_install "${packages[@]}"
+  pkg_list pkg_apt_install "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -138,15 +138,13 @@ function pkg_apt_install_list() {
 # Uninstall apt package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any uninstall failed
 function pkg_apt_uninstall_list() {
-  local -A packages=("$@")
-
   local -i retval=0
 
-  pkg_list pkg_apt_uninstall "${packages[@]}"
+  pkg_list pkg_apt_uninstall "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -231,7 +229,7 @@ function pkg_apk_clean() {
   rm -rf /var/cache/apk/* >/dev/null 2>&1
   ((retval |= $?))
 
-  log_message "clean" "apk" "${retval}"
+  log_message "cleanup" "apk" "${retval}"
 
   return "${retval}"
 }
@@ -239,16 +237,14 @@ function pkg_apk_clean() {
 # Install apk package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any install failed
 function pkg_apk_install_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
   pkg_apk_update
-  pkg_list pkg_apk_install "${packages[@]}"
+  pkg_list pkg_apk_install "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -257,15 +253,13 @@ function pkg_apk_install_list() {
 # Uninstall apk package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any uninstall failed
 function pkg_apk_uninstall_list() {
-  local -A packages=("$@")
-
   local -i retval=0
 
-  pkg_list pkg_apk_uninstall "${packages[@]}"
+  pkg_list pkg_apk_uninstall "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -284,16 +278,11 @@ function pkg_pip_install() {
 
   local -i retval=0
 
-  # Check if package is already installed (any version)
-  if pipx -q list | grep -qE "^package ${package} " &>/dev/null; then
-    return 0
-  fi
-
   if util_string_exist "${version}"; then
-    pipx -q install -q "${package}==${version}" >/dev/null 2>&1
+    pip install "${package}==${version}" --break-system-packages >/dev/null 2>&1
     ((retval = $?))
   else
-    pipx -q install -q "${package}" >/dev/null 2>&1
+    pip install "${package}" --break-system-packages >/dev/null 2>&1
     ((retval = $?))
   fi
 
@@ -303,15 +292,13 @@ function pkg_pip_install() {
 # Install pip package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any install failed
 function pkg_pip_install_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_pip_install "${packages[@]}"
+  pkg_list pkg_pip_install "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -330,12 +317,12 @@ function pkg_pip_uninstall() {
 
   local -i retval=0
 
-  # Check if package is installed (any version)
-  if ! pipx -q list | grep -qE "^package ${package} " &>/dev/null; then
+  # Check `pip show` to detect installed package
+  if ! pip show "${package}" >/dev/null 2>&1; then
     return 0
   fi
 
-  pipx -q uninstall -q "${package}" >/dev/null 2>&1
+  pip uninstall -y --break-system-packages "${package}" >/dev/null 2>&1
   ((retval |= $?))
 
   return "${retval}"
@@ -344,15 +331,13 @@ function pkg_pip_uninstall() {
 # Uninstall a list of pip package dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any uninstall failed
 function pkg_pip_uninstall_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_pip_uninstall "${packages[@]}"
+  pkg_list pkg_pip_uninstall "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -367,10 +352,10 @@ function pkg_pip_uninstall_list() {
 function pkg_pip_clean() {
   local -i retval=0
 
-  pip3 cache purge -q >/dev/null 2>&1
+  pip cache purge -q >/dev/null 2>&1
   ((retval |= $?))
 
-  log_message "clean" "pip" "${retval}"
+  log_message "cleanup" "pip" "${retval}"
 
   return "${retval}"
 }
@@ -407,15 +392,13 @@ function pkg_snap_install() {
 # Install snap package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any install failed
 function pkg_snap_install_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_snap_install "${packages[@]}"
+  pkg_list pkg_snap_install "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -447,8 +430,8 @@ function pkg_snap_uninstall() {
 
   local -i retval=0
 
-  # Check if package is installed (any version)
-  if ! command -v "${package}" &>/dev/null; then
+  # snap maintains its own list; use `snap list` to check
+  if ! snap list --all | awk '{print $1}' | grep -xq "${package}" >/dev/null 2>&1; then
     return 0
   fi
 
@@ -461,15 +444,13 @@ function pkg_snap_uninstall() {
 # Uninstall a list of snap package dependencies.
 #
 # Arguments:
-#   $@ - associative array of packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean indicating success.
+#   $? - 0 on success, non-zero if any uninstall failed
 function pkg_snap_uninstall_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_snap_uninstall "${packages[@]}"
+  pkg_list pkg_snap_uninstall "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -489,7 +470,7 @@ function pkg_npm_install() {
   local -i retval=0
 
   # Check if package is already installed (any version)
-  if npm list "${package}" -g --depth=0 &>/dev/null; then
+  if npm ls -g --depth=0 --parseable "${package}" >/dev/null 2>&1; then
     return 0
   fi
 
@@ -502,15 +483,13 @@ function pkg_npm_install() {
 # Install npm package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any install failed
 function pkg_npm_install_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_npm_install "${packages[@]}"
+  pkg_list pkg_npm_install "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -527,8 +506,8 @@ function pkg_npm_uninstall() {
 
   local -i retval=0
 
-  # Check if package is installed (any version)
-  if npm list "${package}" -g --depth=0 &>/dev/null; then
+  # Check if package is installed globally
+  if ! npm ls -g --depth=0 --parseable "${package}" >/dev/null 2>&1; then
     return 0
   fi
 
@@ -541,15 +520,13 @@ function pkg_npm_uninstall() {
 # Uninstall a list of npm package dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any uninstall failed
 function pkg_npm_uninstall_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_npm_uninstall "${packages[@]}"
+  pkg_list pkg_npm_uninstall "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -567,7 +544,7 @@ function pkg_npm_clean() {
   npm cache clean --force --silent >/dev/null 2>&1
   ((retval = $?))
 
-  log_message "clean" "npm" "${retval}"
+  log_message "cleanup" "npm" "${retval}"
 
   return "${retval}"
 }
@@ -601,19 +578,19 @@ function pkg_go_install() {
 # Install go package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any install failed
 function pkg_go_install_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  # XXX Add Go binaries to PATH
-  PATH="${PATH}:$(go env GOPATH)/bin"
-  export PATH
+  # Add Go binaries to PATH if GOPATH is set
+  if [[ -n "$(go env GOPATH 2>/dev/null)" ]]; then
+    PATH="${PATH}:$(go env GOPATH)/bin"
+    export PATH
+  fi
 
-  pkg_list pkg_go_install "${packages[@]}"
+  pkg_list pkg_go_install "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -648,15 +625,13 @@ function pkg_go_uninstall() {
 # Uninstall go package list dependencies.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping package names to versions (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any uninstall failed
 function pkg_go_uninstall_list() {
-  local -A packages="${1:?array is missing}"
-
   local -i retval=0
 
-  pkg_list pkg_go_uninstall "${packages[@]}"
+  pkg_list pkg_go_uninstall "${1}"
   ((retval |= $?))
 
   return "${retval}"
@@ -679,7 +654,7 @@ function pkg_go_clean() {
   go clean -modcache >/dev/null 2>&1
   ((retval |= $?))
 
-  log_message "clean" "go" "${retval}"
+  log_message "cleanup" "go" "${retval}"
 
   return "${retval}"
 }
@@ -717,15 +692,16 @@ function pkg_wget_download() {
 # Download a list of files using wget.
 #
 # Arguments:
-#   $@ - packages
+#   $1 - name of an associative array (string) mapping URL -> dest or URL -> version (key/value pairs)
 # Returns:
-#   $? - Boolean
+#   $? - 0 on success, non-zero if any download failed
 function pkg_wget_download_list() {
-  local -A urls="${1:?array is missing}"
+  # `pkg_list` expects the name of the associative array as the second argument;
+  # we forward `${1}` directly so a local nameref is not required here.
 
   local -i retval=0
 
-  pkg_list pkg_wget_download "${urls[@]}"
+  pkg_list pkg_wget_download "${1}"
   ((retval |= $?))
 
   return "${retval}"

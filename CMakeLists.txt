@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23.0)
 
-project(${META_PROJECT_NAME})
+project(${META_PROJECT_NAME} LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 
@@ -11,6 +11,10 @@ if(META_BUILD_TESTING)
   endif()
 
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tools/cmake")
+
+  # NOTE Sanitizers and Coverage must be called in the root CMakeLists.txt
+  include(sanitizers)
+  sanitizers_enable()
 
   include(coverage)
   coverage_enable()

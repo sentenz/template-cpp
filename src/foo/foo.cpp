@@ -3,12 +3,12 @@
 namespace cpp_concept
 {
 
-  int add(int a, int b)
+  int Foo::add(int a, int b) const
   {
     return a + b;
   }
 
-  std::string greet(const std::string &name)
+  std::string Foo::greet(const std::string &name) const
   {
     return "Hello, " + name + "!";
   }
