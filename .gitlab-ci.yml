@@ -18,6 +18,18 @@ workflow:
     on_job_failure: all
 
 include:
+  - local: ".gitlab/templates/cmake.yml"
+    inputs:
+      stage: test
+      before:
+        - make bootstrap
+        - make setup
+      tasks:
+        - make cmake-test-unit-run
+      after:
+        - make analysis-dynamic-coverage
+      allow_failure: true
+
   - component: $CI_SERVER_FQDN/ci-cd/analysis/shfmt@~latest
     inputs:
       allow_failure: true
