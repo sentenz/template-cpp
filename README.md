@@ -15,10 +15,11 @@
     - [2.4.1. GTest](#241-gtest)
     - [2.4.2. Code Coverage](#242-code-coverage)
     - [2.4.3. Sanitizers](#243-sanitizers)
-  - [2.5. Secret Manager](#25-secret-manager)
-    - [2.5.1. SOPS](#251-sops)
-  - [2.6. Task Runner](#26-task-runner)
-    - [2.6.1. Makefile](#261-makefile)
+  - [2.5. Software Testing Patterns](#25-software-testing-patterns)
+  - [2.6. Secret Manager](#26-secret-manager)
+    - [2.6.1. SOPS](#261-sops)
+  - [2.7. Task Runner](#27-task-runner)
+    - [2.7.1. Makefile](#271-makefile)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
 - [4. References](#4-references)
@@ -100,9 +101,26 @@ Sanitizers are runtime tools that detect various types of bugs in C/C++ programs
 - [ThreadSanitizer (TSan)](https://clang.llvm.org/docs/ThreadSanitizer.html)
   > ThreadSanitizer is a tool that detects data races.
 
-### 2.5. Secret Manager
+### 2.5. Software Testing Patterns
 
-#### 2.5.1. SOPS
+- Arrange, Act, Assert (AAA)
+  > Arrange, Act, Assert (AAA) is a software testing pattern that provides a structured and organized way to write unit tests. It helps make the tests more readable, maintainable, and easy to understand.
+
+- Table-Driven Testing
+  > Table-Driven Testing is a software testing technique in which test cases are organized in a tabular format.
+
+- In-Got-Want
+  > It helps formalize how test cases are structured by focusing on clear inputs (in), actual results (got), and expected outcomes (want). This pattern enhances the readability of tests, especially in Table-Driven Testing approaches, and promotes consistency in writing unit tests.
+
+- Data-Driven Testing (DDT)
+  > A testing methodology in which input data and expected results are separated from the test logic, allowing multiple test cases to be executed dynamically using datasets (e.g., JSON, CSV) without duplicating code.
+
+- Test Fixtures
+  > Predefined test environments or data setup and teardown that ensure each test starts from a consistent and known state, enabling reliable and repeatable testing outcomes.
+
+### 2.6. Secret Manager
+
+#### 2.6.1. SOPS
 
 1. GPG Key Pair Generation
 
@@ -143,9 +161,9 @@ Sanitizers are runtime tools that detect various types of bugs in C/C++ programs
       make secret-sops-decrypt <files>
       ```
 
-### 2.6. Task Runner
+### 2.7. Task Runner
 
-#### 2.6.1. Makefile
+#### 2.7.1. Makefile
 
 - [Makefile](Makefile)
   > The Makefile serves as the task runner.
