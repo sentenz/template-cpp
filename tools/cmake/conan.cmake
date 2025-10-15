@@ -173,65 +173,63 @@ endfunction()
 
 ### Helper: include found toolchain and expose generator dirs for find_package
 function(conan_configure_toolchain FOUND_TOOLCHAIN INSTALL_FOLDER)
-  if(NOT FOUND_TOOLCHAIN)
-    message(STATUS "Conan install completed; conan_toolchain.cmake not found under ${INSTALL_FOLDER}. If you used a different generator check ${INSTALL_FOLDER}.")
-    return()
-  endif()
-
-  message(STATUS "Found generated Conan toolchain: ${FOUND_TOOLCHAIN}")
-
-  if(NOT DEFINED CMAKE_TOOLCHAIN_FILE OR NOT EXISTS ${CMAKE_TOOLCHAIN_FILE})
-    set(CMAKE_TOOLCHAIN_FILE ${FOUND_TOOLCHAIN} CACHE FILEPATH "Conan generated toolchain file" FORCE)
+  if(FOUND_TOOLCHAIN AND (NOT DEFINED CMAKE_TOOLCHAIN_FILE OR NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}"))
+    set(CMAKE_TOOLCHAIN_FILE "${FOUND_TOOLCHAIN}" CACHE FILEPATH "Conan generated toolchain file" FORCE)
     message(STATUS "Setting CMAKE_TOOLCHAIN_FILE to ${CMAKE_TOOLCHAIN_FILE}")
-  else()
-    message(STATUS "CMAKE_TOOLCHAIN_FILE already set by caller: ${CMAKE_TOOLCHAIN_FILE}; leaving it unchanged")
   endif()
 
-  include(${FOUND_TOOLCHAIN})
-
-  # Locate generators dir so find_package() can discover generated <pkg>Config.cmake
+  # Resolve the generators directory (handles flat, single-config, multi-config)
   set(_gen_dir "")
-  if(DEFINED CMAKE_BUILD_TYPE AND EXISTS ${INSTALL_FOLDER}/build/${CMAKE_BUILD_TYPE}/generators)
-    set(_gen_dir ${INSTALL_FOLDER}/build/${CMAKE_BUILD_TYPE}/generators)
-  elseif(EXISTS ${INSTALL_FOLDER}/generators)
-    set(_gen_dir ${INSTALL_FOLDER}/generators)
+  if(DEFINED CMAKE_BUILD_TYPE AND EXISTS "${INSTALL_FOLDER}/build/${CMAKE_BUILD_TYPE}/generators")
+    set(_gen_dir "${INSTALL_FOLDER}/build/${CMAKE_BUILD_TYPE}/generators")
+  elseif(EXISTS "${INSTALL_FOLDER}/generators")
+    set(_gen_dir "${INSTALL_FOLDER}/generators")
   else()
-    string(FIND "${FOUND_TOOLCHAIN}" "/generators/" _pos)
-    if(NOT _pos EQUAL -1)
-      string(SUBSTRING "${FOUND_TOOLCHAIN}" 0 ${_pos} _prefix)
-      set(_gen_dir "${_prefix}/generators")
-    endif()
+    file(GLOB _cands LIST_DIRECTORIES true
+         "${INSTALL_FOLDER}/build/*/generators"
+         "${INSTALL_FOLDER}/**/generators")
+    # Pick the first directory that actually contains Conan configs
+    foreach(d IN LISTS _cands)
+      if(EXISTS "${d}/conan_toolchain.cmake" OR
+         EXISTS "${d}/GTestConfig.cmake" OR
+         EXISTS "${d}/nlohmann_jsonConfig.cmake" OR
+         EXISTS "${d}/nlohmann_json-config.cmake")
+        set(_gen_dir "${d}")
+        break()
+      endif()
+    endforeach()
   endif()
 
-  if(_gen_dir AND EXISTS ${_gen_dir})
+  if(_gen_dir AND EXISTS "${_gen_dir}")
+    # Make generated configs discoverable in this configure run
     if(DEFINED CMAKE_PREFIX_PATH)
-      list(FIND CMAKE_PREFIX_PATH "${_gen_dir}" _found_prefix)
+      list(FIND CMAKE_PREFIX_PATH "${_gen_dir}" _ix)
     else()
-      set(_found_prefix -1)
+      set(_ix -1)
     endif()
-    if(_found_prefix EQUAL -1)
+    if(_ix EQUAL -1)
       set(CMAKE_PREFIX_PATH "${_gen_dir};${CMAKE_PREFIX_PATH}" CACHE PATH "Paths to search for packages" FORCE)
       message(STATUS "Added Conan generators dir to CMAKE_PREFIX_PATH: ${_gen_dir}")
     endif()
+
+    # Pin per-package dirs (explicitly including nlohmann_json)
+    if(EXISTS "${_gen_dir}/GTestConfig.cmake")
+      set(GTest_DIR "${_gen_dir}" CACHE PATH "Conan generated GTest config directory" FORCE)
+      message(STATUS "Set GTest_DIR to ${GTest_DIR}")
+    endif()
+    if(EXISTS "${_gen_dir}/nlohmann_jsonConfig.cmake" OR EXISTS "${_gen_dir}/nlohmann_json-config.cmake")
+      set(nlohmann_json_DIR "${_gen_dir}" CACHE PATH "Conan generated nlohmann_json config directory" FORCE)
+      message(STATUS "Set nlohmann_json_DIR to ${nlohmann_json_DIR}")
+    endif()
   else()
-    message(STATUS "Conan generators dir not found under ${INSTALL_FOLDER}; generated packages may not be discoverable without setting CMAKE_PREFIX_PATH or <Pkg>_DIR variables.")
+    message(STATUS "Conan generators dir not found under ${INSTALL_FOLDER}; consider running 'conan install' first.")
   endif()
 
-  # As a robust fallback, detect commonly requested package config files
-  # produced by CMakeDeps (for example GTestConfig.cmake) and set the
-  # corresponding <Pkg>_DIR cache variable so find_package() works.
-  file(GLOB_RECURSE _pkg_configs RELATIVE ${INSTALL_FOLDER} "${INSTALL_FOLDER}/*GTestConfig.cmake")
-  foreach(_cfg IN LISTS _pkg_configs)
-    get_filename_component(_cfg_dir "${_cfg}" DIRECTORY)
-    set(_abs_cfg_dir "${INSTALL_FOLDER}/${_cfg_dir}")
-    if(EXISTS ${_abs_cfg_dir})
-      set(GTest_DIR ${_abs_cfg_dir} CACHE PATH "Conan generated GTest config directory" FORCE)
-      message(STATUS "Set GTest_DIR to ${GTest_DIR}")
-      break()
-    endif()
-  endforeach()
+  # Include toolchain (harmless if included after project(), useful when not passed on cmdline)
+  if(FOUND_TOOLCHAIN AND EXISTS "${FOUND_TOOLCHAIN}")
+    include("${FOUND_TOOLCHAIN}")
+  endif()
 endfunction()
-
 
 ### Public: orchestrator (backwards-compatible wrapper)
 function(conan_bootstrap)
@@ -279,6 +277,26 @@ function(conan_bootstrap)
 
   # Ensure conan CLI is available (or install it)
   conan_ensure_executable(_conan_cmd)
+
+  # Ensure a default conan profile exists (helpful in CI where no profile is present)
+  # This runs `conan profile detect` using the discovered conan executable when the
+  # default profile file is missing. Any errors are non-fatal here because conan
+  # install will still emit a helpful error if profile creation fails.
+  if(NOT EXISTS "$ENV{HOME}/.conan2/profiles/default")
+    execute_process(
+      COMMAND ${_conan_cmd} profile detect
+      RESULT_VARIABLE _conan_profile_res
+      OUTPUT_VARIABLE _conan_profile_out
+      ERROR_VARIABLE _conan_profile_err
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT _conan_profile_res EQUAL 0)
+      message(STATUS "conan profile detect failed (non-fatal): ${_conan_profile_err}")
+    else()
+      message(STATUS "Created default conan profile: $ENV{HOME}/.conan2/profiles/default")
+    endif()
+  endif()
 
   # Build CLI args
   conan_build_install_args(${_src_dir} ${_install_folder} "${_gens}" _conan_cmd_args)
