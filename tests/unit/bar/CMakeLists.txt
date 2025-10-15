@@ -3,5 +3,5 @@ gtest_add(
   TARGET ${PROJECT_NAME}-bar-test
   SOURCES
     bar_test.cpp
-  LINK ${PROJECT_NAME}::bar
+  LINK ${PROJECT_NAME}::bar ${PROJECT_NAME}::test
 )
