@@ -19,8 +19,17 @@ readonly -A APT_PACKAGES=(
   ["jq"]=""
   ["bash"]=""
   ["ca-certificates"]=""
-  ["go"]=""
-  ["pipx"]=""
+  ["python3"]=""
+  ["python3-venv"]=""
+  ["python3-pip"]=""
+  ["curl"]=""
+  ["wget"]=""
+  ["unzip"]=""
+  ["pkg-config"]=""
+  ["cmake"]=""
+  ["gcc"]=""
+  ["g++"]=""
+  ["ninja-build"]=""
 )
 
 # Control Flow Logic

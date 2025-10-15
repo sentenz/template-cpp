@@ -13,8 +13,9 @@ source ./../scripts/shell/pkg.sh
 
 # Constant Variables
 
-readonly -A GO_PACKAGES=(
-  ["sops"]=""
+readonly -A PIP_PACKAGES=(
+  ["gcovr"]="8.4"
+  ["conan"]="2.21.0"
 )
 
 readonly -A APT_PACKAGES=(
@@ -23,7 +24,17 @@ readonly -A APT_PACKAGES=(
   ["jq"]=""
   ["bash"]=""
   ["ca-certificates"]=""
-  ["go"]=""
+  ["python3"]=""
+  ["python3-venv"]=""
+  ["python3-pip"]=""
+  ["curl"]=""
+  ["wget"]=""
+  ["unzip"]=""
+  ["pkg-config"]=""
+  ["cmake"]=""
+  ["gcc"]=""
+  ["g++"]=""
+  ["ninja-build"]=""
 )
 
 # Control Flow Logic
@@ -33,10 +44,10 @@ function teardown() {
 
   local -i retval=0
 
-  pkg_go_uninstall_list GO_PACKAGES
+  pkg_pip_uninstall_list PIP_PACKAGES
   ((retval |= $?))
 
-  pkg_go_clean
+  pkg_pip_clean
   ((retval |= $?))
 
   pkg_apt_uninstall_list APT_PACKAGES
