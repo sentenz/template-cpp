@@ -51,8 +51,8 @@ bootstrap:
 ifeq ($(IS_WINDOWS),Windows_NT)
 	$(POWERSHELL) -File ./scripts/Bootstrap.ps1
 else
-	@$(MAKE) -s permission; \
-	cd scripts/ && chmod +x bootstrap.sh && ./bootstrap.sh
+	# @$(MAKE) -s permission
+	@cd ./scripts/ && bash ./bootstrap.sh
 endif
 .PHONY: bootstrap
 
@@ -61,8 +61,8 @@ setup:
 ifeq ($(IS_WINDOWS),Windows_NT)
 	@echo "TODO Implement Windows setup task"
 else
-	@$(MAKE) -s permission; \
-	cd scripts/ && chmod +x setup.sh && ./setup.sh
+	# @$(MAKE) -s permission
+	@cd ./scripts/ && bash ./setup.sh
 endif
 .PHONY: setup
 
@@ -71,8 +71,8 @@ teardown:
 ifeq ($(IS_WINDOWS),Windows_NT)
 	@echo "TODO Implement Windows teardown task"
 else
-	@$(MAKE) -s permission; \
-	cd scripts/ && chmod +x teardown.sh && ./teardown.sh
+	# @$(MAKE) -s permission
+	@cd ./scripts/ && bash ./teardown.sh
 endif
 .PHONY: teardown
 
@@ -149,20 +149,28 @@ cmake-test-unit-build: cmake-test-unit-configure
 
 ## Run the unit tests
 cmake-test-unit-run: cmake-test-unit-build
-	@mkdir -p "$(CURDIR)/logs/unit"
-	ctest --preset test --output-junit "$(CURDIR)/logs/unit/junit.xml" || true
+	@mkdir -p "$(CURDIR)/${LOGS_PATH_TEST}"
+	ctest --preset test --output-junit "$(CURDIR)/${LOGS_PATH_TEST}/junit.xml"
 .PHONY: cmake-test-unit-run
 
 ## Generate code coverage report from unit tests
-cmake-test-unit-coverage: cmake-test-unit-run
-	@mkdir -p "$(CURDIR)/logs/coverage"
-	gcovr --xml-pretty --output "$(CURDIR)/logs/coverage/cobertura.xml" --html="$(CURDIR)/logs/coverage/" --filter "src/"
+cmake-test-unit-coverage:
+	$(MAKE) cmake-test-unit-run || true
+	$(MAKE) analysis-dynamic-coverage
 .PHONY: cmake-test-unit-coverage
 
 ## Clean the unit test build artifacts
 cmake-test-unit-clean:
 	cmake --build --preset test --target clean
 .PHONY: cmake-test-unit-clean
+
+# ── Code Analysis ────────────────────────────────────────────────────────────────────────────────
+
+## Generate code coverage report from dynamic analysis
+analysis-dynamic-coverage:
+	@mkdir -p "$(CURDIR)/${LOGS_PATH_COVERAGE}"
+	gcovr --xml-pretty --print-summary --cobertura --output "$(CURDIR)/${LOGS_PATH_COVERAGE}/cobertura.xml" --html="$(CURDIR)/${LOGS_PATH_COVERAGE}/" --filter "src/" --exclude-unreachable-branches
+.PHONY: analysis-dynamic-coverage
 
 # ── Secret Manager ───────────────────────────────────────────────────────────────────────────────
 
