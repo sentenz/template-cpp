@@ -1,25 +1,44 @@
-# Template C++
+# Template DX
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CMake](https://img.shields.io/badge/CMake-3.28+-blue.svg)](https://cmake.org/)
+[![Conan](https://img.shields.io/badge/Conan-2.21+-blue.svg)](https://conan.io/)
+[![Semantic Release](https://img.shields.io/badge/semantic--release-enabled-brightgreen.svg)](https://semantic-release.gitbook.io/semantic-release/)
+[![Renovate Enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![SOPS Enabled](https://img.shields.io/badge/sops-enabled-brightgreen.svg)](https://github.com/mozilla/sops)
+[![Conftest Enabled](https://img.shields.io/badge/conftest-enabled-brightgreen.svg)](https://www.conftest.dev/)
+
+A modular C++ project using a component-based architecture, with CMake as the build system and Conan for dependency management.
 
 - [1. Details](#1-details)
   - [1.1. Prerequisites](#11-prerequisites)
-- [2. Usage](#2-usage)
-  - [2.1. Build System](#21-build-system)
-    - [2.1.1. CMake](#211-cmake)
-  - [2.2. Package Manager](#22-package-manager)
-    - [2.2.1. Conan](#221-conan)
-  - [2.3. Compiler Cache](#23-compiler-cache)
-    - [2.3.1. Ccache](#231-ccache)
-  - [2.4. Test Framework](#24-test-framework)
-    - [2.4.1. GTest](#241-gtest)
-    - [2.4.2. Code Coverage](#242-code-coverage)
-    - [2.4.3. Sanitizers](#243-sanitizers)
-  - [2.5. Software Testing Patterns](#25-software-testing-patterns)
-  - [2.6. Secret Manager](#26-secret-manager)
-    - [2.6.1. SOPS](#261-sops)
-  - [2.7. Task Runner](#27-task-runner)
-    - [2.7.1. Makefile](#271-makefile)
+- [2. Contribute](#2-contribute)
+  - [2.1. Task Runner](#21-task-runner)
+    - [2.1.1. Make](#211-make)
+  - [2.2. Bootstrap](#22-bootstrap)
+    - [2.2.1. Scripts](#221-scripts)
+  - [2.3. Dev Containers](#23-dev-containers)
+  - [2.4. Build System](#24-build-system)
+    - [2.4.1. CMake](#241-cmake)
+  - [2.5. Dependency Manager](#25-dependency-manager)
+    - [2.5.1. Conan](#251-conan)
+  - [2.6. Test Framework](#26-test-framework)
+    - [2.6.1. GTest](#261-gtest)
+    - [2.6.2. Code Coverage](#262-code-coverage)
+    - [2.6.3. Sanitizers](#263-sanitizers)
+    - [2.6.4. Software Testing Patterns](#264-software-testing-patterns)
+  - [2.7. Cache Manager](#27-cache-manager)
+    - [2.7.1. Ccache](#271-ccache)
+  - [2.8. Release Manager](#28-release-manager)
+    - [2.8.1. Semantic-Release](#281-semantic-release)
+  - [2.9. Update Manager](#29-update-manager)
+    - [2.9.1. Renovate](#291-renovate)
+  - [2.10. Secrets Manager](#210-secrets-manager)
+    - [2.10.1. SOPS](#2101-sops)
+  - [2.11. Container Manager](#211-container-manager)
+    - [2.11.1. Docker](#2111-docker)
+  - [2.12. Policy Manager](#212-policy-manager)
+    - [2.12.1. Conftest](#2121-conftest)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
 - [4. References](#4-references)
@@ -28,149 +47,29 @@
 
 ### 1.1. Prerequisites
 
-## 2. Usage
+- [C++](https://isocpp.org/)
+  > The C++ programming language (ISO/IEC C++17 standard) for software development.
 
-### 2.1. Build System
-
-#### 2.1.1. CMake
-
-CMake is a cross-platform, compiler-independent, open-source build system that manages the build process.
+- [GCC GNU](https://gcc.gnu.org/)
+  > GCC (GNU Compiler Collection) for compiling C and C++ code.
 
 - [CMake](https://cmake.org/)
-  > CMake is an open-source, cross-platform family of tools designed to build, test and package software.
+  > Cross-platform build system generator to manage the build process of software projects.
 
-- [CMakeLists.txt](CMakeLists.txt)
-  > The CMake build system configuration file.
+## 2. Contribute
 
-- [CMakePresets.json](CMakePresets.json)
-  > CMake presets for configuring and building the project.
+Contribution guidelines and project management tools.
 
-### 2.2. Package Manager
+### 2.1. Task Runner
 
-#### 2.2.1. Conan
-
-Conan is a package manager for C and C++ that simplifies the process of managing dependencies and libraries.
-
-- [Conan](https://conan.io/)
-  > Conan nis a decentralized, open-source package manager for C and C++.
-
-- [Conanfile.txt](Conanfile.txt)
-  > The Conan package manager configuration file.
-
-### 2.3. Compiler Cache
-
-#### 2.3.1. Ccache
-
-Ccache is a compiler cache that speeds up recompilation by caching previous compilations and detecting when the same compilation is being done again.
-
-- [Ccache](https://ccache.dev/)
-  > Ccache is a compiler cache that speeds up recompilation by caching previous compilations and detecting when the same compilation is being done again.
-
-  ```bash
-  # Example: Using ccache with gcc
-  export CC="ccache gcc"
-  export CXX="ccache g++"
-  ```
-
-### 2.4. Test Framework
-
-#### 2.4.1. GTest
-
-Google Test (GTest) is a unit testing framework for C++.
-
-- [GTest](https://github.com/google/googletest)
-  > Google Test is a unit testing library for the C++ programming language, based on the xUnit architecture.
-
-#### 2.4.2. Code Coverage
-
-Code coverage is a measure used to describe the degree to which the source code of a program is executed when a particular test suite runs.
-
-- [gcovr](https://gcovr.com/en/stable/)
-  > Gcovr is a Python tool that provides a utility for managing and generating code coverage reports.
-
-#### 2.4.3. Sanitizers
-
-Sanitizers are runtime tools that detect various types of bugs in C/C++ programs, such as memory errors and undefined behavior.
-
-- [AddressSanitizer (ASan)](https://clang.llvm.org/docs/AddressSanitizer.html)
-  > AddressSanitizer is a fast memory error detector.
-
-- [UndefinedBehaviorSanitizer (UBSan)](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
-  > UndefinedBehaviorSanitizer is a fast undefined behavior detector.
-
-- [ThreadSanitizer (TSan)](https://clang.llvm.org/docs/ThreadSanitizer.html)
-  > ThreadSanitizer is a tool that detects data races.
-
-### 2.5. Software Testing Patterns
-
-- Arrange, Act, Assert (AAA)
-  > Arrange, Act, Assert (AAA) is a software testing pattern that provides a structured and organized way to write unit tests. It helps make the tests more readable, maintainable, and easy to understand.
-
-- Table-Driven Testing
-  > Table-Driven Testing is a software testing technique in which test cases are organized in a tabular format.
-
-- In-Got-Want
-  > It helps formalize how test cases are structured by focusing on clear inputs (in), actual results (got), and expected outcomes (want). This pattern enhances the readability of tests, especially in Table-Driven Testing approaches, and promotes consistency in writing unit tests.
-
-- Data-Driven Testing (DDT)
-  > A testing methodology in which input data and expected results are separated from the test logic, allowing multiple test cases to be executed dynamically using datasets (e.g., JSON, CSV) without duplicating code.
-
-- Test Fixtures
-  > Predefined test environments or data setup and teardown that ensure each test starts from a consistent and known state, enabling reliable and repeatable testing outcomes.
-
-### 2.6. Secret Manager
-
-#### 2.6.1. SOPS
-
-1. GPG Key Pair Generation
-
-    - Task Runner
-      > Generate a new key pair to be used with SOPS.
-
-      > [!NOTE]
-      > The UID can be customized via the `SOPS_UID` variable (defaults to `sops-dx`).
-
-      ```sh
-      make secret-gpg-generate SOPS_UID=<uid>
-      ```
-
-2. GPG Public Key Fingerprint
-
-    - Task Runner
-      > Print the  GPG Public Key fingerprint associated with a given UID.
-
-      ```sh
-      make secret-gpg-show SOPS_UID=<uid>
-      ```
-
-    - [.sops.yaml](.sops.yaml)
-      > The GPG UID is required for populating in `.sops.yaml`.
-
-      ```yaml
-      creation_rules:
-        - pgp: "<fingerprint>" # <uid>
-      ```
-
-3. SOPS Encrypt/Decrypt
-
-    - Task Runner
-      > Encrypt/decrypt one or more files in place using SOPS.
-
-      ```sh
-      make secret-sops-encrypt <files>
-      make secret-sops-decrypt <files>
-      ```
-
-### 2.7. Task Runner
-
-#### 2.7.1. Makefile
+#### 2.1.1. Make
 
 - [Makefile](Makefile)
-  > The Makefile serves as the task runner.
+  > Makefile defining tasks for building, testing, and managing the project.
 
   > [!NOTE]
-  > - Run the `make help` command in the terminal to list the tasks used for the project.
-  > - Targets **must** have a leading comment line starting with `##` to be included in the task list.
+  > - Run `make help` in the terminal to list the project tasks.
+  > - Each task description must begin with `##` to be included in the task list.
 
   ```plaintext
   $ make help
@@ -181,16 +80,301 @@ Sanitizers are runtime tools that detect various types of bugs in C/C++ programs
   Usage
           make <task>
 
-          bootstrap              Initialize a software development workspace with requisites
-          setup                  Install and configure all dependencies essential for development
-          teardown               Remove development artifacts and restore the host to its pre-setup state
-          secret-gpg-generate    Generate a new GPG key pair for SOPS
-          secret-gpg-show        Print the GPG key fingerprint for SOPS (.sops.yaml)
-          secret-gpg-remove      Remove an existing GPG key for SOPS (interactive)
-          secret-sops-encrypt    Encrypt file using SOPS
-          secret-sops-decrypt    Decrypt file using SOPS
-          secret-sops-view       View a file encrypted with SOPS
+          bootstrap         Initialize a software development workspace with requisites
+          setup             Install and configure all dependencies essential for development
+          teardown          Remove development artifacts and restore the host to its pre-setup state
   ```
+
+### 2.2. Bootstrap
+
+#### 2.2.1. Scripts
+
+[scripts/](scripts/README.md) provides scripts to bootstrap, setup, and teardown a software development workspace with requisites.
+
+1. Insights and Details
+
+    - [bootstrap.sh](scripts/bootstrap.sh)
+      > Initializes a software development workspace with requisites.
+
+    - [setup.sh](scripts/setup.sh)
+      > Installs and configures all dependencies essential for development.
+
+    - [teardown.sh](scripts/teardown.sh)
+      > Removes development artifacts and restores the host to its pre-setup state.
+
+2. Usage and Instructions
+
+    - Tasks
+
+      ```bash
+      make bootstrap
+      ```
+
+      ```bash
+      make setup
+      ```
+
+      ```bash
+      make teardown
+      ```
+
+### 2.3. Dev Containers
+
+[.devcontainer/](.devcontainer/README.md) provides Dev Containers as a consistent development environment using Docker containers.
+
+1. Insights and Details
+
+    - [cpp/](.devcontainer/cpp/)
+      > Dev Container configuration for C++ development environment.
+
+2. Usage and Instructions
+
+    - Tasks
+
+      ```bash
+      # TODO
+      # make devcontainer-cpp
+      ```
+
+### 2.4. Build System
+
+#### 2.4.1. CMake
+
+[CMake](https://cmake.org/) is a cross-platform, compiler-independent, open-source build system that manages the build process.
+
+1. Insights and Details
+
+- [CMakeLists.txt](CMakeLists.txt)
+  > The CMake build system configuration file.
+
+- [CMakePresets.json](CMakePresets.json)
+  > CMake presets for configuring and building the project.
+
+### 2.5. Dependency Manager
+
+#### 2.5.1. Conan
+
+[Conan](https://conan.io/) is a package manager for C and C++ that simplifies the process of managing dependencies and libraries.
+
+1. Insights and Details
+
+- [Conanfile.txt](Conanfile.txt)
+  > The Conan package manager configuration file.
+
+### 2.6. Test Framework
+
+#### 2.6.1. GTest
+
+[Google Test (GTest)](https://github.com/google/googletest) is a unit testing library for the C++ programming language, based on the xUnit architecture.
+
+#### 2.6.2. Code Coverage
+
+Code coverage is a measure used to describe the degree to which the source code of a program is executed when a particular test suite runs.
+
+1. Insights and Details
+
+    - [gcovr](https://gcovr.com/en/stable/)
+      > Gcovr is a Python tool that provides a utility for managing and generating code coverage reports.
+
+#### 2.6.3. Sanitizers
+
+Sanitizers are runtime tools that detect various types of bugs in C/C++ programs, such as memory errors and undefined behavior.
+
+1. Insights and Details
+
+    - [AddressSanitizer (ASan)](https://clang.llvm.org/docs/AddressSanitizer.html)
+      > AddressSanitizer is a fast memory error detector.
+
+    - [UndefinedBehaviorSanitizer (UBSan)](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+      > UndefinedBehaviorSanitizer is a fast undefined behavior detector.
+
+    - [ThreadSanitizer (TSan)](https://clang.llvm.org/docs/ThreadSanitizer.html)
+      > ThreadSanitizer is a tool that detects data races.
+
+#### 2.6.4. Software Testing Patterns
+
+- In-Got-Want
+  > It helps formalize how test cases are structured by focusing on clear inputs (in), actual results (got), and expected outcomes (want). This pattern enhances the readability of tests, especially in Table-Driven Testing approaches, and promotes consistency in writing unit tests.
+
+- Table-Driven Testing
+  > Table-Driven Testing is a software testing technique in which test cases are organized in a tabular format.
+
+- Data-Driven Testing (DDT)
+  > A testing methodology in which input data and expected results are separated from the test logic, allowing multiple test cases to be executed dynamically using datasets (e.g., JSON, CSV) without duplicating code.
+
+- Arrange, Act, Assert (AAA)
+  > Arrange, Act, Assert (AAA) is a software testing pattern that provides a structured and organized way to write unit tests. It helps make the tests more readable, maintainable, and easy to understand.
+
+- Test Fixtures
+  > Predefined test environments or data setup and teardown that ensure each test starts from a consistent and known state, enabling reliable and repeatable testing outcomes.
+
+### 2.7. Cache Manager
+
+#### 2.7.1. Ccache
+
+[Ccache](https://ccache.dev/) is a compiler cache that speeds up recompilation by caching previous compilations and detecting when the same compilation is being done again.
+
+1. Insights and Details
+
+      ```bash
+      # Example: Using ccache with gcc
+      export CC="ccache gcc"
+      export CXX="ccache g++"
+      ```
+
+### 2.8. Release Manager
+
+#### 2.8.1. Semantic-Release
+
+[Semantic-Release](https://github.com/semantic-release/semantic-release) automates the release process by analyzing commit messages to determine the next version number, generating changelog and release notes, and publishing the release.
+
+1. Insights and Details
+
+    - [.releaserc.json](.releaserc.json)
+      > Configuration file for Semantic-Release specifying release rules and plugins.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      uses: sentenz/actions/semantic-release@latest
+      ```
+
+### 2.9. Update Manager
+
+#### 2.9.1. Renovate
+
+[Renovate](https://github.com/renovatebot/renovate) automates dependency updates by creating merge requests for outdated dependencies, ensuring that projects stay up-to-date with the latest versions of libraries and packages.
+
+1. Insights and Details
+
+    - [renovate.json](renovate.json)
+      > Configuration file for Renovate specifying update rules and schedules.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      uses: sentenz/actions/renovate@latest
+      ```
+
+### 2.10. Secrets Manager
+
+#### 2.10.1. SOPS
+
+[SOPS (Secrets OPerationS)](https://github.com/getsops/sops) is a tool for managing and encrypting sensitive data such as passwords, API keys, and other secrets.
+
+1. Insights and Details
+
+    - [.sops.yaml](.sops.yaml)
+      > Configuration file for SOPS specifying encryption rules and key management.
+
+2. Usage and Instructions
+
+    - GPG Key Pair Generation
+
+      - Tasks
+        > Generate a new key pair to be used with SOPS.
+
+        > [!NOTE]
+        > The UID can be customized via the `SECRETS_SOPS_UID` variable (defaults to `sops-dx`).
+
+        ```bash
+        make secrets-gpg-generate SECRETS_SOPS_UID=<uid>
+        ```
+
+    - GPG Public Key Fingerprint
+
+      - Tasks
+        > Print the  GPG Public Key fingerprint associated with a given UID.
+
+        ```bash
+        make secrets-gpg-show SECRETS_SOPS_UID=<uid>
+        ```
+
+      - [.sops.yaml](.sops.yaml)
+        > The GPG UID is required for populating in `.sops.yaml`.
+
+        ```yaml
+        creation_rules:
+          - pgp: "<fingerprint>" # <uid>
+        ```
+
+    - SOPS Encrypt/Decrypt
+
+      - Tasks
+        > Encrypt/decrypt one or more files in place using SOPS.
+
+        ```bash
+        make secrets-sops-encrypt <files>
+        ```
+
+        ```bash
+        make secrets-sops-decrypt <files>
+        ```
+
+### 2.11. Container Manager
+
+#### 2.11.1. Docker
+
+[Docker](https://github.com/docker) containerization tool to run applications in isolated container environments and execute container-based tasks.
+
+1. Insights and Details
+
+    - [Dockerfile](Dockerfile)
+      > Dockerfile defining the container image for the project.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      # TODO
+      ```
+
+    - Tasks
+
+      ```bash
+      # TODO
+      ```
+
+### 2.12. Policy Manager
+
+#### 2.12.1. Conftest
+
+[Conftest](https://www.conftest.dev/) is a **Policy as Code (PaC)** tool to streamline policy management for improved development, security and audit capability.
+
+1. Insights and Details
+
+    - [conftest.toml](conftest.toml)
+      > Configuration file for Conftest specifying policy paths and output formats.
+
+    - [tests/policy](tests/policy/)
+      > Directory contains Rego policies for Conftest to enforce best practices and compliance standards.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      uses: sentenz/actions/regal@latest
+      ```
+
+      ```yaml
+      uses: sentenz/actions/conftest@latest
+      ```
+
+    - Tasks
+
+      ```bash
+      make policy-lint-regal <filepath>
+      ```
+
+      ```bash
+      make policy-analysis-conftest <filepath>
+      ```
 
 ## 3. Troubleshoot
 
@@ -202,3 +386,4 @@ TODO
 
 - GitHub [Template DX](https://github.com/sentenz/template-dx) repository.
 - GitHub [Template C++](https://github.com/sentenz/template-cpp) repository.
+- Sentenz [Manager Tools](https://github.com/sentenz/convention/issues/392) article.
