@@ -134,7 +134,7 @@ Contribution guidelines and project management tools.
       ```
 
       > [!NOTE]
-      > The `devcontainer.json` runs the `bootstrap` and `setup` scripts to initialize and configure the development environment.
+      > The `devcontainer.json` runs the `bootstrap` and `setup` tasks to initialize and configure the development environment.
 
 2. Usage and Instructions
 
@@ -153,11 +153,11 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-- [CMakeLists.txt](CMakeLists.txt)
-  > The CMake build system configuration file.
+    - [CMakeLists.txt](CMakeLists.txt)
+      > The CMake build system configuration file.
 
-- [CMakePresets.json](CMakePresets.json)
-  > CMake presets for configuring and building the project.
+    - [CMakePresets.json](CMakePresets.json)
+      > CMake presets for configuring and building the project.
 
 ### 2.5. Dependency Manager
 
@@ -167,8 +167,8 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-- [Conanfile.txt](Conanfile.txt)
-  > The Conan package manager configuration file.
+    - [Conanfile.txt](Conanfile.txt)
+      > The Conan package manager configuration file.
 
 ### 2.6. Test Framework
 
