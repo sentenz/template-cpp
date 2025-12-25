@@ -127,6 +127,15 @@ Contribution guidelines and project management tools.
     - [cpp/](.devcontainer/cpp/)
       > Dev Container configuration for C++ development environment.
 
+      ```json
+      // ...
+      "postCreateCommand": "sudo make bootstrap && sudo make setup",
+      // ...
+      ```
+
+      > [!NOTE]
+      > The `devcontainer.json` runs the `bootstrap` and `setup` scripts to initialize and configure the development environment.
+
 2. Usage and Instructions
 
     - Tasks
