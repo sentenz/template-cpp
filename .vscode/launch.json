@@ -2,31 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(gdb) Launch",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${file}",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "gdb",
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        },
-        {
-          "description": "Set Disassembly Flavor to Intel",
-          "text": "-gdb-set disassembly-flavor intel",
-          "ignoreFailures": true
-        }
-      ]
-    },
-    {
-      "name": "(gdb) Launch",
+      "name": "(gdb) Launch Target",
       "type": "cppdbg",
       "request": "launch",
       "program": "${command:cmake.launchTargetPath}",
@@ -35,20 +11,7 @@
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
-      "MIMode": "gdb"
-    },
-    {
-      "name": "(gdb) Foo Test",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/build/test/bin/cpp-concept-foo-test",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
       "MIMode": "gdb",
-      "preLaunchTask": "build-tests",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -63,17 +26,16 @@
       ]
     },
     {
-      "name": "(gdb) Bar Test",
+      "name": "(gdb) Launch Unit Tests",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/test/bin/cpp-concept-bar-test",
+      "program": "${command:cmake.launchTargetPath}-test",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "preLaunchTask": "build-tests",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -86,6 +48,6 @@
           "ignoreFailures": true
         }
       ]
-    },
+    }
   ]
 }
