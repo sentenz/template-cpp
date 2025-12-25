@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.1.0](https://github.com/sentenz/template-cpp/compare/1.0.0...1.1.0) (2025-12-25)
+
+
+### Features
+
+* enhance Foo and Bar classes with additional sanitizers and utility functions ([7f7d2a4](https://github.com/sentenz/template-cpp/commit/7f7d2a4e638549c70aa829f42ec18fc2d0e75df7))
+
 # 1.0.0 (2025-12-25)
 
 
