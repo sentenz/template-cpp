@@ -5,12 +5,12 @@ spec:
     stage:
       options: ["build", "test"]
       default: build
-      description: "The stage and order in which to run the job with `build` and `test`."
+      description: "The names and order of the pipeline stages with `build` and `test`."
     job:
       default: cmake
       description: "Name of the job commands to run to accomplish tasks."
     image:
-      default: debian:13.1-slim
+      default: debian:13.2-slim@sha256:e711a7b30ec1261130d0a121050b4ed81d7fb28aeabcf4ea0c7876d4e9f5aca2
       description: "The container image to use for the job."
     tags:
       type: array
@@ -31,7 +31,7 @@ spec:
     needs:
       type: array
       default: []
-      description: "List of jobs that must complete before this job runs."
+      description: "List of custom rules to add to the job."
     rules:
       type: array
       default: []
