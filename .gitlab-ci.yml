@@ -25,17 +25,9 @@ include:
         - make bootstrap
         - make setup
       tasks:
-        - make cmake-test-unit-run
+        - make cmake-gcc-test-unit-run
       after:
         - make analysis-dynamic-coverage
-      allow_failure: true
-
-  - component: $CI_SERVER_FQDN/ci-cd/analysis/shfmt@~latest
-    inputs:
-      allow_failure: true
-
-  - component: $CI_SERVER_FQDN/ci-cd/analysis/shellcheck@~latest
-    inputs:
       allow_failure: true
 
   - component: $CI_SERVER_FQDN/ci-cd/analysis/semgrep@~latest
@@ -43,6 +35,16 @@ include:
       allow_failure: true
 
   - component: $CI_SERVER_FQDN/ci-cd/analysis/gitleaks@~latest
+
+  - component: $CI_SERVER_FQDN/ci-cd/analysis/conftest@~latest
+    inputs:
+      allow_failure: true
+
+  - component: $CI_SERVER_FQDN/ci-cd/sonar/c-cpp@~latest
+    inputs:
+      tasks:
+        - make cmake-gcc-debug-configure
+      allow_failure: true
 
   - component: $CI_SERVER_FQDN/ci-cd/manager/renovate@~latest
     inputs:
