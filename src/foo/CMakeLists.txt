@@ -13,9 +13,6 @@ target_sources(${PROJECT_NAME}-foo
 )
 target_link_libraries(${PROJECT_NAME}-foo PUBLIC ${PROJECT_NAME}::includes)
 
-policy_target_properties(${PROJECT_NAME}-foo)
-policy_compiler_warnings(${PROJECT_NAME}-foo)
-
 # Provide a namespaced alias for internal use
 if(NOT TARGET ${PROJECT_NAME}::foo)
   add_library(${PROJECT_NAME}::foo ALIAS ${PROJECT_NAME}-foo)

@@ -1,7 +1,7 @@
-gtest_add(
-  WITH_CTEST TRUE WITH_MAIN TRUE
-  TARGET ${PROJECT_NAME}-bar-test
+meta_gtest(
+  TARGET ${PROJECT_NAME}-test
   SOURCES
     bar_test.cpp
-  LINK ${PROJECT_NAME}::bar ${PROJECT_NAME}::test
+  LINK
+    ${PROJECT_NAME}::bar
 )

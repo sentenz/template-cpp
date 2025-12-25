@@ -1,6 +1,3 @@
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tools/cmake")
-include(policy)
-
 # Centralized include target for subdirectories to link a single source/install specification
 add_library(${PROJECT_NAME}-includes INTERFACE)
 target_include_directories(${PROJECT_NAME}-includes INTERFACE

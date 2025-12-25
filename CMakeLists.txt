@@ -1,8 +1,13 @@
-cmake_minimum_required(VERSION 3.23.0)
+cmake_minimum_required(VERSION 3.28.3)
 
 project(${META_PROJECT_NAME} LANGUAGES C CXX)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tools/cmake")
+
 include(GNUInstallDirs)
+
+include(meta_policy)
+meta_policy()
 
 if(META_BUILD_TESTING)
   include(CTest)
@@ -10,16 +15,18 @@ if(META_BUILD_TESTING)
     enable_testing()
   endif()
 
-  list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tools/cmake")
+  include(meta_conan)
+  meta_conan()
 
-  # NOTE Sanitizers and Coverage must be called in the root CMakeLists.txt
-  include(sanitizers)
-  sanitizers_enable()
+  include(meta_sanitizers)
+  meta_sanitizers(ENABLE ${META_BUILD_TESTING})
 
-  include(coverage)
-  coverage_enable()
+  include(meta_coverage)
+  meta_coverage(ENABLE ${META_BUILD_TESTING})
+
+  # Subdirectories
+  add_subdirectory(tests)
 endif()
 
 # Subdirectories
 add_subdirectory(src)
-add_subdirectory(tests)

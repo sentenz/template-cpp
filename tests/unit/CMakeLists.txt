@@ -1,10 +1,10 @@
-add_library(${PROJECT_NAME}-test INTERFACE)
-target_link_libraries(${PROJECT_NAME}-test INTERFACE ${PROJECT_NAME}::includes)
+include(meta_gtest)
 
-if(NOT TARGET ${PROJECT_NAME}::test)
-  add_library(${PROJECT_NAME}::test ALIAS ${PROJECT_NAME}-test)
-endif()
+meta_gtest(
+  WITH_CTEST
+  WITH_MAIN
+  TARGET ${PROJECT_NAME}-test
+)
 
-# Subdirectories
 add_subdirectory(foo)
 add_subdirectory(bar)

@@ -1,7 +1,8 @@
-gtest_add(
-  WITH_CTEST TRUE WITH_MAIN TRUE WITH_DDT TRUE
-  TARGET ${PROJECT_NAME}-foo-test
+meta_gtest(
+  WITH_DDT
+  TARGET ${PROJECT_NAME}-test
   SOURCES
     foo_test.cpp
-  LINK ${PROJECT_NAME}::foo ${PROJECT_NAME}::test
+  LINK
+    ${PROJECT_NAME}::foo
 )
