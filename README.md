@@ -354,7 +354,7 @@ Contribution guidelines and project management tools.
         > Generate a new key pair to be used with SOPS.
 
         > [!NOTE]
-        > The UID can be customized via the `SECRETS_SOPS_UID` variable (defaults to `sops-dx`).
+        > The UID can be customized via the `SECRETS_SOPS_UID` variable (defaults to `sops-c++`).
 
         ```bash
         make secrets-gpg-generate SECRETS_SOPS_UID=<uid>
