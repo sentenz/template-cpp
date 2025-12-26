@@ -22,11 +22,10 @@ A modular C++ project using a component-based architecture, with CMake as the bu
     - [2.4.1. CMake](#241-cmake)
   - [2.5. Dependency Manager](#25-dependency-manager)
     - [2.5.1. Conan](#251-conan)
-  - [2.6. Test Framework](#26-test-framework)
-    - [2.6.1. GTest](#261-gtest)
+  - [2.6. Software Testing](#26-software-testing)
+    - [2.6.1. Unit Testing](#261-unit-testing)
     - [2.6.2. Code Coverage](#262-code-coverage)
     - [2.6.3. Sanitizers](#263-sanitizers)
-    - [2.6.4. Software Testing Patterns](#264-software-testing-patterns)
   - [2.7. Cache Manager](#27-cache-manager)
     - [2.7.1. Ccache](#271-ccache)
   - [2.8. Release Manager](#28-release-manager)
@@ -170,6 +169,24 @@ Contribution guidelines and project management tools.
     - [CMakePresets.json](CMakePresets.json)
       > CMake presets for configuring and building the project.
 
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      # TODO
+      ```
+
+    - Tasks
+
+      ```bash
+      make cmake-gcc-debug-build
+      ```
+
+      ```bash
+      make cmake-gcc-release-build
+      ```
+
 ### 2.5. Dependency Manager
 
 #### 2.5.1. Conan
@@ -181,52 +198,88 @@ Contribution guidelines and project management tools.
     - [Conanfile.txt](Conanfile.txt)
       > The Conan package manager configuration file.
 
-### 2.6. Test Framework
+    - [conan.cmake](tools/cmake/meta_conan.cmake)
+      > CMake module to integrate Conan into the build system.
 
-#### 2.6.1. GTest
+      ```cmake
+      include(conan)
+      conan()
+      ```
 
-[Google Test (GTest)](https://github.com/google/googletest) is a unit testing library for the C++ programming language, based on the xUnit architecture.
+### 2.6. Software Testing
+
+#### 2.6.1. Unit Testing
+
+[Google Test (GTest)](https://github.com/google/googletest) is a unit testing library for the C++ programming language.
+
+1. Insights and Details
+
+    - [gtest.cmake](tools/cmake/meta_gtest.cmake)
+      > CMake module to integrate Google Test into the build system.
+
+      ```cmake
+      include(gtest)
+      gtest(...)
+      ```
+
+    - [AGENTS.md](./AGENTS.md)
+      > Automate unit test generation using Large Language Models (LLMs) Agents.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      # TODO
+      ```
+
+    - Tasks
+
+      ```bash
+      make cmake-gcc-test-unit-run
+      ```
 
 #### 2.6.2. Code Coverage
 
-Code coverage is a measure used to describe the degree to which the source code of a program is executed when a particular test suite runs.
+[gcovr](https://gcovr.com/en/stable/) is a Python tool that provides a utility for managing and generating code coverage reports.
 
 1. Insights and Details
 
-    - [gcovr](https://gcovr.com/en/stable/)
-      > Gcovr is a Python tool that provides a utility for managing and generating code coverage reports.
+    - [coverage.cmake](tools/cmake/meta_coverage.cmake)
+      > CMake module to integrate code coverage analysis into the build system.
+
+      ```cmake
+      include(coverage)
+      coverage(ENABLE ON)
+      ```
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      # TODO
+      ```
+
+    - Tasks
+
+      ```bash
+      make cmake-gcc-test-unit-coverage
+      ```
 
 #### 2.6.3. Sanitizers
 
-Sanitizers are runtime tools that detect various types of bugs in C/C++ programs, such as memory errors and undefined behavior.
+[Clang Sanitizers](https://clang.llvm.org/docs/) are a set of runtime tools to detect memory errors (MemorySanitizer), undefined behavior (UndefinedBehaviorSanitizer) or thread issues (ThreadSanitizer) in C/C++ programs.
 
 1. Insights and Details
 
-    - [AddressSanitizer (ASan)](https://clang.llvm.org/docs/AddressSanitizer.html)
-      > AddressSanitizer is a fast memory error detector.
+    - [sanitizers.cmake](tools/cmake/meta_sanitizers.cmake)
+      > CMake module to integrate Clang Sanitizers into the build system.
 
-    - [UndefinedBehaviorSanitizer (UBSan)](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
-      > UndefinedBehaviorSanitizer is a fast undefined behavior detector.
-
-    - [ThreadSanitizer (TSan)](https://clang.llvm.org/docs/ThreadSanitizer.html)
-      > ThreadSanitizer is a tool that detects data races.
-
-#### 2.6.4. Software Testing Patterns
-
-- In-Got-Want
-  > It helps formalize how test cases are structured by focusing on clear inputs (in), actual results (got), and expected outcomes (want). This pattern enhances the readability of tests, especially in Table-Driven Testing approaches, and promotes consistency in writing unit tests.
-
-- Table-Driven Testing
-  > Table-Driven Testing is a software testing technique in which test cases are organized in a tabular format.
-
-- Data-Driven Testing (DDT)
-  > A testing methodology in which input data and expected results are separated from the test logic, allowing multiple test cases to be executed dynamically using datasets (e.g., JSON, CSV) without duplicating code.
-
-- Arrange, Act, Assert (AAA)
-  > Arrange, Act, Assert (AAA) is a software testing pattern that provides a structured and organized way to write unit tests. It helps make the tests more readable, maintainable, and easy to understand.
-
-- Test Fixtures
-  > Predefined test environments or data setup and teardown that ensure each test starts from a consistent and known state, enabling reliable and repeatable testing outcomes.
+      ```cmake
+      include(sanitizers)
+      sanitizers(ENABLE ON)
+      ```
 
 ### 2.7. Cache Manager
 
@@ -236,10 +289,12 @@ Sanitizers are runtime tools that detect various types of bugs in C/C++ programs
 
 1. Insights and Details
 
-      ```bash
-      # Example: Using ccache with gcc
-      export CC="ccache gcc"
-      export CXX="ccache g++"
+    - [ccache.cmake](tools/cmake/meta_ccache.cmake)
+      > CMake module to integrate Ccache into the build system.
+
+      ```cmake
+      include(ccache)
+      ccache(ENABLE ON)
       ```
 
 ### 2.8. Release Manager
