@@ -4,9 +4,9 @@
 [![CMake](https://img.shields.io/badge/CMake-3.28+-blue.svg)](https://cmake.org/)
 [![Conan](https://img.shields.io/badge/Conan-2.21+-blue.svg)](https://conan.io/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-enabled-brightgreen.svg)](https://semantic-release.gitbook.io/semantic-release/)
-[![Renovate Enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
-[![SOPS Enabled](https://img.shields.io/badge/sops-enabled-brightgreen.svg)](https://github.com/mozilla/sops)
-[![Conftest Enabled](https://img.shields.io/badge/conftest-enabled-brightgreen.svg)](https://www.conftest.dev/)
+[![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![SOPS](https://img.shields.io/badge/sops-enabled-brightgreen.svg)](https://github.com/mozilla/sops)
+[![Conftest](https://img.shields.io/badge/conftest-enabled-brightgreen.svg)](https://www.conftest.dev/)
 
 A modular C++ project using a component-based architecture, with CMake as the build system and Conan for dependency management.
 
