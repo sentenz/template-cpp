@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/sentenz/template-cpp/compare/1.1.0...1.1.1) (2025-12-30)
+
+
+### Bug Fixes
+
+* restructure AGENTS.md to enhance software testing sections and add fuzz and benchmark testing ([d743b63](https://github.com/sentenz/template-cpp/commit/d743b638b61b348fc1b3904107286173cf2c17d5))
+
 # [1.1.0](https://github.com/sentenz/template-cpp/compare/1.0.0...1.1.0) (2025-12-25)
 
 
