@@ -1,13 +1,18 @@
 # AGENTS.md
 
-- [1. Unit Testing](#1-unit-testing)
-  - [1.1. Testing Patterns](#11-testing-patterns)
-  - [1.2. Test Workflow](#12-test-workflow)
-  - [1.3. Test Commands](#13-test-commands)
-  - [1.4. Test Style](#14-test-style)
-  - [1.5. Test Template](#15-test-template)
+- [1. Software Testing](#1-software-testing)
+  - [1.1. Unit Testing](#11-unit-testing)
+    - [1.1.1. Testing Patterns](#111-testing-patterns)
+    - [1.1.2. Test Workflow](#112-test-workflow)
+    - [1.1.3. Test Commands](#113-test-commands)
+    - [1.1.4. Test Style](#114-test-style)
+    - [1.1.5. Test Template](#115-test-template)
+  - [1.2. Fuzz Testing](#12-fuzz-testing)
+  - [1.3. Benchmark Testing](#13-benchmark-testing)
 
-## 1. Unit Testing
+## 1. Software Testing
+
+### 1.1. Unit Testing
 
 Instructions for AI coding agents on automating unit test creation using consistent software testing patterns in this C++ project.
 
@@ -25,7 +30,7 @@ Instructions for AI coding agents on automating unit test creation using consist
     - Debuggability
       > Scoped traces and detailed assertion messages pinpoint failures quickly during continuous integration and local testing.
 
-### 1.1. Testing Patterns
+#### 1.1.1. Testing Patterns
 
 - In-Got-Want
   > In-Got-Want is a software testing pattern that structures test cases into three distinct sections of In (input), Got (actual output), and Want (expected output).
@@ -42,7 +47,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 - Test Fixtures
   > Test Fixtures are a software testing pattern that provides a consistent and reusable setup and teardown mechanism for test cases.
 
-### 1.2. Test Workflow
+#### 1.1.2. Test Workflow
 
 1. Identify
 
@@ -66,7 +71,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 
     Structure all tests using this [template](#15-test-template) pattern.
 
-### 1.3. Test Commands
+#### 1.1.3. Test Commands
 
 - Build Unit Tests
   > CMake preset configuration and Compile with Ninja.
@@ -89,7 +94,7 @@ Instructions for AI coding agents on automating unit test creation using consist
   make cmake-gcc-test-unit-coverage
   ```
 
-### 1.4. Test Style
+#### 1.1.4. Test Style
 
 - Test Framework
   > Use [GoogleTest (GTest)](https://google.github.io/googletest/) framework via `#include <gtest/gtest.h>`.
@@ -116,7 +121,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 - Assertions
   > Use `EXPECT_*` macros (not `ASSERT_*`) to allow all test cases to run.
 
-### 1.5. Test Template
+#### 1.1.5. Test Template
 
 Use this template (In-Got-Want + Table-Driven + AAA) for new test functions. Replace placeholders with actual values and adjust as needed for the use case.
 
@@ -171,3 +176,15 @@ TEST(<Module>Test, <FunctionName>)
   }
 }
 ```
+
+### 1.2. Fuzz Testing
+
+Instructions for AI coding agents on automating fuzz test creation using consistent software testing patterns in this C++ project.
+
+<!-- TODO -->
+
+### 1.3. Benchmark Testing
+
+Instructions for AI coding agents on automating benchmark test creation using consistent software testing patterns in this C++ project.
+
+<!-- TODO -->
