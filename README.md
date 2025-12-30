@@ -1,12 +1,8 @@
-# Template DX
+# Template C++
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![CMake](https://img.shields.io/badge/CMake-3.28+-blue.svg)](https://cmake.org/)
 [![Conan](https://img.shields.io/badge/Conan-2.21+-blue.svg)](https://conan.io/)
-[![Semantic Release](https://img.shields.io/badge/semantic--release-enabled-brightgreen.svg)](https://semantic-release.gitbook.io/semantic-release/)
-[![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
-[![SOPS](https://img.shields.io/badge/sops-enabled-brightgreen.svg)](https://github.com/mozilla/sops)
-[![Conftest](https://img.shields.io/badge/conftest-enabled-brightgreen.svg)](https://www.conftest.dev/)
 
 A modular C++ project using a component-based architecture, with CMake as the build system and Conan for dependency management.
 
@@ -32,12 +28,15 @@ A modular C++ project using a component-based architecture, with CMake as the bu
     - [2.8.1. Semantic-Release](#281-semantic-release)
   - [2.9. Update Manager](#29-update-manager)
     - [2.9.1. Renovate](#291-renovate)
+    - [2.9.2. Dependabot](#292-dependabot)
   - [2.10. Secrets Manager](#210-secrets-manager)
     - [2.10.1. SOPS](#2101-sops)
   - [2.11. Container Manager](#211-container-manager)
     - [2.11.1. Docker](#2111-docker)
   - [2.12. Policy Manager](#212-policy-manager)
     - [2.12.1. Conftest](#2121-conftest)
+  - [2.13. Supply Chain Manager](#213-supply-chain-manager)
+    - [2.13.1. Trivy](#2131-trivy)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
 - [4. References](#4-references)
@@ -320,7 +319,7 @@ Contribution guidelines and project management tools.
 
 #### 2.9.1. Renovate
 
-[Renovate](https://github.com/renovatebot/renovate) automates dependency updates by creating merge requests for outdated dependencies, ensuring that projects stay up-to-date with the latest versions of libraries and packages.
+[Renovate](https://github.com/renovatebot/renovate) automates dependency updates by creating merge requests for outdated dependencies, libraries and packages.
 
 1. Insights and Details
 
@@ -334,6 +333,15 @@ Contribution guidelines and project management tools.
       ```yaml
       uses: sentenz/actions/renovate@latest
       ```
+
+#### 2.9.2. Dependabot
+
+[Dependabot](https://github.com/dependabot/dependabot-core) automates dependency updates by creating pull requests for outdated dependencies, libraries and packages.
+
+1. Insights and Details
+
+    - [.github/dependabot.yml](.github/dependabot.yml)
+      > Configuration file for Dependabot specifying update rules and schedules.
 
 ### 2.10. Secrets Manager
 
@@ -451,6 +459,46 @@ Contribution guidelines and project management tools.
       make policy-analysis-conftest <filepath>
       ```
 
+### 2.13. Supply Chain Manager
+
+#### 2.13.1. Trivy
+
+[Trivy](https://github.com/aquasecurity/trivy) is a comprehensive security scanner for vulnerabilities, misconfigurations, and compliance issues in container images, filesystems, and source code.
+
+1. Insights and Details
+
+    - [trivy.yaml](trivy.yaml)
+      > Configuration file for Trivy specifying scan settings and options.
+
+    - [.trivyignore](.trivyignore)
+      > File specifying vulnerabilities to ignore during Trivy scans.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      uses: sentenz/actions/trivy@latest
+      ```
+
+    - Tasks
+
+      ```bash
+      make sast-trivy-fs <path>
+      ```
+
+      ```bash
+      make sast-trivy-sbom-cyclonedx-fs <path>
+      ```
+
+      ```bash
+      make sast-trivy-sbom-scan <sbom_path>
+      ```
+
+      ```bash
+      make sast-trivy-sbom-license <sbom_path>
+      ```
+
 ## 3. Troubleshoot
 
 ### 3.1. TODO
@@ -459,6 +507,7 @@ TODO
 
 ## 4. References
 
-- GitHub [Template DX](https://github.com/sentenz/template-dx) repository.
-- GitHub [Template C++](https://github.com/sentenz/template-cpp) repository.
+- Sentenz [Template DX](https://github.com/sentenz/template-dx) repository.
+- Sentenz [Template C++](https://github.com/sentenz/template-cpp) repository.
+- Sentenz [Actions](https://github.com/sentenz/actions) repository.
 - Sentenz [Manager Tools](https://github.com/sentenz/convention/issues/392) article.
