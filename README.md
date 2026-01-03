@@ -1,8 +1,8 @@
 # Template C++
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![CMake](https://img.shields.io/badge/CMake-3.28+-blue.svg)](https://cmake.org/)
-[![Conan](https://img.shields.io/badge/Conan-2.21+-blue.svg)](https://conan.io/)
+[![CMake](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/sentenz/template-cpp/main/.versions.json&query=$.cmake&label=CMake&logo=cmake&color=blue)](https://cmake.org/)
+[![Conan](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/sentenz/template-cpp/main/.versions.json&query=$.conan&label=Conan&logo=conan&color=blue)](https://conan.io/)
 
 A modular C++ project using a component-based architecture, with CMake as the build system and Conan for dependency management.
 
