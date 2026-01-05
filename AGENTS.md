@@ -64,11 +64,11 @@ Instructions for AI coding agents on automating unit test creation using consist
 
 2. Add/Create
 
-    Create new tests under `tests/unit/<module>/` (e.g., `tests/unit/<module>/<header>_test.cpp`).
+    Create new tests under `test(s)/unit/<module>/` (e.g., `test(s)/unit/<module>/<header>_test.cpp`).
 
 3. Register with CMake
 
-    Add the test file to `tests/unit/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_GMOCK`, `WITH_DDT`).
+    Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_GMOCK`, `WITH_DDT`).
 
 4. Test Coverage Requirements
 
@@ -233,11 +233,11 @@ Instructions for AI coding agents on automating mock test creation using Google 
 
 2. Create Mock Classes
 
-    Create mock classes for interfaces under `tests/unit/<module>/` using GMock's `MOCK_METHOD` macro.
+    Create mock classes for interfaces under `test(s)/unit/<module>/` using GMock's `MOCK_METHOD` macro.
 
 3. Register with CMake
 
-    Add the test file to `tests/unit/<module>/CMakeLists.txt` using `meta_gtest()` with `WITH_GMOCK` option.
+    Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with `WITH_GMOCK` option.
 
 4. Define Expectations
 
