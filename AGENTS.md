@@ -338,7 +338,7 @@ Instructions for AI coding agents on automating mock test creation using Google 
 
 #### 1.2.5. Mock Test Template
 
-Use this template (In-Got-Want + Table-Driven + AAA + Mocks) for new mock test functions. Replace placeholders with actual values and adjust as needed for the use case.
+Use this template (In-Got-Want + Table-Driven + AAA + Mocks) applying Google Mock example for new mock test functions. Replace placeholders with actual values and adjust as needed for the use case.
 
 ```cpp
 #include <gmock/gmock.h>
@@ -363,6 +363,7 @@ public:
   // Add more MOCK_METHOD declarations as needed
 };
 
+// Example with In-Got-Want and Table-Driven Testing
 TEST(<Module>Test, <FunctionName>WithMock)
 {
   // In-Got-Want
