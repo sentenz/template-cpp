@@ -66,7 +66,11 @@ Instructions for AI coding agents on automating unit test creation using consist
 
     Create new tests under `tests/unit/<module>/` (e.g., `tests/unit/<module>/<header>_test.cpp`).
 
-3. Test Coverage Requirements
+3. Register with CMake
+
+    Add the test file to `tests/unit/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_GMOCK`, `WITH_DDT`).
+
+4. Test Coverage Requirements
 
     Include comprehensive edge cases:
     - Coverage-guided cases
@@ -76,7 +80,7 @@ Instructions for AI coding agents on automating unit test creation using consist
     - Overflow/underflow scenarios
     - Special cases (negative numbers, zero, special states)
 
-4. Apply Templates
+5. Apply Templates
 
     Structure all tests using this [template](#115-unit-test-template) pattern.
 
@@ -231,7 +235,11 @@ Instructions for AI coding agents on automating mock test creation using Google 
 
     Create mock classes for interfaces under `tests/unit/<module>/` using GMock's `MOCK_METHOD` macro.
 
-3. Define Expectations
+3. Register with CMake
+
+    Add the test file to `tests/unit/<module>/CMakeLists.txt` using `meta_gtest()` with `WITH_GMOCK` option.
+
+4. Define Expectations
 
     Set up expectations using `EXPECT_CALL` to specify:
     - Which methods should be called
@@ -239,7 +247,7 @@ Instructions for AI coding agents on automating mock test creation using Google 
     - Call frequency (Times, AtLeast, AtMost, etc.)
     - Return values or actions
 
-4. Test Coverage Requirements
+5. Test Coverage Requirements
 
     Include comprehensive scenarios:
     - Normal operation with mocked dependencies
@@ -248,7 +256,7 @@ Instructions for AI coding agents on automating mock test creation using Google 
     - Sequence of calls to multiple dependencies
     - Concurrent access scenarios when applicable
 
-5. Apply Templates
+6. Apply Templates
 
     Structure all tests using this [template](#125-mock-test-template) pattern.
 
