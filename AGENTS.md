@@ -193,33 +193,33 @@ Instructions for AI coding agents on automating mock test creation using Google 
 1. Features and Benefits
 
     - Isolation
-      &gt; Isolates the unit under test from external dependencies, ensuring tests focus on the specific component's behavior.
+      > Isolates the unit under test from external dependencies, ensuring tests focus on the specific component's behavior.
 
     - Control
-      &gt; Provides precise control over dependency behavior through expectations and return values, enabling thorough testing of edge cases and error conditions.
+      > Provides precise control over dependency behavior through expectations and return values, enabling thorough testing of edge cases and error conditions.
 
     - Verification
-      &gt; Automatically verifies that dependencies are called correctly with expected parameters and call counts.
+      > Automatically verifies that dependencies are called correctly with expected parameters and call counts.
 
     - Flexibility
-      &gt; Supports various testing scenarios including strict mocks, nice mocks, and sequence verification for complex interactions.
+      > Supports various testing scenarios including strict mocks, nice mocks, and sequence verification for complex interactions.
 
 #### 1.2.1. Mock Testing Patterns
 
 - Mock Objects
-  &gt; Mock Objects are simulated objects that mimic the behavior of real objects in controlled ways. They verify interactions between the unit under test and its dependencies.
+  > Mock Objects are simulated objects that mimic the behavior of real objects in controlled ways. They verify interactions between the unit under test and its dependencies.
 
 - Interface Mocking
-  &gt; Interface Mocking involves creating mock implementations of abstract interfaces or base classes to isolate the unit under test from concrete implementations.
+  > Interface Mocking involves creating mock implementations of abstract interfaces or base classes to isolate the unit under test from concrete implementations.
 
 - Behavior Verification
-  &gt; Behavior Verification focuses on verifying that methods are called with expected arguments and in the correct order, rather than just checking return values.
+  > Behavior Verification focuses on verifying that methods are called with expected arguments and in the correct order, rather than just checking return values.
 
 - Return Value Stubbing
-  &gt; Return Value Stubbing configures mock objects to return specific values when their methods are called, allowing control over dependency behavior during tests.
+  > Return Value Stubbing configures mock objects to return specific values when their methods are called, allowing control over dependency behavior during tests.
 
 - Exception Injection
-  &gt; Exception Injection uses mocks to simulate error conditions by throwing exceptions, enabling tests to verify error handling logic.
+  > Exception Injection uses mocks to simulate error conditions by throwing exceptions, enabling tests to verify error handling logic.
 
 #### 1.2.2. Mock Test Workflow
 
@@ -255,21 +255,21 @@ Instructions for AI coding agents on automating mock test creation using Google 
 #### 1.2.3. Mock Test Commands
 
 - Build Mock Tests
-  &gt; CMake preset configuration with GMock support and Compile with Ninja.
+  > CMake preset configuration with GMock support and Compile with Ninja.
 
   ```bash
   make cmake-gcc-test-unit-build
   ```
 
 - Run Mock Tests
-  &gt; Execute tests via ctest (mock tests are part of unit tests).
+  > Execute tests via ctest (mock tests are part of unit tests).
 
   ```bash
   make cmake-gcc-test-unit-run
   ```
 
 - Run Code Coverage
-  &gt; Generate coverage reports including mock test coverage.
+  > Generate coverage reports including mock test coverage.
 
   ```bash
   make cmake-gcc-test-unit-coverage
@@ -278,53 +278,53 @@ Instructions for AI coding agents on automating mock test creation using Google 
 #### 1.2.4. Mock Test Style
 
 - Test Framework
-  &gt; Use [Google Mock (GMock)](https://google.github.io/googletest/gmock_for_dummies.html) framework via `#include <gmock/gmock.h>` and `#include <gtest/gtest.h>`.
+  > Use [Google Mock (GMock)](https://google.github.io/googletest/gmock_for_dummies.html) framework via `#include <gmock/gmock.h>` and `#include <gtest/gtest.h>`.
 
 - Mock Class Definition
-  &gt; Define mock classes inheriting from the interface to be mocked. Use `MOCK_METHOD` macro with proper method signature, including const qualifiers and override specifiers.
+  > Define mock classes inheriting from the interface to be mocked. Use `MOCK_METHOD` macro with proper method signature, including const qualifiers and override specifiers.
 
 - Include Headers
-  &gt; Include necessary headers in this order:
-  &gt; 1. GMock/GTest headers (`<gmock/gmock.h>`, `<gtest/gtest.h>`)
-  &gt; 2. Standard library headers (`<memory>`, `<string>`, etc.)
-  &gt; 3. Project interface headers
-  &gt; 4. Project implementation headers
+  > Include necessary headers in this order:
+  > 1. GMock/GTest headers (`<gmock/gmock.h>`, `<gtest/gtest.h>`)
+  > 2. Standard library headers (`<memory>`, `<string>`, etc.)
+  > 3. Project interface headers
+  > 4. Project implementation headers
 
 - Namespace
-  &gt; Use `using namespace <namespace>;` and `using namespace ::testing;` for convenience within test functions to access GMock matchers and actions.
+  > Use `using namespace <namespace>;` and `using namespace ::testing;` for convenience within test functions to access GMock matchers and actions.
 
 - Test Organization
-  &gt; Use table-driven testing for multiple scenarios with the same mock setup. Each `TEST` or `TEST_F` should focus on one aspect of the interaction with mocked dependencies.
+  > Use table-driven testing for multiple scenarios with the same mock setup. Each `TEST` or `TEST_F` should focus on one aspect of the interaction with mocked dependencies.
 
 - Mock Types
-  &gt; - **NiceMock**: Ignores unexpected calls (use for non-critical dependencies)
-  &gt; - **StrictMock**: Fails on any unexpected calls (use for strict verification)
-  &gt; - **Default Mock**: Warns on unexpected calls (balanced approach)
+  > - **NiceMock**: Ignores unexpected calls (use for non-critical dependencies)
+  > - **StrictMock**: Fails on any unexpected calls (use for strict verification)
+  > - **Default Mock**: Warns on unexpected calls (balanced approach)
 
 - Expectations
-  &gt; - Use `EXPECT_CALL` to set up expectations before exercising the unit under test
-  &gt; - Chain matchers with `.With()`, `.WillOnce()`, `.WillRepeatedly()`, `.Times()`
-  &gt; - Prefer specific matchers (`Eq()`, `Gt()`, `_`) over generic ones when possible
+  > - Use `EXPECT_CALL` to set up expectations before exercising the unit under test
+  > - Chain matchers with `.With()`, `.WillOnce()`, `.WillRepeatedly()`, `.Times()`
+  > - Prefer specific matchers (`Eq()`, `Gt()`, `_`) over generic ones when possible
 
 - Matchers and Actions
-  &gt; - Use built-in matchers: `_` (anything), `Eq()`, `Ne()`, `Lt()`, `Gt()`, `Le()`, `Ge()`, `IsNull()`, `NotNull()`
-  &gt; - Container matchers: `IsEmpty()`, `SizeIs()`, `Contains()`, `ElementsAre()`
-  &gt; - String matchers: `StartsWith()`, `EndsWith()`, `HasSubstr()`, `MatchesRegex()`
-  &gt; - Use `Return()`, `ReturnRef()`, `Throw()`, `DoAll()`, `Invoke()` for actions
+  > - Use built-in matchers: `_` (anything), `Eq()`, `Ne()`, `Lt()`, `Gt()`, `Le()`, `Ge()`, `IsNull()`, `NotNull()`
+  > - Container matchers: `IsEmpty()`, `SizeIs()`, `Contains()`, `ElementsAre()`
+  > - String matchers: `StartsWith()`, `EndsWith()`, `HasSubstr()`, `MatchesRegex()`
+  > - Use `Return()`, `ReturnRef()`, `Throw()`, `DoAll()`, `Invoke()` for actions
 
 - Sequence Verification
-  &gt; Use `InSequence` or `Sequence` objects when call order matters.
+  > Use `InSequence` or `Sequence` objects when call order matters.
 
 - Traceability
-  &gt; Employ `SCOPED_TRACE(tc.label)` for traceable failures in table-driven mock tests.
+  > Employ `SCOPED_TRACE(tc.label)` for traceable failures in table-driven mock tests.
 
 - Assertions
-  &gt; Use `EXPECT_*` macros to allow all test cases to run. Mock expectations are automatically verified at the end of each test.
+  > Use `EXPECT_*` macros to allow all test cases to run. Mock expectations are automatically verified at the end of each test.
 
 - Documentation References
-  &gt; - [GMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) - Getting started guide
-  &gt; - [GMock Cookbook](https://google.github.io/googletest/gmock_cook_book.html) - Advanced techniques and recipes
-  &gt; - [GMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) - Quick reference for matchers and actions
+  > - [GMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) - Getting started guide
+  > - [GMock Cookbook](https://google.github.io/googletest/gmock_cook_book.html) - Advanced techniques and recipes
+  > - [GMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) - Quick reference for matchers and actions
 
 #### 1.2.5. Mock Test Template
 
