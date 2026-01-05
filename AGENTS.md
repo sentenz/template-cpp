@@ -289,6 +289,8 @@ Instructions for AI coding agents on automating mock test creation using Google 
   > 2. Standard library headers (`<memory>`, `<string>`, etc.)
   > 3. Project interface headers
   > 4. Project implementation headers
+  >
+  > Note: GMock/GTest headers are listed first as they are the testing framework headers and should be included before other headers to avoid potential conflicts.
 
 - Namespace
   > Use `using namespace <namespace>;` and `using namespace ::testing;` for convenience within test functions to access GMock matchers and actions.
@@ -368,14 +370,21 @@ TEST(<Module>Test, <FunctionName>WithMock)
     struct Want
     {
       /* expected output type(s) and name(s) */
-      /* expected mock call parameters */
+      /* expected mock call parameters and behavior */
+      int call_count;         // number of times method should be called
+      <return_type> return_value;  // value mock should return
+      <param_type> param;     // expected parameter value(s)
     } want;
   };
 
   // Table-Driven Testing
   const std::vector<Tests> tests = {
-    {"case description 1", /* in */ {/* input values */}, /* want */ {/* expected output */}},
-    {"case description 2", /* in */ {/* input values */}, /* want */ {/* expected output */}},
+    {"case description 1", 
+     /* in */ {/* input values */}, 
+     /* want */ {/* expected output */, /* call_count */ 1, /* return_value */ {}, /* param */ {}}},
+    {"case description 2", 
+     /* in */ {/* input values */}, 
+     /* want */ {/* expected output */, /* call_count */ 1, /* return_value */ {}, /* param */ {}}},
     // add more cases as needed
   };
 
@@ -387,9 +396,9 @@ TEST(<Module>Test, <FunctionName>WithMock)
     auto mock_dependency = std::make_shared<Mock<Interface>>();
     
     // Set up expectations
-    EXPECT_CALL(*mock_dependency, <method_name>(tc.want.<param>))
-        .Times(tc.want.<call_count>)
-        .WillOnce(Return(tc.want.<return_value>));
+    EXPECT_CALL(*mock_dependency, <method_name>(tc.want.param))
+        .Times(tc.want.call_count)
+        .WillOnce(Return(tc.want.return_value));
     
     <Implementation> object(mock_dependency);
     // additional setup as needed
