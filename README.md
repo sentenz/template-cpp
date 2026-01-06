@@ -287,7 +287,7 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-    - [cache.cmake](tools/cmake/meta_cache.cmake)
+    - [meta_cache.cmake](tools/cmake/meta_cache.cmake)
       > CMake module to integrate compiler caching (ccache or sccache) into the build system.
 
       ```cmake
