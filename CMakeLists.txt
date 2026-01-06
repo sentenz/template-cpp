@@ -9,6 +9,9 @@ include(GNUInstallDirs)
 include(meta_policy)
 meta_policy()
 
+include(meta_cache)
+meta_cache(ENABLE ON TYPE auto)
+
 if(META_BUILD_TESTING)
   include(CTest)
   if(NOT DEFINED BUILD_TESTING)
