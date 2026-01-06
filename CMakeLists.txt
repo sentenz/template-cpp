@@ -9,6 +9,11 @@ include(GNUInstallDirs)
 include(meta_policy)
 meta_policy()
 
+# Set default for META_ENABLE_CACHE if not defined
+if(NOT DEFINED META_ENABLE_CACHE)
+  set(META_ENABLE_CACHE ON CACHE BOOL "Enable compiler cache (ccache/sccache)")
+endif()
+
 include(meta_cache)
 meta_cache(ENABLE ${META_ENABLE_CACHE})
 
