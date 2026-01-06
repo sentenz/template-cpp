@@ -10,7 +10,7 @@ include(meta_policy)
 meta_policy()
 
 include(meta_cache)
-meta_cache(ENABLE ON)
+meta_cache(ENABLE ${META_ENABLE_CACHE})
 
 if(META_BUILD_TESTING)
   include(CTest)

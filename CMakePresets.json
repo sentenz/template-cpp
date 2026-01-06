@@ -20,7 +20,8 @@
         "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/lib",
         "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/bin",
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-        "META_PROJECT_NAME": "cpp-concept"
+        "META_PROJECT_NAME": "cpp-concept",
+        "META_ENABLE_CACHE": true
       }
     },
     {

@@ -292,10 +292,17 @@ Contribution guidelines and project management tools.
 
       ```cmake
       include(meta_cache)
-      meta_cache(ENABLE ON)                  # Auto-detect ccache or sccache
-      meta_cache(ENABLE ON TYPE ccache)      # Use ccache explicitly
-      meta_cache(ENABLE ON TYPE sccache)     # Use sccache explicitly
-      meta_cache(ENABLE ON TYPE auto)        # Auto-detect (default)
+      meta_cache(ENABLE ${META_ENABLE_CACHE})   # Controlled by META_ENABLE_CACHE variable
+      meta_cache(ENABLE ON)                     # Always enable with auto-detect
+      meta_cache(ENABLE ON TYPE ccache)         # Use ccache explicitly
+      meta_cache(ENABLE ON TYPE sccache)        # Use sccache explicitly
+      meta_cache(ENABLE ON TYPE auto)           # Auto-detect (default)
+      ```
+
+      The module is enabled by default through the `META_ENABLE_CACHE` variable in `CMakePresets.json`. It can be disabled by setting `META_ENABLE_CACHE=OFF` or overridden via command line:
+
+      ```bash
+      cmake --preset debug -DMETA_ENABLE_CACHE=OFF
       ```
 
 2. Usage and Instructions
