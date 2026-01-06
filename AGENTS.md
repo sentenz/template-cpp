@@ -68,7 +68,15 @@ Instructions for AI coding agents on automating unit test creation using consist
 
 3. Register with CMake
 
-    Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_GMOCK`, `WITH_DDT`).
+    Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_DDT`).
+
+    ```cmake
+    meta_gtest(
+      TARGET ${PROJECT_NAME}
+      SOURCES
+        <header>_test.cpp
+    )
+    ```
 
 4. Test Coverage Requirements
 
@@ -82,7 +90,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 
 5. Apply Templates
 
-    Structure all tests using this [template](#115-unit-test-template) pattern.
+    Structure all tests using [unit test template](#115-unit-test-template) pattern.
 
 #### 1.1.3. Unit Test Commands
 
@@ -127,6 +135,9 @@ Instructions for AI coding agents on automating unit test creation using consist
 
 - Testing Macros
   > Focus each `TEST(...)` function on a single function or cohesive behavior. For complex setups, use `TEST_F` fixtures or helper functions to reduce duplication.
+
+- Mocking
+  > Use [Google Mock (GMock)](#12-mock-testing) for creating test doubles (mocks, stubs, fakes) to isolate the unit under test.
 
 - Traceability
   > Employ [`SCOPED_TRACE(tc.label)`](https://google.github.io/googletest/reference/testing.html#SCOPED_TRACE) for traceable failures in table-driven tests.
@@ -239,6 +250,15 @@ Instructions for AI coding agents on automating mock test creation using Google 
 
     Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with `WITH_GMOCK` option.
 
+    ```cmake
+    meta_gtest(
+      WITH_GMOCK
+      TARGET ${PROJECT_NAME}
+      SOURCES
+        <header>_test.cpp
+    )
+    ```
+
 4. Define Expectations
 
     Set up expectations using `EXPECT_CALL` to specify:
@@ -258,7 +278,7 @@ Instructions for AI coding agents on automating mock test creation using Google 
 
 6. Apply Templates
 
-    Structure all tests using this [template](#125-mock-test-template) pattern.
+    Structure all tests using [mock test template](#125-mock-test-template) pattern.
 
 #### 1.2.3. Mock Test Commands
 
@@ -292,13 +312,13 @@ Instructions for AI coding agents on automating mock test creation using Google 
   > Define mock classes inheriting from the interface to be mocked. Use `MOCK_METHOD` macro with proper method signature, including const qualifiers and override specifiers.
 
 - Include Headers
-  > Include necessary headers in this order:
-  > 1. GMock/GTest headers (`<gmock/gmock.h>`, `<gtest/gtest.h>`)
-  > 2. Standard library headers (`<memory>`, `<string>`, etc.)
-  > 3. Project interface headers
-  > 4. Project implementation headers
-  >
-  > Note: GMock/GTest headers are listed first in mock test files as a convention to clearly identify the file as a test file using the GMock framework.
+  > GMock/GTest headers are listed first in mock test files as a convention to clearly identify the file as a test file using the GMock framework.
+
+  Include necessary headers in this order:
+    1. GMock/GTest headers (`<gmock/gmock.h>`, `<gtest/gtest.h>`)
+    2. Standard library headers (`<memory>`, `<string>`, etc.)
+    3. Project interface headers
+    4. Project implementation headers
 
 - Namespace
   > Use `using namespace <namespace>;` and `using namespace ::testing;` for convenience within test functions to access GMock matchers and actions.
@@ -332,9 +352,9 @@ Instructions for AI coding agents on automating mock test creation using Google 
   > Use `EXPECT_*` macros to allow all test cases to run. Mock expectations are automatically verified at the end of each test.
 
 - Documentation References
-  > - [GMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) - Getting started guide
-  > - [GMock Cookbook](https://google.github.io/googletest/gmock_cook_book.html) - Advanced techniques and recipes
-  > - [GMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) - Quick reference for matchers and actions
+  - [GMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) a getting started guide.
+  - [GMock Cookbook](https://google.github.io/googletest/gmock_cook_book.html) for advanced techniques and recipes.
+  - [GMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) a quick reference for matchers and actions.
 
 #### 1.2.5. Mock Test Template
 
