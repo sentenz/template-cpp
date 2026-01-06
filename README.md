@@ -281,18 +281,20 @@ Contribution guidelines and project management tools.
 
 ### 2.7. Cache Manager
 
-#### 2.7.1. Ccache
+#### 2.7.1. Compiler Cache
 
-[Ccache](https://ccache.dev/) is a compiler cache that speeds up recompilation by caching previous compilations and detecting when the same compilation is being done again.
+[Ccache](https://ccache.dev/) and [sccache](https://github.com/mozilla/sccache) are compiler caches that speed up recompilation by caching previous compilations and detecting when the same compilation is being done again.
 
 1. Insights and Details
 
-    - [ccache.cmake](tools/cmake/meta_ccache.cmake)
-      > CMake module to integrate Ccache into the build system.
+    - [cache.cmake](tools/cmake/meta_cache.cmake)
+      > CMake module to integrate compiler caching (ccache or sccache) into the build system.
 
       ```cmake
-      include(ccache)
-      ccache(ENABLE ON)
+      include(meta_cache)
+      meta_cache(ENABLE ON)
+      meta_cache(ENABLE ON BACKEND ccache)
+      meta_cache(ENABLE ON BACKEND sccache)
       ```
 
 ### 2.8. Release Manager
