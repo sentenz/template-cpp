@@ -95,7 +95,7 @@ pkg-conan-initialize:
 
 # ── Build System ─────────────────────────────────────────────────────────────────────────────────
 
-LOGS_PATH_TEST=logs/test
+LOGS_PATH_TEST := logs/test
 
 ## Generate a CMake project configured for GCC-ARM in Debug mode
 cmake-gcc-debug-configure:
@@ -156,7 +156,7 @@ cmake-gcc-test-unit-coverage:
 
 # ── Software Analysis ────────────────────────────────────────────────────────────────────────────
 
-LOGS_PATH_COVERAGE=logs/coverage
+LOGS_PATH_COVERAGE := logs/coverage
 
 ## Generate code coverage report from dynamic analysis
 analysis-dynamic-coverage:
