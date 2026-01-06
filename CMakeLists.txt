@@ -10,23 +10,24 @@ include(meta_policy)
 meta_policy()
 
 if(META_BUILD_TESTING)
-  include(CTest)
-  if(NOT DEFINED BUILD_TESTING)
-    enable_testing()
-  endif()
+    include(CTest)
+    if(NOT DEFINED BUILD_TESTING)
+        enable_testing()
+    endif()
 
-  include(meta_conan)
-  meta_conan()
+    include(meta_conan)
+    meta_conan()
 
-  include(meta_sanitizers)
-  meta_sanitizers(ENABLE ${META_BUILD_TESTING})
+    include(meta_sanitizers)
+    meta_sanitizers(ENABLE ${META_BUILD_TESTING})
 
-  include(meta_coverage)
-  meta_coverage(ENABLE ${META_BUILD_TESTING})
+    include(meta_coverage)
+    meta_coverage(ENABLE ${META_BUILD_TESTING})
 
-  # Subdirectories
-  add_subdirectory(tests)
+    # Subdirectories
+    add_subdirectory(tests)
 endif()
 
 # Subdirectories
+# NOTE Unconditionally so unit tests can link against them
 add_subdirectory(src)

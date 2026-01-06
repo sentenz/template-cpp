@@ -3,7 +3,7 @@ include(meta_gtest)
 meta_gtest(
   WITH_CTEST
   WITH_MAIN
-  TARGET ${PROJECT_NAME}-test
+  TARGET ${PROJECT_NAME}
 )
 
 add_subdirectory(foo)

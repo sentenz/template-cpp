@@ -17,24 +17,24 @@ include("${CMAKE_CURRENT_LIST_DIR}/meta_utils.cmake")
 # Example:
 #   meta_policy()
 function(meta_policy)
-  meta_parse_arguments()
+    meta_parse_arguments()
 
-  # Global Language Properties
-  set(CMAKE_CXX_STANDARD 23 CACHE STRING "C++ standard to be used")
-  set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Require C++ standard")
-  set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Disable C++ extensions")
+    # Global Language Properties
+    set(CMAKE_CXX_STANDARD 23 CACHE STRING "C++ standard to be used")
+    set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Require C++ standard")
+    set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Disable C++ extensions")
 
-  # Global Compiler Warnings
-  if(MSVC)
-    add_compile_options(/W4 /permissive-)
-  else()
-    set(meta_warning_flags -Wall -Wextra -Wpedantic)
-    foreach(warning_flag IN LISTS meta_warning_flags)
-      add_compile_options(
-        $<$<COMPILE_LANG_AND_ID:CXX,GNU>:${warning_flag}>
-        $<$<COMPILE_LANG_AND_ID:CXX,Clang>:${warning_flag}>
-        $<$<COMPILE_LANG_AND_ID:CXX,AppleClang>:${warning_flag}>
-      )
-    endforeach()
-  endif()
+    # Global Compiler Warnings
+    if(MSVC)
+        add_compile_options(/W4 /permissive-)
+    else()
+        set(meta_warning_flags -Wall -Wextra -Wpedantic)
+        foreach(warning_flag IN LISTS meta_warning_flags)
+            add_compile_options(
+                $<$<COMPILE_LANG_AND_ID:CXX,GNU>:${warning_flag}>
+                $<$<COMPILE_LANG_AND_ID:CXX,Clang>:${warning_flag}>
+                $<$<COMPILE_LANG_AND_ID:CXX,AppleClang>:${warning_flag}>
+            )
+        endforeach()
+    endif()
 endfunction()

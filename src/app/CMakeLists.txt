@@ -7,7 +7,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}::foo ${PROJECT_NAM
 
 # ── Install Target ───────────────────────────────────────────────────────────────────────────────
 
-install(
-  TARGETS ${PROJECT_NAME}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

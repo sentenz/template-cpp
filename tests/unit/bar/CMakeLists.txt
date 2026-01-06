@@ -1,5 +1,5 @@
 meta_gtest(
-  TARGET ${PROJECT_NAME}-test
+  TARGET ${PROJECT_NAME}
   SOURCES
     bar_test.cpp
   LINK
