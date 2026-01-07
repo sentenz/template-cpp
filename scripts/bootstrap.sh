@@ -31,6 +31,8 @@ readonly -A APT_PACKAGES=(
   ["gcc"]=""
   ["g++"]=""
   ["ninja-build"]=""
+  ["ccache"]=""
+  ["sccache"]=""
 )
 
 # Control Flow Logic

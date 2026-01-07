@@ -9,6 +9,9 @@ include(GNUInstallDirs)
 include(meta_policy)
 meta_policy()
 
+include(meta_compiler_cache)
+meta_compiler_cache(ENABLE ${META_ENABLE_COMPILER_CACHE})
+
 if(META_BUILD_TESTING)
     include(CTest)
     if(NOT DEFINED BUILD_TESTING)

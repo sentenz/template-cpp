@@ -29,7 +29,8 @@
       "description": "Configuration with debug information",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "META_BUILD_TESTING": false
+        "META_BUILD_TESTING": false,
+        "META_ENABLE_COMPILER_CACHE": true
       },
       "inherits": [
         "base"
@@ -41,7 +42,8 @@
       "description": "Configuration with release optimization",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "META_BUILD_TESTING": false
+        "META_BUILD_TESTING": false,
+        "META_ENABLE_COMPILER_CACHE": false
       },
       "inherits": [
         "base"
@@ -53,7 +55,8 @@
       "description": "Configuration with tests",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "META_BUILD_TESTING": true
+        "META_BUILD_TESTING": true,
+        "META_ENABLE_COMPILER_CACHE": true
       },
       "inherits": [
         "base"
