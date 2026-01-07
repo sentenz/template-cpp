@@ -21,7 +21,7 @@ meta_gtest(
     ENABLE ${META_BUILD_TESTING}
     WITH_CTEST
     WITH_MAIN
-    TARGET ${PROJECT_NAME}
+    TARGET ${PROJECT_NAME}-test
 )
 
 # ── Subdirectories ───────────────────────────────────────────────────────────────────────────────

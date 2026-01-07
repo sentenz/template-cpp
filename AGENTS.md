@@ -77,7 +77,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 
     meta_gtest(
         ENABLE ${META_BUILD_TESTING}
-        TARGET ${PROJECT_NAME}
+        TARGET ${PROJECT_NAME}-test
         SOURCES
             <header>_test.cpp
         LINK
@@ -260,7 +260,7 @@ Instructions for AI coding agents on automating mock test creation using Google 
     ```cmake
     meta_gtest(
       WITH_GMOCK
-      TARGET ${PROJECT_NAME}
+      TARGET ${PROJECT_NAME}-test
       SOURCES
         <header>_test.cpp
     )

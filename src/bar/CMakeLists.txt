@@ -18,7 +18,7 @@ endif()
 
 meta_gtest(
     ENABLE ${META_BUILD_TESTING}
-    TARGET ${PROJECT_NAME}
+    TARGET ${PROJECT_NAME}-test
     SOURCES
         bar_test.cpp
     LINK
