@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.2.0](https://github.com/sentenz/template-cpp/compare/1.1.1...1.2.0) (2026-01-07)
+
+
+### Features
+
+* create a CMake module for compiler cache (ccache/sccache) ([#19](https://github.com/sentenz/template-cpp/issues/19)) ([90e5d29](https://github.com/sentenz/template-cpp/commit/90e5d2919cc47b4e8f147095df231759c1a148ee)), closes [#18](https://github.com/sentenz/template-cpp/issues/18) [#16](https://github.com/sentenz/template-cpp/issues/16) [#2](https://github.com/sentenz/template-cpp/issues/2)
+
 ## [1.1.1](https://github.com/sentenz/template-cpp/compare/1.1.0...1.1.1) (2025-12-30)
 
 
