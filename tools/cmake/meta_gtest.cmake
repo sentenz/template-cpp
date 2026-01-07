@@ -11,6 +11,7 @@ include_guard(GLOBAL)
 #     WITH_DDT    - Define WITH_DDT for data-driven tests (requires nlohmann_json when enabled).
 #   One-Value
 #     TARGET      - Required: target name for add_executable.
+#     ENABLE      - Optional: Boolean flag to enable/disable (default: ON).
 #   Multi-value
 #     SOURCES     - Optional: source files are intentionally optional for incremental extensions of an already-defined test target.
 #     LINK        - Optional: semicolon-separated list of additional libraries to link.
@@ -21,6 +22,7 @@ include_guard(GLOBAL)
 # Usage:
 #   meta_gtest([WITH_GMOCK] [WITH_MAIN] [WITH_CTEST] [WITH_DDT]
 #             TARGET <name>
+#             [ENABLE <bool>]
 #             SOURCES <src>...
 #             [LINK <lib>...])
 #
@@ -28,12 +30,16 @@ include_guard(GLOBAL)
 #   meta_gtest(WITH_CTEST TARGET my_tests SOURCES test_foo.cpp test_bar.cpp LINK my_lib)
 function(meta_gtest)
     set(options WITH_GMOCK WITH_MAIN WITH_CTEST WITH_DDT)
-    set(one_value_args TARGET)
+    set(one_value_args TARGET ENABLE)
     set(multi_value_args SOURCES LINK)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${options}" "${one_value_args}" "${multi_value_args}")
 
     if(DEFINED ARG_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Unknown arguments: ${ARG_UNPARSED_ARGUMENTS}.")
+    endif()
+
+    if(DEFINED ARG_ENABLE AND NOT ARG_ENABLE)
+        return()
     endif()
 
     if(NOT ARG_TARGET)
