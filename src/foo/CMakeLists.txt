@@ -13,3 +13,18 @@ target_link_libraries(${PROJECT_NAME}-foo PUBLIC ${PROJECT_NAME}::includes)
 if(NOT TARGET ${PROJECT_NAME}::foo)
     add_library(${PROJECT_NAME}::foo ALIAS ${PROJECT_NAME}-foo)
 endif()
+
+# ── Unit Tests ───────────────────────────────────────────────────────────────────────────────────
+
+if(META_BUILD_TESTING)
+    include(meta_gtest)
+
+    meta_gtest(
+        WITH_DDT
+        TARGET ${PROJECT_NAME}
+        SOURCES
+            foo_test.cpp
+        LINK
+            ${PROJECT_NAME}::foo
+    )
+endif()

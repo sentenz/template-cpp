@@ -12,6 +12,20 @@ if(NOT TARGET ${PROJECT_NAME}::includes)
     add_library(${PROJECT_NAME}::includes ALIAS ${PROJECT_NAME}-includes)
 endif()
 
+# ── Unit Test Target Setup ───────────────────────────────────────────────────────────────────────
+
+if(META_BUILD_TESTING)
+    include(meta_gtest)
+
+    meta_gtest(
+        WITH_CTEST
+        WITH_MAIN
+        TARGET ${PROJECT_NAME}
+    )
+endif()
+
+# ── Subdirectories ───────────────────────────────────────────────────────────────────────────────
+
 if(NOT META_BUILD_TESTING)
     add_subdirectory(app)
 endif()

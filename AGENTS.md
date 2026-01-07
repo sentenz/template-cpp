@@ -64,18 +64,26 @@ Instructions for AI coding agents on automating unit test creation using consist
 
 2. Add/Create
 
-    Create new tests under `test(s)/unit/<module>/` (e.g., `test(s)/unit/<module>/<header>_test.cpp`).
+    Create new tests colocated with source code in `src/<module>/` (e.g., `src/<module>/<header>_test.cpp`).
 
 3. Register with CMake
 
-    Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_DDT`).
+    Add the test file to `src/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_DDT`).
+    
+    The test configuration should be conditionally included within `if(META_BUILD_TESTING)` block:
 
     ```cmake
-    meta_gtest(
-      TARGET ${PROJECT_NAME}
-      SOURCES
-        <header>_test.cpp
-    )
+    if(META_BUILD_TESTING)
+        include(meta_gtest)
+
+        meta_gtest(
+            TARGET ${PROJECT_NAME}
+            SOURCES
+                <header>_test.cpp
+            LINK
+                ${PROJECT_NAME}::<module>
+        )
+    endif()
     ```
 
 4. Test Coverage Requirements
