@@ -199,7 +199,7 @@ Contribution guidelines and project management tools.
     - [conan.lock](conan.lock)
       > The Conan lock file to ensure reproducible builds.
 
-    - [conan.cmake](tools/cmake/meta_conan.cmake)
+    - [meta_conan.cmake](tools/cmake/meta_conan.cmake)
       > CMake module to integrate Conan into the build system.
 
       ```cmake
@@ -215,12 +215,12 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-    - [gtest.cmake](tools/cmake/meta_gtest.cmake)
+    - [meta_gtest.cmake](tools/cmake/meta_gtest.cmake)
       > CMake module to integrate Google Test into the build system.
 
       ```cmake
       include(meta_gtest)
-      meta_gtest(...)
+      meta_gtest(ENABLE ON ...)
       ```
 
     - [AGENTS.md](./AGENTS.md)
@@ -246,7 +246,7 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-    - [coverage.cmake](tools/cmake/meta_coverage.cmake)
+    - [meta_coverage.cmake](tools/cmake/meta_coverage.cmake)
       > CMake module to integrate code coverage analysis into the build system.
 
       ```cmake
@@ -274,7 +274,7 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-    - [sanitizers.cmake](tools/cmake/meta_sanitizers.cmake)
+    - [meta_sanitizers.cmake](tools/cmake/meta_sanitizers.cmake)
       > CMake module to integrate Clang Sanitizers into the build system.
 
       ```cmake
