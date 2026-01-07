@@ -9,21 +9,18 @@ target_sources(
 )
 target_link_libraries(${PROJECT_NAME}-bar PUBLIC ${PROJECT_NAME}::includes)
 
-# Provide a namespaced alias for internal use
+# Export a namespaced alias for subprojects and downstream consumers to link
 if(NOT TARGET ${PROJECT_NAME}::bar)
     add_library(${PROJECT_NAME}::bar ALIAS ${PROJECT_NAME}-bar)
 endif()
 
 # ── Unit Tests ───────────────────────────────────────────────────────────────────────────────────
 
-if(META_BUILD_TESTING)
-    include(meta_gtest)
-
-    meta_gtest(
-        TARGET ${PROJECT_NAME}
-        SOURCES
-            bar_test.cpp
-        LINK
-            ${PROJECT_NAME}::bar
-    )
-endif()
+meta_gtest(
+    ENABLE ${META_BUILD_TESTING}
+    TARGET ${PROJECT_NAME}
+    SOURCES
+        bar_test.cpp
+    LINK
+        ${PROJECT_NAME}::bar
+)

@@ -1,4 +1,6 @@
-# Centralized include target for subdirectories to link a single source/install specification
+# ── Include Target ─────────────────────────────────────────────────────────────────────────────
+
+# Provide an interface target for including headers
 add_library(${PROJECT_NAME}-includes INTERFACE)
 target_include_directories(
     ${PROJECT_NAME}-includes
@@ -12,17 +14,15 @@ if(NOT TARGET ${PROJECT_NAME}::includes)
     add_library(${PROJECT_NAME}::includes ALIAS ${PROJECT_NAME}-includes)
 endif()
 
-# ── Unit Test Target Setup ───────────────────────────────────────────────────────────────────────
+# ── Unit Tests ───────────────────────────────────────────────────────────────────────────────────
 
-if(META_BUILD_TESTING)
-    include(meta_gtest)
-
-    meta_gtest(
-        WITH_CTEST
-        WITH_MAIN
-        TARGET ${PROJECT_NAME}
-    )
-endif()
+include(meta_gtest)
+meta_gtest(
+    ENABLE ${META_BUILD_TESTING}
+    WITH_CTEST
+    WITH_MAIN
+    TARGET ${PROJECT_NAME}
+)
 
 # ── Subdirectories ───────────────────────────────────────────────────────────────────────────────
 
