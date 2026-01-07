@@ -26,8 +26,6 @@ meta_gtest(
 
 # ── Subdirectories ───────────────────────────────────────────────────────────────────────────────
 
-if(NOT META_BUILD_TESTING)
-    add_subdirectory(app)
-endif()
+add_subdirectory(app)
 add_subdirectory(foo)
 add_subdirectory(bar)
