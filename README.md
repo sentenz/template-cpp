@@ -22,7 +22,7 @@ A modular C++ project using a component-based architecture, with CMake as the bu
     - [2.6.2. Code Coverage](#262-code-coverage)
     - [2.6.3. Sanitizers](#263-sanitizers)
   - [2.7. Cache Manager](#27-cache-manager)
-    - [2.7.1. Ccache](#271-ccache)
+    - [2.7.1. Compiler Cache](#271-compiler-cache)
   - [2.8. Release Manager](#28-release-manager)
     - [2.8.1. Semantic-Release](#281-semantic-release)
   - [2.9. Update Manager](#29-update-manager)
@@ -193,15 +193,18 @@ Contribution guidelines and project management tools.
 
 1. Insights and Details
 
-    - [Conanfile.txt](Conanfile.txt)
+    - [conanfile.txt](conanfile.txt)
       > The Conan package manager configuration file.
+
+    - [conan.lock](conan.lock)
+      > The Conan lock file to ensure reproducible builds.
 
     - [conan.cmake](tools/cmake/meta_conan.cmake)
       > CMake module to integrate Conan into the build system.
 
       ```cmake
-      include(conan)
-      conan()
+      include(meta_conan)
+      meta_conan()
       ```
 
 ### 2.6. Software Testing
@@ -216,8 +219,8 @@ Contribution guidelines and project management tools.
       > CMake module to integrate Google Test into the build system.
 
       ```cmake
-      include(gtest)
-      gtest(...)
+      include(meta_gtest)
+      meta_gtest(...)
       ```
 
     - [AGENTS.md](./AGENTS.md)
@@ -247,8 +250,8 @@ Contribution guidelines and project management tools.
       > CMake module to integrate code coverage analysis into the build system.
 
       ```cmake
-      include(coverage)
-      coverage(ENABLE ON)
+      include(meta_coverage)
+      meta_coverage(ENABLE ON)
       ```
 
 2. Usage and Instructions
@@ -275,24 +278,26 @@ Contribution guidelines and project management tools.
       > CMake module to integrate Clang Sanitizers into the build system.
 
       ```cmake
-      include(sanitizers)
-      sanitizers(ENABLE ON)
+      include(meta_sanitizers)
+      meta_sanitizers(ENABLE ON)
       ```
 
 ### 2.7. Cache Manager
 
-#### 2.7.1. Ccache
+#### 2.7.1. Compiler Cache
 
-[Ccache](https://ccache.dev/) is a compiler cache that speeds up recompilation by caching previous compilations and detecting when the same compilation is being done again.
+[Ccache](https://ccache.dev/) and [sccache](https://github.com/mozilla/sccache) are compiler caches that speed up recompilation by caching previous compilations and detecting when the same compilation is being done again.
 
 1. Insights and Details
 
-    - [ccache.cmake](tools/cmake/meta_ccache.cmake)
-      > CMake module to integrate Ccache into the build system.
+    - [meta_compiler_cache.cmake](tools/cmake/meta_compiler_cache.cmake)
+      > CMake module to integrate compiler caching (ccache or sccache) into the build system.
 
       ```cmake
-      include(ccache)
-      ccache(ENABLE ON)
+      include(meta_compiler_cache)
+      meta_compiler_cache(ENABLE ON TYPE auto)
+      meta_compiler_cache(ENABLE ON TYPE ccache)
+      meta_compiler_cache(ENABLE ON TYPE sccache)
       ```
 
 ### 2.8. Release Manager
