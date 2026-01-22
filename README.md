@@ -44,14 +44,14 @@ A modular C++ project using a component-based architecture, with CMake as the bu
 
 ### 1.1. Prerequisites
 
-- [C++](https://isocpp.org/)
-  > The C++ programming language (ISO/IEC C++17 standard) for software development.
+- [Git](https://git-scm.com/)
+  > Distributed version control system for tracking source code changes.
 
-- [GCC GNU](https://gcc.gnu.org/)
-  > GCC (GNU Compiler Collection) for compiling C and C++ code.
+- [Git LFS](https://git-lfs.com/)
+  > Git extension for managing large files (assets, binaries) outside normal Git history.
 
-- [CMake](https://cmake.org/)
-  > Cross-platform build system generator to manage the build process of software projects.
+- [Make](https://www.gnu.org/software/make/)
+  > Build automation tool used to define and run project tasks.
 
 ## 2. Contribute
 
