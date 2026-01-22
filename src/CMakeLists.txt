@@ -1,18 +1,14 @@
 # ── Include Target ─────────────────────────────────────────────────────────────────────────────
 
 # Provide an interface target for including headers
-add_library(${PROJECT_NAME}-includes INTERFACE)
-target_include_directories(
-    ${PROJECT_NAME}-includes
-    INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>
+add_library(${PROJECT_NAME}-interface INTERFACE)
+target_include_directories(${PROJECT_NAME}-interface INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>
 )
 
 # Export a namespaced alias for subprojects and downstream consumers to link
-if(NOT TARGET ${PROJECT_NAME}::includes)
-    add_library(${PROJECT_NAME}::includes ALIAS ${PROJECT_NAME}-includes)
-endif()
+add_library(${PROJECT_NAME}::interface ALIAS ${PROJECT_NAME}-interface)
 
 # ── Unit Tests ───────────────────────────────────────────────────────────────────────────────────
 

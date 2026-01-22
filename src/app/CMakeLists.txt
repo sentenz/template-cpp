@@ -3,7 +3,7 @@
 add_executable(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}::foo ${PROJECT_NAME}::bar ${PROJECT_NAME}::includes)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}::foo ${PROJECT_NAME}::bar ${PROJECT_NAME}::interface)
 
 # ── Install Target ───────────────────────────────────────────────────────────────────────────────
 
