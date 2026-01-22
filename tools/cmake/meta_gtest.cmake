@@ -11,7 +11,7 @@ include_guard(GLOBAL)
 #     WITH_DDT    - Define WITH_DDT for data-driven tests (requires nlohmann_json when enabled).
 #   One-Value
 #     TARGET      - Required: target name for add_executable.
-#     ENABLE      - Optional: Boolean flag to enable/disable (default: ON).
+#     ENABLE      - Optional: Boolean flag to enable/disable gtest (default: ON).
 #   Multi-value
 #     SOURCES     - Optional: source files are intentionally optional for incremental extensions of an already-defined test target.
 #     LINK        - Optional: semicolon-separated list of additional libraries to link.

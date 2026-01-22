@@ -8,9 +8,8 @@ include_guard(GLOBAL)
 #
 # Arguments:
 #   One-Value
-#     ENABLE     - Boolean flag to enable compiler cache (ON/OFF).
-#     TYPE       - Compiler cache type to use: "ccache", "sccache", or "auto" (default: "auto").
-#                  "auto" will try to find ccache first, then sccache.
+#     ENABLE     - Optional: Boolean flag to enable/disable compiler cache (default: ON).
+#     TYPE       - Optional: Compiler cache type to use in the order "auto", "ccache" or "sccache" (default: "auto").
 #
 # Outputs:
 #   NONE
@@ -31,7 +30,7 @@ function(meta_compiler_cache)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Unknown arguments: ${ARG_UNPARSED_ARGUMENTS}.")
     endif()
 
-    if(NOT ARG_ENABLE)
+    if(DEFINED ARG_ENABLE AND NOT ARG_ENABLE)
         return()
     endif()
 

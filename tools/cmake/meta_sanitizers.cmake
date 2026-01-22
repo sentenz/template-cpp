@@ -5,7 +5,7 @@ include_guard(GLOBAL)
 #
 # Arguments:
 #   One-Value
-#     ENABLE     - Boolean flag to enable sanitizers (ON/OFF).
+#     ENABLE     - Optional: Boolean flag to enable/disable sanitizers (default: ON).
 #
 # Outputs:
 #   NONE
@@ -23,7 +23,7 @@ function(meta_sanitizers)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Unknown arguments: ${ARG_UNPARSED_ARGUMENTS}.")
     endif()
 
-    if(NOT ARG_ENABLE)
+    if(DEFINED ARG_ENABLE AND NOT ARG_ENABLE)
         return()
     endif()
 
