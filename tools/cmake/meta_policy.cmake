@@ -17,7 +17,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/meta_utils.cmake")
 # Example:
 #   meta_policy()
 function(meta_policy)
-    meta_parse_arguments()
+    cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "")
 
     # Global Language Properties
     set(CMAKE_CXX_STANDARD 23 CACHE STRING "C++ standard to be used")
