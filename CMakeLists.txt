@@ -26,6 +26,8 @@ if(META_BUILD_TESTING)
 
     include(meta_coverage)
     meta_coverage(ENABLE ${META_BUILD_TESTING})
+
+    # add_subdirectory(tests)
 endif()
 
 add_subdirectory(src)

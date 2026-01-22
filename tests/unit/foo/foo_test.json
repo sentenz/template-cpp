@@ -1,0 +1,140 @@
+{
+  "foo::greet": [
+    {
+      "label": "greet world",
+      "in": {
+        "text": "World"
+      },
+      "want": {
+        "result": "Hello, World!"
+      }
+    },
+    {
+      "label": "empty name",
+      "in": {
+        "text": ""
+      },
+      "want": {
+        "result": "Hello, !"
+      }
+    },
+    {
+      "label": "whitespace name",
+      "in": {
+        "text": "   "
+      },
+      "want": {
+        "result": "Hello,    !"
+      }
+    },
+    {
+      "label": "unicode name",
+      "in": {
+        "text": "世 界"
+      },
+      "want": {
+        "result": "Hello, 世 界!"
+      }
+    },
+    {
+      "label": "long name",
+      "in": {
+        "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "want": {
+        "result": "Hello, aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"
+      }
+    },
+    {
+      "label": "special characters",
+      "in": {
+        "text": "!@#$%^&*()_+-=[]{}|;':\",.<>/?`~"
+      },
+      "want": {
+        "result": "Hello, !@#$%^&*()_+-=[]{}|;':\",.<>/?`~!"
+      }
+    }
+  ],
+  "foo::add": [
+    {
+      "label": "valid positive input",
+      "in": {
+        "a": 2,
+        "b": 3
+      },
+      "want": {
+        "result": 5
+      }
+    },
+    {
+      "label": "valid negative input",
+      "in": {
+        "a": -1,
+        "b": -2
+      },
+      "want": {
+        "result": -3
+      }
+    },
+    {
+      "label": "zero inputs",
+      "in": {
+        "a": 0,
+        "b": 0
+      },
+      "want": {
+        "result": 0
+      }
+    },
+    {
+      "label": "mixed sign",
+      "in": {
+        "a": 5,
+        "b": -3
+      },
+      "want": {
+        "result": 2
+      }
+    },
+    {
+      "label": "int max + 0",
+      "in": {
+        "a": 2147483647,
+        "b": 0
+      },
+      "want": {
+        "result": 2147483647
+      }
+    },
+    {
+      "label": "int min + 0",
+      "in": {
+        "a": -2147483648,
+        "b": 0
+      },
+      "want": {
+        "result": -2147483648
+      }
+    },
+    {
+      "label": "overflow positive",
+      "in": {
+        "a": 2147483647,
+        "b": 1
+      },
+      "want": {
+        "result": -2147483648
+      }
+    },
+    {
+      "label": "overflow negative",
+      "in": {
+        "a": -2147483648,
+        "b": -1
+      },
+      "want": {
+        "result": 2147483647
+      }
+    }
+  ]
+}
