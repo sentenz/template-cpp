@@ -2,11 +2,12 @@
 
 - [1. Software Testing](#1-software-testing)
   - [1.1. Unit Testing](#11-unit-testing)
-    - [1.1.1. Unit Testing Patterns](#111-unit-testing-patterns)
-    - [1.1.2. Unit Test Workflow](#112-unit-test-workflow)
-    - [1.1.3. Unit Test Commands](#113-unit-test-commands)
-    - [1.1.4. Unit Test Style](#114-unit-test-style)
-    - [1.1.5. Unit Test Template](#115-unit-test-template)
+    - [1.1.1. Unit Testing Principles](#111-unit-testing-principles)
+    - [1.1.2. Unit Testing Patterns](#112-unit-testing-patterns)
+    - [1.1.3. Unit Test Workflow](#113-unit-test-workflow)
+    - [1.1.4. Unit Test Commands](#114-unit-test-commands)
+    - [1.1.5. Unit Test Style](#115-unit-test-style)
+    - [1.1.6. Unit Test Template](#116-unit-test-template)
   - [1.2. Mock Testing](#12-mock-testing)
     - [1.2.1. Mock Testing Patterns](#121-mock-testing-patterns)
     - [1.2.2. Mock Test Workflow](#122-mock-test-workflow)
@@ -36,7 +37,27 @@ Instructions for AI coding agents on automating unit test creation using consist
     - Debuggability
       > Scoped traces and detailed assertion messages pinpoint failures quickly during continuous integration and local testing.
 
-#### 1.1.1. Unit Testing Patterns
+#### 1.1.1. Unit Testing Principles
+
+- FIRST Principles
+  > The `FIRST` principles for unit testing focus on creating effective and maintainable tests.
+
+  - Fast
+    > Unit tests should execute quickly to provide rapid feedback during development and continuous integration.
+
+  - Independent
+    > Each unit test should be self-contained and not rely on the state or behavior of other tests.
+
+  - Repeatable
+    > Unit tests should produce deterministic results every time they are run, regardless of the environment or order of execution.
+
+  - Self-Validating
+    > Unit tests should have clear pass/fail outcomes without requiring manual inspection.
+
+  - Timely
+    > Unit tests should be written and executed early in the development process to catch issues as soon as possible.
+
+#### 1.1.2. Unit Testing Patterns
 
 - In-Got-Want
   > In-Got-Want is a software testing pattern that structures test cases into three distinct sections of In (input), Got (actual output), and Want (expected output).
@@ -56,7 +77,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 - Test Doubles
   > Test Doubles (e.g., mocks, stubs, fakes) involves creating simplified versions of complex objects or components to isolate the unit under test.
 
-#### 1.1.2. Unit Test Workflow
+#### 1.1.3. Unit Test Workflow
 
 1. Identify
 
@@ -97,9 +118,9 @@ Instructions for AI coding agents on automating unit test creation using consist
 
 5. Apply Templates
 
-    Structure all tests using [unit test template](#115-unit-test-template) pattern.
+    Structure all tests using [unit test template](#116-unit-test-template) pattern.
 
-#### 1.1.3. Unit Test Commands
+#### 1.1.4. Unit Test Commands
 
 - Build Unit Tests
   > CMake preset configuration and Compile with Ninja.
@@ -122,7 +143,7 @@ Instructions for AI coding agents on automating unit test creation using consist
   make cmake-gcc-test-unit-coverage
   ```
 
-#### 1.1.4. Unit Test Style
+#### 1.1.5. Unit Test Style
 
 - Test Framework
   > Use [GoogleTest (GTest)](https://google.github.io/googletest/) framework via `#include <gtest/gtest.h>`.
@@ -152,7 +173,7 @@ Instructions for AI coding agents on automating unit test creation using consist
 - Assertions
   > Use `EXPECT_*` macros (not `ASSERT_*`) to allow all test cases to run.
 
-#### 1.1.5. Unit Test Template
+#### 1.1.6. Unit Test Template
 
 Use this template (In-Got-Want + Table-Driven + AAA) for new test functions. Replace placeholders with actual values and adjust as needed for the use case.
 
@@ -186,8 +207,8 @@ TEST(<Module>Test, <FunctionName>)
 
   // Table-Driven Testing
   const std::vector<Tests> tests = {
-    {"case description 1", /* in */ {/* input values */}, /* want */ {/* expected output */}},
-    {"case description 2", /* in */ {/* input values */}, /* want */ {/* expected output */}},
+    {"case-description-1", /* in */ {/* input values */}, /* want */ {/* expected output */}},
+    {"case-description-2", /* in */ {/* input values */}, /* want */ {/* expected output */}},
     // add more cases as needed
   };
 
