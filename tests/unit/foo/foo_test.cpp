@@ -558,3 +558,93 @@ TEST(FooTest, IsPrime)
     EXPECT_EQ(got, tc.want.result);
   }
 }
+
+TEST(FooTest, Greet)
+{
+  // In-Got-Want
+  struct Tests
+  {
+    std::string label;
+
+    struct In
+    {
+      std::string text;
+    } in;
+
+    struct Want
+    {
+      std::string result;
+    } want;
+  };
+
+  // Table-Driven Testing
+  const std::vector<Tests> tests = {
+      {"empty string", /* in */ {""}, /* want */ {"Hello, !"}},
+      {"single word", /* in */ {"World"}, /* want */ {"Hello, World!"}},
+      {"multiple words", /* in */ {"C++ Developer"}, /* want */ {"Hello, C++ Developer!"}},
+      {"with special characters", /* in */ {"Hello, World!"}, /* want */ {"Hello, Hello, World!!"}},
+  };
+
+  for (const auto &tc : tests)
+  {
+    SCOPED_TRACE(tc.label);
+
+    // Arrange
+    Foo foo;
+
+    // Act
+    auto got = foo.greet(tc.in.text);
+
+    // Assert
+    EXPECT_EQ(got, tc.want.result);
+  }
+}
+
+TEST(FooTest, FindMax)
+{
+  // In-Got-Want
+  struct Tests
+  {
+    std::string label;
+
+    struct In
+    {
+      std::vector<int> vec;
+    } in;
+
+    struct Want
+    {
+      int result;
+      bool throws_exception;
+    } want;
+  };
+
+  // Table-Driven Testing
+  const std::vector<Tests> tests = {
+      {"single element", /* in */ {{5}}, /* want */ {5, false}},
+      {"positive numbers", /* in */ {{1, 3, 2, 5, 4}}, /* want */ {5, false}},
+      {"negative numbers", /* in */ {{-5, -3, -8, -1}}, /* want */ {-1, false}},
+      {"mixed numbers", /* in */ {{-2, 0, 3, -1, 2}}, /* want */ {3, false}},
+      {"duplicates", /* in */ {{2, 2, 2}}, /* want */ {2, false}},
+      {"empty vector", /* in */ {{}}, /* want */ {0, true}},
+  };
+
+  for (const auto &tc : tests)
+  {
+    SCOPED_TRACE(tc.label);
+
+    // Arrange
+    Foo foo;
+
+    // Act & Assert
+    if (tc.want.throws_exception)
+    {
+      EXPECT_THROW(foo.find_max(tc.in.vec), std::invalid_argument);
+    }
+    else
+    {
+      auto got = foo.find_max(tc.in.vec);
+      EXPECT_EQ(got, tc.want.result);
+    }
+  }
+}

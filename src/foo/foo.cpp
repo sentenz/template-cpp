@@ -118,4 +118,23 @@ namespace cpp_concept
     return true;
   }
 
+  int Foo::find_max(const std::vector<int> &vec) const
+  {
+    if (vec.empty())
+    {
+      throw std::invalid_argument("Vector cannot be empty");
+    }
+
+    int max_val = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i)
+    {
+      if (vec[i] > max_val)
+      {
+        max_val = vec[i];
+      }
+    }
+
+    return max_val;
+  }
+
 } // namespace cpp_concept
