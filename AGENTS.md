@@ -5,7 +5,6 @@ This file provides instructions for AI coding agents working with this C++ proje
 - [1. Tech Stack](#1-tech-stack)
   - [1.1. C/C++](#11-cc)
 - [2. Project Structure](#2-project-structure)
-- [3. Skills](#3-skills)
 
 ## 1. Tech Stack
 
@@ -103,14 +102,3 @@ This file provides instructions for AI coding agents working with this C++ proje
 ├── AGENTS.md
 └── README.md
 ```
-
-## 3. Skills
-
-Agent skills are located in the `.github/skills/` directory following the [Agent Skills specification](https://agentskills.io/specification).
-
-| Skill                                                          | Description                                  |
-| -------------------------------------------------------------- | -------------------------------------------- |
-| [unit-testing](.github/skills/unit-testing/SKILL.md)           | Unit test creation using GoogleTest (GTest)  |
-| [mock-testing](.github/skills/mock-testing/SKILL.md)           | Mock test creation using Google Mock (GMock) |
-| [fuzz-testing](.github/skills/fuzz-testing/SKILL.md)           | Fuzz test creation (TODO)                    |
-| [benchmark-testing](.github/skills/benchmark-testing/SKILL.md) | Benchmark test creation (TODO)               |
