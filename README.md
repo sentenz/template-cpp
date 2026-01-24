@@ -8,34 +8,35 @@ A modular C++ project using a component-based architecture, with CMake as the bu
 - [1. Details](#1-details)
   - [1.1. Prerequisites](#11-prerequisites)
 - [2. Contribute](#2-contribute)
-  - [2.1. Task Runner](#21-task-runner)
-    - [2.1.1. Make](#211-make)
-  - [2.2. Bootstrap](#22-bootstrap)
-    - [2.2.1. Scripts](#221-scripts)
-  - [2.3. Dev Containers](#23-dev-containers)
-  - [2.4. Build System](#24-build-system)
-    - [2.4.1. CMake](#241-cmake)
-  - [2.5. Dependency Manager](#25-dependency-manager)
-    - [2.5.1. Conan](#251-conan)
-  - [2.6. Software Testing](#26-software-testing)
-    - [2.6.1. Unit Testing](#261-unit-testing)
-    - [2.6.2. Code Coverage](#262-code-coverage)
-    - [2.6.3. Sanitizers](#263-sanitizers)
-  - [2.7. Cache Manager](#27-cache-manager)
-    - [2.7.1. Compiler Cache](#271-compiler-cache)
-  - [2.8. Release Manager](#28-release-manager)
-    - [2.8.1. Semantic-Release](#281-semantic-release)
-  - [2.9. Update Manager](#29-update-manager)
-    - [2.9.1. Renovate](#291-renovate)
-    - [2.9.2. Dependabot](#292-dependabot)
-  - [2.10. Secrets Manager](#210-secrets-manager)
-    - [2.10.1. SOPS](#2101-sops)
-  - [2.11. Container Manager](#211-container-manager)
-    - [2.11.1. Docker](#2111-docker)
-  - [2.12. Policy Manager](#212-policy-manager)
-    - [2.12.1. Conftest](#2121-conftest)
-  - [2.13. Supply Chain Manager](#213-supply-chain-manager)
-    - [2.13.1. Trivy](#2131-trivy)
+  - [2.1. AI Agents](#21-ai-agents)
+  - [2.2. Task Runner](#22-task-runner)
+    - [2.2.1. Make](#221-make)
+  - [2.3. Bootstrap](#23-bootstrap)
+    - [2.3.1. Scripts](#231-scripts)
+  - [2.4. Dev Containers](#24-dev-containers)
+  - [2.5. Build System](#25-build-system)
+    - [2.5.1. CMake](#251-cmake)
+  - [2.6. Dependency Manager](#26-dependency-manager)
+    - [2.6.1. Conan](#261-conan)
+  - [2.7. Software Testing](#27-software-testing)
+    - [2.7.1. Unit Testing](#271-unit-testing)
+    - [2.7.2. Code Coverage](#272-code-coverage)
+    - [2.7.3. Sanitizers](#273-sanitizers)
+  - [2.8. Cache Manager](#28-cache-manager)
+    - [2.8.1. Compiler Cache](#281-compiler-cache)
+  - [2.9. Release Manager](#29-release-manager)
+    - [2.9.1. Semantic-Release](#291-semantic-release)
+  - [2.10. Update Manager](#210-update-manager)
+    - [2.10.1. Renovate](#2101-renovate)
+    - [2.10.2. Dependabot](#2102-dependabot)
+  - [2.11. Secrets Manager](#211-secrets-manager)
+    - [2.11.1. SOPS](#2111-sops)
+  - [2.12. Container Manager](#212-container-manager)
+    - [2.12.1. Docker](#2121-docker)
+  - [2.13. Policy Manager](#213-policy-manager)
+    - [2.13.1. Conftest](#2131-conftest)
+  - [2.14. Supply Chain Manager](#214-supply-chain-manager)
+    - [2.14.1. Trivy](#2141-trivy)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
 - [4. References](#4-references)
@@ -57,9 +58,21 @@ A modular C++ project using a component-based architecture, with CMake as the bu
 
 Contribution guidelines and project management tools.
 
-### 2.1. Task Runner
+### 2.1. AI Agents
 
-#### 2.1.1. Make
+AI Agents are automated tools that assist in various development tasks such as code generation, testing, and documentation.
+
+1. Insights and Details
+
+    - [AGENTS.md](AGENTS.md)
+      > Instructions for AI coding agents working with the project.
+
+    - [SKILLS.md](.github/skills/README.md)
+      > Instructions for AI agent skills used in the project.
+
+### 2.2. Task Runner
+
+#### 2.2.1. Make
 
 [Make](https://www.gnu.org/software/make/) is a automation tool that defines and manages tasks to streamline development workflows.
 
@@ -93,9 +106,9 @@ Contribution guidelines and project management tools.
               teardown          Remove development artifacts and restore the host to its pre-setup state
       ```
 
-### 2.2. Bootstrap
+### 2.3. Bootstrap
 
-#### 2.2.1. Scripts
+#### 2.3.1. Scripts
 
 [scripts/](scripts/README.md) provides scripts to bootstrap, setup, and teardown a software development workspace with requisites.
 
@@ -126,7 +139,7 @@ Contribution guidelines and project management tools.
       make teardown
       ```
 
-### 2.3. Dev Containers
+### 2.4. Dev Containers
 
 [.devcontainer/](.devcontainer/README.md) provides Dev Containers as a consistent development environment using Docker containers.
 
@@ -153,9 +166,9 @@ Contribution guidelines and project management tools.
       # make devcontainer-cpp
       ```
 
-### 2.4. Build System
+### 2.5. Build System
 
-#### 2.4.1. CMake
+#### 2.5.1. CMake
 
 [CMake](https://cmake.org/) is a cross-platform, compiler-independent, open-source build system that manages the build process.
 
@@ -185,9 +198,9 @@ Contribution guidelines and project management tools.
       make cmake-gcc-release-build
       ```
 
-### 2.5. Dependency Manager
+### 2.6. Dependency Manager
 
-#### 2.5.1. Conan
+#### 2.6.1. Conan
 
 [Conan](https://conan.io/) is a package manager for C and C++ that simplifies the process of managing dependencies and libraries.
 
@@ -207,9 +220,9 @@ Contribution guidelines and project management tools.
       meta_conan()
       ```
 
-### 2.6. Software Testing
+### 2.7. Software Testing
 
-#### 2.6.1. Unit Testing
+#### 2.7.1. Unit Testing
 
 [Google Test (GTest)](https://github.com/google/googletest) is a unit testing library for the C++ programming language.
 
@@ -240,7 +253,7 @@ Contribution guidelines and project management tools.
       make cmake-gcc-test-unit-run
       ```
 
-#### 2.6.2. Code Coverage
+#### 2.7.2. Code Coverage
 
 [gcovr](https://gcovr.com/en/stable/) is a Python tool that provides a utility for managing and generating code coverage reports.
 
@@ -268,7 +281,7 @@ Contribution guidelines and project management tools.
       make cmake-gcc-test-unit-coverage
       ```
 
-#### 2.6.3. Sanitizers
+#### 2.7.3. Sanitizers
 
 [Clang Sanitizers](https://clang.llvm.org/docs/) are a set of runtime tools to detect memory errors (MemorySanitizer), undefined behavior (UndefinedBehaviorSanitizer) or thread issues (ThreadSanitizer) in C/C++ programs.
 
@@ -282,9 +295,9 @@ Contribution guidelines and project management tools.
       meta_sanitizers(ENABLE ON)
       ```
 
-### 2.7. Cache Manager
+### 2.8. Cache Manager
 
-#### 2.7.1. Compiler Cache
+#### 2.8.1. Compiler Cache
 
 [Ccache](https://ccache.dev/) and [sccache](https://github.com/mozilla/sccache) are compiler caches that speed up recompilation by caching previous compilations and detecting when the same compilation is being done again.
 
@@ -300,9 +313,9 @@ Contribution guidelines and project management tools.
       meta_compiler_cache(ENABLE ON TYPE sccache)
       ```
 
-### 2.8. Release Manager
+### 2.9. Release Manager
 
-#### 2.8.1. Semantic-Release
+#### 2.9.1. Semantic-Release
 
 [Semantic-Release](https://github.com/semantic-release/semantic-release) automates the release process by analyzing commit messages to determine the next version number, generating changelog and release notes, and publishing the release.
 
@@ -319,9 +332,9 @@ Contribution guidelines and project management tools.
       uses: sentenz/actions/semantic-release@latest
       ```
 
-### 2.9. Update Manager
+### 2.10. Update Manager
 
-#### 2.9.1. Renovate
+#### 2.10.1. Renovate
 
 [Renovate](https://github.com/renovatebot/renovate) automates dependency updates by creating merge requests for outdated dependencies, libraries and packages.
 
@@ -338,7 +351,7 @@ Contribution guidelines and project management tools.
       uses: sentenz/actions/renovate@latest
       ```
 
-#### 2.9.2. Dependabot
+#### 2.10.2. Dependabot
 
 [Dependabot](https://github.com/dependabot/dependabot-core) automates dependency updates by creating pull requests for outdated dependencies, libraries and packages.
 
@@ -347,9 +360,9 @@ Contribution guidelines and project management tools.
     - [.github/dependabot.yml](.github/dependabot.yml)
       > Configuration file for Dependabot specifying update rules and schedules.
 
-### 2.10. Secrets Manager
+### 2.11. Secrets Manager
 
-#### 2.10.1. SOPS
+#### 2.11.1. SOPS
 
 [SOPS (Secrets OPerationS)](https://github.com/getsops/sops) is a tool for managing and encrypting sensitive data such as passwords, API keys, and other secrets.
 
@@ -402,9 +415,9 @@ Contribution guidelines and project management tools.
         make secrets-sops-decrypt <files>
         ```
 
-### 2.11. Container Manager
+### 2.12. Container Manager
 
-#### 2.11.1. Docker
+#### 2.12.1. Docker
 
 [Docker](https://github.com/docker) containerization tool to run applications in isolated container environments and execute container-based tasks.
 
@@ -427,9 +440,9 @@ Contribution guidelines and project management tools.
       # TODO
       ```
 
-### 2.12. Policy Manager
+### 2.13. Policy Manager
 
-#### 2.12.1. Conftest
+#### 2.13.1. Conftest
 
 [Conftest](https://www.conftest.dev/) is a **Policy as Code (PaC)** tool to streamline policy management for improved development, security and audit capability.
 
@@ -463,9 +476,9 @@ Contribution guidelines and project management tools.
       make policy-analysis-conftest <filepath>
       ```
 
-### 2.13. Supply Chain Manager
+### 2.14. Supply Chain Manager
 
-#### 2.13.1. Trivy
+#### 2.14.1. Trivy
 
 [Trivy](https://github.com/aquasecurity/trivy) is a comprehensive security scanner for vulnerabilities, misconfigurations, and compliance issues in container images, filesystems, and source code.
 
