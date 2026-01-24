@@ -4,7 +4,8 @@ This file provides instructions for AI coding agents working with this C++ proje
 
 - [1. Tech Stack](#1-tech-stack)
   - [1.1. C/C++](#11-cc)
-- [2. Skills](#2-skills)
+- [2. Project Structure](#2-project-structure)
+- [3. Skills](#3-skills)
 
 ## 1. Tech Stack
 
@@ -84,7 +85,26 @@ This file provides instructions for AI coding agents working with this C++ proje
     - [x] [Microsoft CMake Style Guide](https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines)
       > Guidelines for writing clear, portable, and maintainable CMake scripts, including target-based patterns, recommended project layout, and best practices.
 
-## 2. Skills
+## 2. Project Structure
+
+```plaintext
+.
+├── src
+├── tests
+├── scripts
+├── tools
+├── build
+├── logs
+├── CMakeLists.txt
+├── CMakePresets.json
+├── Makefile
+├── LICENSE
+├── CODEOWNERS
+├── AGENTS.md
+└── README.md
+```
+
+## 3. Skills
 
 Agent skills are located in the `.github/skills/` directory following the [Agent Skills specification](https://agentskills.io/specification).
 
