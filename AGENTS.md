@@ -1,521 +1,96 @@
 # AGENTS.md
 
-- [1. Software Testing](#1-software-testing)
-  - [1.1. Unit Testing](#11-unit-testing)
-    - [1.1.1. Unit Testing Principles](#111-unit-testing-principles)
-    - [1.1.2. Unit Testing Patterns](#112-unit-testing-patterns)
-    - [1.1.3. Unit Test Workflow](#113-unit-test-workflow)
-    - [1.1.4. Unit Test Commands](#114-unit-test-commands)
-    - [1.1.5. Unit Test Style](#115-unit-test-style)
-    - [1.1.6. Unit Test Template](#116-unit-test-template)
-  - [1.2. Mock Testing](#12-mock-testing)
-    - [1.2.1. Mock Testing Patterns](#121-mock-testing-patterns)
-    - [1.2.2. Mock Test Workflow](#122-mock-test-workflow)
-    - [1.2.3. Mock Test Commands](#123-mock-test-commands)
-    - [1.2.4. Mock Test Style](#124-mock-test-style)
-    - [1.2.5. Mock Test Template](#125-mock-test-template)
-  - [1.3. Fuzz Testing](#13-fuzz-testing)
-  - [1.4. Benchmark Testing](#14-benchmark-testing)
+This file provides instructions for AI coding agents working with this C++ project.
 
-## 1. Software Testing
+- [1. Tech Stack](#1-tech-stack)
+  - [1.1. C/C++](#11-cc)
+- [2. Skills](#2-skills)
 
-### 1.1. Unit Testing
+## 1. Tech Stack
 
-Instructions for AI coding agents on automating unit test creation using consistent software testing patterns in this C++ project.
+### 1.1. C/C++
 
-1. Features and Benefits
+1. Programming & Scripting
 
-    - Readability
-      > Ensures high code quality and reliability. Tests are self-documenting, reducing cognitive load for reviewers and maintainers.
+    - [x] C
+      > Standard C11/C17 is used for low-level programming and hardware interfacing.
 
-    - Consistency
-      > Uniform structure across tests ensures predictable, familiar code that team members can navigate efficiently.
+    - [x] C++
+      > Standard C++17 is utilized to leverage modern object-oriented and functional programming features while maintaining compatibility.
 
-    - Scalability
-      > Table-driven and data-driven approaches minimize boilerplate code when adding new test cases, making it simple to expand coverage.
+2. Build Systems
 
-    - Debuggability
-      > Scoped traces and detailed assertion messages pinpoint failures quickly during continuous integration and local testing.
+    - [x] [CMake](https://cmake.org)
+      > Cross-platform build-system generator. Preferred for modern C/C++ projects; integrates with multiple toolchains and CI systems.
 
-#### 1.1.1. Unit Testing Principles
+    - [x] [Ninja](https://ninja-build.org)
+      > Lightweight, fast build backend used as CMake's primary generator for improved build performance.
 
-- FIRST Principles
-  > The `FIRST` principles for unit testing focus on creating effective and maintainable tests.
+3. Cache Manager
 
-  - Fast
-    > Unit tests should execute quickly to provide rapid feedback during development and continuous integration.
+    - [x] [sccache](https://github.com/mozilla/sccache)
+      > A shared/remote compilation cache for distributed builds with Rust and C/C++ support.
 
-  - Independent
-    > Each unit test should be self-contained and not rely on the state or behavior of other tests.
+4. Dependency Manager
 
-  - Repeatable
-    > Unit tests should produce deterministic results every time they are run, regardless of the environment or order of execution.
+    - [x] [Conan](https://github.com/conan-io/conan)
+      > A decentralized, cross-platform C/C++ package manager for dependency resolution, binary distribution, and reproducible builds.
 
-  - Self-Validating
-    > Unit tests should have clear pass/fail outcomes without requiring manual inspection.
+5. Compilers & Toolchains
 
-  - Timely
-    > Unit tests should be written and executed early in the development process to catch issues as soon as possible.
+    - [x] GNU Compiler Collection (GCC)
+      > GCC is a compiler system supporting various programming languages for compiling C and C++ code on Unix-like systems.
 
-#### 1.1.2. Unit Testing Patterns
+6. Analysis
 
-- In-Got-Want
-  > In-Got-Want is a software testing pattern that structures test cases into three distinct sections of In (input), Got (actual output), and Want (expected output).
+    - [x] [Clang-Format](https://clang.llvm.org/docs/ClangFormat.html)
+      > A tool to automatically format C/C++ code according to a set of rules and style guides.
 
-- Table-Driven Testing
-  > Table-Driven Testing is a software testing technique in which test cases are organized in a tabular format.
+    - [x] [Sanitizers](https://clang.llvm.org/docs/AddressSanitizer.html)
+      > A suite of runtime tools to detect various types of bugs, including memory errors (AddressSanitizer), undefined behavior (UndefinedBehaviorSanitizer), and thread data races (ThreadSanitizer).
 
-- Data-Driven Testing (DDT)
-  > Data-Driven Testing (DDT) is a software testing methodology that separates test data from test logic, allowing the same test logic to be executed with multiple sets of input data (e.g., JSON, CSV).
+7. Test Framework
 
-- Arrange, Act, Assert (AAA)
-  > Arrange, Act, Assert (AAA) is a software testing pattern that structures test cases into three distinct phases of Arrange (setup), Act (execution), and Assert (verification).
+    - [x] [GoogleTest](https://google.github.io/googletest/)
+      > GoogleTest (gtest/gmock) is a testing framework for C++, providing a rich set of features for unit testing and test-driven development.
 
-- Test Fixtures
-  > Test Fixtures are a software testing pattern that provides a consistent and reusable `setup` and `teardown` mechanism for test cases.
+    - [ ] [Google FuzzTest](https://github.com/google/fuzztest)
+      > A library for coverage-guided fuzz testing of C++ code, integrated with GoogleTest. It is used to discover and exploit software vulnerabilities by generating random inputs.
 
-- Test Doubles
-  > Test Doubles (e.g., mocks, stubs, fakes) involves creating simplified versions of complex objects or components to isolate the unit under test.
+    - [ ] [Google Benchmark](https://github.com/google/benchmark)
+      > A microbenchmark support library for GoogleTest. It is used to add performance benchmarks to tests.
 
-#### 1.1.3. Unit Test Workflow
+    - [x] [CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html#)
+      > A testing tool integrated with CMake, primarily used for running tests and ensuring code quality across builds.
 
-1. Identify
+    - [x] [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
+      > A test coverage program used to analyze and create code coverage reports for C/C++ programs.
 
-    Identify new functions in `src/` (e.g., `src/<module>/<header>.hpp`).
+8. Documentation
 
-2. Add/Create
+    - [x] [Doxygen](https://www.doxygen.nl/)
+      > Doxygen is a open-source API documentation generator for various programming languages, including C++. It extracts structured comments from source code and generates documentation in multiple formats such as HTML, LaTeX, and XML.
 
-    Create new tests colocated with source code in `src/<module>/` (e.g., `src/<module>/<header>_test.cpp`).
+9. Repository Strategy
 
-3. Register with CMake
+    - [x] Modular Monolith
+      > The Modular Monolith organizes a single application into distinct, self-contained modules within one repository.
 
-    Add the test file to `src/<module>/CMakeLists.txt` using `meta_gtest()` with appropriate options (e.g., `WITH_DDT`).
+10. Conventions & Style Guides
 
-    The test configuration should use `ENABLE` option with `META_BUILD_TESTING` variable:
+    - [x] [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html)
+      > The Google C++ Style Guide is adopted as the primary coding style guide for consistency and readability.
 
-    ```cmake
-    include(meta_gtest)
+    - [x] [Microsoft CMake Style Guide](https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines)
+      > Guidelines for writing clear, portable, and maintainable CMake scripts, including target-based patterns, recommended project layout, and best practices.
 
-    meta_gtest(
-        ENABLE ${META_BUILD_TESTING}
-        TARGET ${PROJECT_NAME}-test
-        SOURCES
-            <header>_test.cpp
-        LINK
-            ${PROJECT_NAME}::<module>
-    )
-    ```
+## 2. Skills
 
-4. Test Coverage Requirements
+Agent skills are located in the `.github/skills/` directory following the [Agent Skills specification](https://agentskills.io/specification).
 
-    Include comprehensive edge cases:
-    - Coverage-guided cases
-    - Boundary values (min/max limits, edge thresholds)
-    - Empty/null inputs
-    - Null pointers and invalid references
-    - Overflow/underflow scenarios
-    - Special cases (negative numbers, zero, special states)
-
-5. Apply Templates
-
-    Structure all tests using [unit test template](#116-unit-test-template) pattern.
-
-#### 1.1.4. Unit Test Commands
-
-- Build Unit Tests
-  > CMake preset configuration and Compile with Ninja.
-
-  ```bash
-  make cmake-gcc-test-unit-build
-  ```
-
-- Run Unit Tests
-  > Execute tests via ctest.
-
-  ```bash
-  make cmake-gcc-test-unit-run
-  ```
-
-- Run Code Coverage
-  > Generate coverage reports.
-
-  ```bash
-  make cmake-gcc-test-unit-coverage
-  ```
-
-#### 1.1.5. Unit Test Style
-
-- Test Framework
-  > Use [GoogleTest (GTest)](https://google.github.io/googletest/) framework via `#include <gtest/gtest.h>`.
-
-- Include Headers
-  > Include necessary standard library headers (`<vector>`, `<string>`, `<climits>`, etc.) and module-specific headers in a logical order: system headers first, then project headers.
-
-- Namespace
-  > Use `using namespace <namespace>;` for convenience within test functions to reduce verbosity while maintaining clarity, since test scope is limited.
-
-- Test Organization
-  > Consolidate test cases for a single function into **one `TEST(...)` function** using table-driven testing. This approach:
-  > - Eliminates redundant test function definitions
-  > - Simplifies maintenance by grouping related scenarios together
-  > - Reduces code duplication in setup and teardown phases
-  > - Makes it easier to add or modify test cases
-
-- Testing Macros
-  > Focus each `TEST(...)` function on a single function or cohesive behavior. For complex setups, use `TEST_F` fixtures or helper functions to reduce duplication.
-
-- Mocking
-  > Use [Google Mock (GMock)](#12-mock-testing) for creating test doubles (mocks, stubs, fakes) to isolate the unit under test.
-
-- Traceability
-  > Employ [`SCOPED_TRACE(tc.label)`](https://google.github.io/googletest/reference/testing.html#SCOPED_TRACE) for traceable failures in table-driven tests.
-
-- Assertions
-  > Use `EXPECT_*` macros (not `ASSERT_*`) to allow all test cases to run.
-
-#### 1.1.6. Unit Test Template
-
-Use this template (In-Got-Want + Table-Driven + AAA) for new test functions. Replace placeholders with actual values and adjust as needed for the use case.
-
-```cpp
-#include <gtest/gtest.h>
-
-#include <vector>
-#include <string>
-
-#include "<module>/<header>.hpp"
-
-using namespace <namespace>;
-
-TEST(<Module>Test, <FunctionName>)
-{
-  // In-Got-Want
-  struct Tests
-  {
-    std::string label;
-
-    struct In
-    {
-      /* input types and names */
-    } in;
-
-    struct Want
-    {
-      /* expected output type(s) and name(s) */
-    } want;
-  };
-
-  // Table-Driven Testing
-  const std::vector<Tests> tests = {
-    {"case-description-1", /* in */ {/* input values */}, /* want */ {/* expected output */}},
-    {"case-description-2", /* in */ {/* input values */}, /* want */ {/* expected output */}},
-    // add more cases as needed
-  };
-
-  for (const auto &tc : tests)
-  {
-    SCOPED_TRACE(tc.label);
-
-    // Arrange
-    <Module> <object>;
-    // additional setup as needed
-
-    // Act
-    auto got = <object>.<function>(tc.in.<input>);
-
-    // Assert
-    EXPECT_EQ(got, tc.want.<expected>);
-  }
-}
-```
-
-### 1.2. Mock Testing
-
-Instructions for AI coding agents on automating mock test creation using Google Mock (GMock) with consistent software testing patterns in this C++ project.
-
-1. Features and Benefits
-
-    - Isolation
-      > Isolates the unit under test from external dependencies, ensuring tests focus on the specific component's behavior.
-
-    - Control
-      > Provides precise control over dependency behavior through expectations and return values, enabling thorough testing of edge cases and error conditions.
-
-    - Verification
-      > Automatically verifies that dependencies are called correctly with expected parameters and call counts.
-
-    - Flexibility
-      > Supports various testing scenarios including strict mocks, nice mocks, and sequence verification for complex interactions.
-
-#### 1.2.1. Mock Testing Patterns
-
-- Mock Objects
-  > Mock Objects are simulated objects that mimic the behavior of real objects in controlled ways. They verify interactions between the unit under test and its dependencies.
-
-- Interface Mocking
-  > Interface Mocking involves creating mock implementations of abstract interfaces or base classes to isolate the unit under test from concrete implementations.
-
-- Behavior Verification
-  > Behavior Verification focuses on verifying that methods are called with expected arguments and in the correct order, rather than just checking return values.
-
-- Return Value Stubbing
-  > Return Value Stubbing configures mock objects to return specific values when their methods are called, allowing control over dependency behavior during tests.
-
-- Exception Injection
-  > Exception Injection uses mocks to simulate error conditions by throwing exceptions, enabling tests to verify error handling logic.
-
-#### 1.2.2. Mock Test Workflow
-
-1. Identify Dependencies
-
-    Identify interfaces or classes that need to be mocked (e.g., database connections, file systems, network services, external APIs).
-
-2. Create Mock Classes
-
-    Create mock classes for interfaces under `test(s)/unit/<module>/` using GMock's `MOCK_METHOD` macro.
-
-3. Register with CMake
-
-    Add the test file to `test(s)/unit/<module>/CMakeLists.txt` using `meta_gtest()` with `WITH_GMOCK` option.
-
-    ```cmake
-    meta_gtest(
-      WITH_GMOCK
-      TARGET ${PROJECT_NAME}-test
-      SOURCES
-        <header>_test.cpp
-    )
-    ```
-
-4. Define Expectations
-
-    Set up expectations using `EXPECT_CALL` to specify:
-    - Which methods should be called
-    - Expected arguments (using matchers)
-    - Call frequency (Times, AtLeast, AtMost, etc.)
-    - Return values or actions
-
-5. Test Coverage Requirements
-
-    Include comprehensive scenarios:
-    - Normal operation with mocked dependencies
-    - Error conditions (exceptions, null returns, invalid data)
-    - Boundary conditions in dependency interactions
-    - Sequence of calls to multiple dependencies
-    - Concurrent access scenarios when applicable
-
-6. Apply Templates
-
-    Structure all tests using [mock test template](#125-mock-test-template) pattern.
-
-#### 1.2.3. Mock Test Commands
-
-- Build Mock Tests
-  > CMake preset configuration with GMock support and Compile with Ninja.
-
-  ```bash
-  make cmake-gcc-test-unit-build
-  ```
-
-- Run Mock Tests
-  > Execute tests via ctest (mock tests are part of unit tests).
-
-  ```bash
-  make cmake-gcc-test-unit-run
-  ```
-
-- Run Code Coverage
-  > Generate coverage reports including mock test coverage.
-
-  ```bash
-  make cmake-gcc-test-unit-coverage
-  ```
-
-#### 1.2.4. Mock Test Style
-
-- Test Framework
-  > Use [Google Mock (GMock)](https://google.github.io/googletest/gmock_for_dummies.html) framework via `#include <gmock/gmock.h>` and `#include <gtest/gtest.h>`.
-
-- Mock Class Definition
-  > Define mock classes inheriting from the interface to be mocked. Use `MOCK_METHOD` macro with proper method signature, including const qualifiers and override specifiers.
-
-- Include Headers
-  > GMock/GTest headers are listed first in mock test files as a convention to clearly identify the file as a test file using the GMock framework.
-
-  Include necessary headers in this order:
-    1. GMock/GTest headers (`<gmock/gmock.h>`, `<gtest/gtest.h>`)
-    2. Standard library headers (`<memory>`, `<string>`, etc.)
-    3. Project interface headers
-    4. Project implementation headers
-
-- Namespace
-  > Use `using namespace <namespace>;` and `using namespace ::testing;` for convenience within test functions to access GMock matchers and actions.
-
-- Test Organization
-  > Use table-driven testing for multiple scenarios with the same mock setup. Each `TEST` or `TEST_F` should focus on one aspect of the interaction with mocked dependencies.
-
-- Mock Types
-  > - **NiceMock**: Ignores unexpected calls (use for non-critical dependencies)
-  > - **StrictMock**: Fails on any unexpected calls (use for strict verification)
-  > - **Default Mock**: Warns on unexpected calls (balanced approach)
-
-- Expectations
-  > - Use `EXPECT_CALL` to set up expectations before exercising the unit under test
-  > - Chain matchers with `.With()`, `.WillOnce()`, `.WillRepeatedly()`, `.Times()`
-  > - Prefer specific matchers (`Eq()`, `Gt()`, `_`) over generic ones when possible
-
-- Matchers and Actions
-  > - Use built-in matchers: `_` (anything), `Eq()`, `Ne()`, `Lt()`, `Gt()`, `Le()`, `Ge()`, `IsNull()`, `NotNull()`
-  > - Container matchers: `IsEmpty()`, `SizeIs()`, `Contains()`, `ElementsAre()`
-  > - String matchers: `StartsWith()`, `EndsWith()`, `HasSubstr()`, `MatchesRegex()`
-  > - Use `Return()`, `ReturnRef()`, `Throw()`, `DoAll()`, `Invoke()` for actions
-
-- Sequence Verification
-  > Use `InSequence` or `Sequence` objects when call order matters.
-
-- Traceability
-  > Employ `SCOPED_TRACE(tc.label)` for traceable failures in table-driven mock tests.
-
-- Assertions
-  > Use `EXPECT_*` macros to allow all test cases to run. Mock expectations are automatically verified at the end of each test.
-
-- Documentation References
-  - [GMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) a getting started guide.
-  - [GMock Cookbook](https://google.github.io/googletest/gmock_cook_book.html) for advanced techniques and recipes.
-  - [GMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) a quick reference for matchers and actions.
-
-#### 1.2.5. Mock Test Template
-
-Use this template (In-Got-Want + Table-Driven + AAA + Mocks) applying Google Mock example for new mock test functions. Replace placeholders with actual values and adjust as needed for the use case.
-
-```cpp
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
-
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "<module>/<interface>.hpp"
-#include "<module>/<implementation>.hpp"
-
-using namespace <namespace>;
-using namespace ::testing;
-
-// Mock class definition
-class Mock<Interface> : public <Interface>
-{
-public:
-  MOCK_METHOD(<return_type>, <method_name>, (<param_types>), (override));
-  MOCK_METHOD(<return_type>, <method_name2>, (<param_types>), (const, override));
-  // Add more MOCK_METHOD declarations as needed
-};
-
-// Example with In-Got-Want and Table-Driven Testing
-TEST(<Module>Test, <FunctionName>WithMock)
-{
-  // In-Got-Want
-  struct Tests
-  {
-    std::string label;
-
-    struct In
-    {
-      /* input types and names */
-    } in;
-
-    struct Want
-    {
-      <output_type> expected;     // expected output type(s) and name(s)
-      /* expected mock call parameters and behavior */
-      <size_t> call_count;        // number of times method should be called
-      <return_type> return_value; // value mock should return
-      <param_type> param;         // expected parameter value(s)
-    } want;
-  };
-
-  // Table-Driven Testing
-  const std::vector<Tests> tests = {
-    {
-      "case description 1", 
-      /* in */ {/* input values */}, 
-      /* want */ {/* expected */, /* call_count */ 1, /* return_value */ {}, /* param */ {}}
-    },
-    {
-      "case description 2", 
-      /* in */ {/* input values */}, 
-      /* want */ {/* expected */, /* call_count */ 1, /* return_value */ {}, /* param */ {}}
-    },
-    // add more cases as needed
-  };
-
-  for (const auto &tc : tests)
-  {
-    SCOPED_TRACE(tc.label);
-
-    // Arrange
-    auto mock_dependency = std::make_shared<Mock<Interface>>();
-    
-    // Set up expectations
-    EXPECT_CALL(*mock_dependency, <method_name>(tc.want.param))
-        .Times(tc.want.call_count)
-        .WillOnce(Return(tc.want.return_value));
-    
-    <Implementation> object(mock_dependency);
-    // additional setup as needed
-
-    // Act
-    auto got = object.<function>(tc.in.<input>);
-
-    // Assert
-    EXPECT_EQ(got, tc.want.expected);
-    // Mock expectations are automatically verified here
-  }
-}
-
-// Example with strict mock and sequence verification
-TEST(<Module>Test, <FunctionName>WithSequence)
-{
-  // Arrange
-  auto mock_dependency = std::make_shared<StrictMock<Mock<Interface>>>();
-  
-  InSequence seq;
-  EXPECT_CALL(*mock_dependency, <method1>(_)).WillOnce(Return(<value1>));
-  EXPECT_CALL(*mock_dependency, <method2>(_)).WillOnce(Return(<value2>));
-  
-  <Implementation> object(mock_dependency);
-
-  // Act
-  auto got = object.<function>();
-
-  // Assert
-  EXPECT_EQ(got, <expected>);
-}
-
-// Example with exception testing
-TEST(<Module>Test, <FunctionName>WithException)
-{
-  // Arrange
-  auto mock_dependency = std::make_shared<Mock<Interface>>();
-  
-  EXPECT_CALL(*mock_dependency, <method_name>(_))
-      .WillOnce(Throw(std::runtime_error("test error")));
-  
-  <Implementation> object(mock_dependency);
-
-  // Act & Assert
-  EXPECT_THROW(object.<function>(), std::runtime_error);
-}
-```
-
-### 1.3. Fuzz Testing
-
-Instructions for AI coding agents on automating fuzz test creation using consistent software testing patterns in this C++ project.
-
-<!-- TODO -->
-
-### 1.4. Benchmark Testing
-
-Instructions for AI coding agents on automating benchmark test creation using consistent software testing patterns in this C++ project.
-
-<!-- TODO -->
+| Skill                                                          | Description                                  |
+| -------------------------------------------------------------- | -------------------------------------------- |
+| [unit-testing](.github/skills/unit-testing/SKILL.md)           | Unit test creation using GoogleTest (GTest)  |
+| [mock-testing](.github/skills/mock-testing/SKILL.md)           | Mock test creation using Google Mock (GMock) |
+| [fuzz-testing](.github/skills/fuzz-testing/SKILL.md)           | Fuzz test creation (TODO)                    |
+| [benchmark-testing](.github/skills/benchmark-testing/SKILL.md) | Benchmark test creation (TODO)               |
