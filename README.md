@@ -161,7 +161,7 @@ AI Agents are automated tools that assist in various development tasks such as c
     - [CMakePresets.json](CMakePresets.json)
       > CMake presets for configuring and building the project.
 
-    - [tools/cmake/](tools/cmake/)
+    - [CMake Modules](tools/cmake/)
       > CMake modules to streamline the build system.
 
 2. Usage and Instructions
