@@ -110,18 +110,10 @@ AI Agents are automated tools that assist in various development tasks such as c
 
 #### 2.3.1. Scripts
 
-[scripts/](scripts/README.md) provides scripts to bootstrap, setup, and teardown a software development workspace with requisites.
-
 1. Insights and Details
 
-    - [bootstrap.sh](scripts/bootstrap.sh)
-      > Initializes a software development workspace with requisites.
-
-    - [setup.sh](scripts/setup.sh)
-      > Installs and configures all dependencies essential for development.
-
-    - [teardown.sh](scripts/teardown.sh)
-      > Removes development artifacts and restores the host to its pre-setup state.
+    - [scripts/](scripts/README.md)
+      > Provides scripts to bootstrap, setup, and teardown a software development workspace with requisites.
 
 2. Usage and Instructions
 
@@ -141,21 +133,10 @@ AI Agents are automated tools that assist in various development tasks such as c
 
 ### 2.4. Dev Containers
 
-[.devcontainer/](.devcontainer/README.md) provides Dev Containers as a consistent development environment using Docker containers.
-
 1. Insights and Details
 
-    - [cpp/](.devcontainer/cpp/)
-      > Dev Container configuration for C++ development environment.
-
-      ```json
-      // ...
-      "postCreateCommand": "sudo make bootstrap && sudo make setup",
-      // ...
-      ```
-
-      > [!NOTE]
-      > The `devcontainer.json` runs the `bootstrap` and `setup` tasks to initialize and configure the development environment.
+    - [.devcontainer/](.devcontainer/README.md)
+      > Provides Dev Containers as a consistent development environment using Docker containers.
 
 2. Usage and Instructions
 
@@ -179,6 +160,9 @@ AI Agents are automated tools that assist in various development tasks such as c
 
     - [CMakePresets.json](CMakePresets.json)
       > CMake presets for configuring and building the project.
+
+    - [tools/cmake/](tools/cmake/)
+      > CMake modules to streamline the build system.
 
 2. Usage and Instructions
 
@@ -236,9 +220,6 @@ AI Agents are automated tools that assist in various development tasks such as c
       meta_gtest(ENABLE ON ...)
       ```
 
-    - [AGENTS.md](./AGENTS.md)
-      > Automate unit test generation using Large Language Models (LLMs) Agents.
-
 2. Usage and Instructions
 
     - CI/CD
@@ -252,6 +233,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       ```bash
       make cmake-gcc-test-unit-run
       ```
+
+    - AI Agents
+      > Instruct Agent Skills capabilities to to perform [Unit Testing](.github/skills/unit-testing/SKILL.md) tasks.
 
 #### 2.7.2. Code Coverage
 
@@ -451,7 +435,7 @@ AI Agents are automated tools that assist in various development tasks such as c
     - [conftest.toml](conftest.toml)
       > Configuration file for Conftest specifying policy paths and output formats.
 
-    - [tests/policy](tests/policy/)
+    - [tests/policy/](tests/policy/)
       > Directory contains Rego policies for Conftest to enforce best practices and compliance standards.
 
 2. Usage and Instructions

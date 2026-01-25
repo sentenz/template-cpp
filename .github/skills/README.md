@@ -27,4 +27,4 @@ Skills are documented in individual `SKILL.md` files located in appropriate subd
 ## 2. References
 
 - [AGENTS.md](AGENTS.md) page.
-- [Agent Skills Specification](https://agentskills.io/specification) page.
+- Agent Skills [Specification](https://agentskills.io/specification) page.

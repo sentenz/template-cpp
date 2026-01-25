@@ -1,5 +1,7 @@
 # `.devcontainer/`
 
+The `.devcontainer/` directory contains configuration files for setting up a [Development Containers](https://containers.dev/) environment.
+
 - [1. Details](#1-details)
   - [1.1. Dev Containers](#11-dev-containers)
 - [2. References](#2-references)
@@ -8,10 +10,17 @@
 
 ### 1.1. Dev Containers
 
-The `.devcontainer/` directory contains configuration files for setting up a [Development Containers](https://containers.dev/) environment.
-
 - `cpp/`
   > Develop [C++](https://github.com/devcontainers/images/tree/main/src/cpp) applications on Linux. Includes Debian C++ build tools.
+
+  ```json
+  // ...
+  "postCreateCommand": "sudo make bootstrap && sudo make setup",
+  // ...
+  ```
+
+  > [!NOTE]
+  > The `devcontainer.json` runs the `bootstrap` and `setup` tasks to initialize and configure the development environment.
 
 - `dotnet/`
   > Develop [C# and .NET](https://github.com/devcontainers/images/tree/main/src/dotnet) based applications. Includes all needed SDKs, extensions, and dependencies.
