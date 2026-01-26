@@ -52,7 +52,7 @@ A modular C++ project using a component-based architecture, with CMake as the bu
   > Git extension for managing large files (assets, binaries) outside normal Git history.
 
 - [Make](https://www.gnu.org/software/make/)
-  > Build automation tool used to define and run project tasks.
+  > Task automation tool to manage build processes and workflows.
 
 ## 2. Contribute
 

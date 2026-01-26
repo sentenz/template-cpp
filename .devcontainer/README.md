@@ -13,15 +13,6 @@ The `.devcontainer/` directory contains configuration files for setting up a [De
 - `cpp/`
   > Develop [C++](https://github.com/devcontainers/images/tree/main/src/cpp) applications on Linux. Includes Debian C++ build tools.
 
-  ```json
-  // ...
-  "postCreateCommand": "sudo make bootstrap && sudo make setup",
-  // ...
-  ```
-
-  > [!NOTE]
-  > The `devcontainer.json` runs the `bootstrap` and `setup` tasks to initialize and configure the development environment.
-
 - `dotnet/`
   > Develop [C# and .NET](https://github.com/devcontainers/images/tree/main/src/dotnet) based applications. Includes all needed SDKs, extensions, and dependencies.
 
@@ -30,6 +21,15 @@ The `.devcontainer/` directory contains configuration files for setting up a [De
 
 - `python/`
   > Develop [Python 3](https://github.com/devcontainers/images/tree/main/src/python) applications.
+
+> [!NOTE]
+> The `devcontainer.json` runs the `bootstrap` and `setup` tasks to initialize and configure the development environment.
+>
+> ```json
+> // ...
+> "postCreateCommand": "sudo make bootstrap && sudo make setup",
+> // ...
+> ```
 
 ## 2. References
 
