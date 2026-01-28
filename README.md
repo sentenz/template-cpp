@@ -67,8 +67,24 @@ AI Agents are automated tools that assist in various development tasks such as c
     - [AGENTS.md](AGENTS.md)
       > Instructions for AI coding agents working with the project.
 
-    - [SKILLS.md](.github/skills/README.md)
+    - [SKILL.md](.github/skills/README.md)
       > Instructions for AI agent skills used in the project.
+
+2. Usage and Instructions
+
+    - Implicit Invocation
+      > AI Agents can be implicitly invoked based on file paths, programming languages, or specific keywords in user prompts.
+
+      ```plaintext
+      .github/skills/<skill-name>/SKILL.md
+      ```
+
+    - Explicit Invocation
+      > AI Agents can be explicitly invoked by specifying the skill name in user prompts.
+
+      ```plaintext
+      @agent <skill-name> <task-description>
+      ```
 
 ### 2.2. Task Runner
 
