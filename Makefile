@@ -262,12 +262,12 @@ POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.64.0@sha256:eb634
 #
 ## Run Conftest container in REPL (Read-Eval-Print-Loop) to evaluate policies against input data and generate a report
 policy-conftest-run:
-	@mkdir -p logs/policy
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make policy-conftest-run <filepath>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/policy
 
 	docker run --rm -v "$$(pwd)":/workspace -w /workspace "$(POLICY_IMAGE_CONFTEST)" test "$(filter-out $@,$(MAKECMDGOALS))" > logs/policy/conftest-report.json 2>&1
 .PHONY: policy-conftest-run
@@ -295,12 +295,12 @@ sast-trivy-fs:
 #
 ## Scan a container image for vulnerabilities using Trivy
 sast-trivy-image:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-image <image_name>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" image --output logs/sast/trivy-image.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-image
@@ -309,12 +309,12 @@ sast-trivy-image:
 #
 ## Scan a container image for license compliance using Trivy
 sast-trivy-image-license:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-image-license <image_name>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" image --scanners license --format table --output logs/sast/trivy-image-license.txt "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-image-license
@@ -323,12 +323,12 @@ sast-trivy-image-license:
 #
 ## Scan a remote repository for vulnerabilities using Trivy
 sast-trivy-repository:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-repository <repo_url>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" repository --output logs/sast/trivy-repository.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-repository
@@ -337,12 +337,12 @@ sast-trivy-repository:
 #
 ## Scan a rootfs e.g. `/` for vulnerabilities using Trivy
 sast-trivy-rootfs:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-rootfs <path>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" rootfs --output logs/sast/trivy-rootfs.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-rootfs
@@ -351,12 +351,12 @@ sast-trivy-rootfs:
 #
 ## Scan SBOM for vulnerabilities using Trivy
 sast-trivy-sbom-scan:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-sbom-scan <sbom_path>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" sbom --output logs/sast/trivy-sbom.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-scan
@@ -365,12 +365,12 @@ sast-trivy-sbom-scan:
 #
 ## Generate SBOM in CycloneDX format for a container image using Trivy
 sast-trivy-sbom-cyclonedx-image:
-	@mkdir -p logs/sbom
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-sbom-cyclonedx-image <image_name>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sbom
 
 	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" image --format cyclonedx --output logs/sbom/sbom-image.cdx.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-cyclonedx-image
@@ -379,12 +379,12 @@ sast-trivy-sbom-cyclonedx-image:
 #
 ## Generate SBOM in CycloneDX format for a file system using Trivy
 sast-trivy-sbom-cyclonedx-fs:
-	@mkdir -p logs/sbom
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-sbom-cyclonedx-fs <path>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sbom
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" filesystem --format cyclonedx --output logs/sbom/sbom-fs.cdx.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-cyclonedx-fs
@@ -393,12 +393,12 @@ sast-trivy-sbom-cyclonedx-fs:
 #
 ## Scan SBOM for license compliance using Trivy
 sast-trivy-sbom-license:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-sbom-license <sbom_path>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" sbom --scanners license --format table --output logs/sast/trivy-sbom-license.txt "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-license
@@ -407,12 +407,12 @@ sast-trivy-sbom-license:
 #
 ## Scan the verified SBOM attestation using Trivy
 sast-trivy-sbom-attestation:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-trivy-sbom-attestation <intoto_sbom_path>"; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" sbom "$(filter-out $@,$(MAKECMDGOALS))"
 .PHONY: sast-trivy-sbom-attestation
@@ -446,8 +446,6 @@ sast-cosign-attest:
 #
 ## Verify SBOM attestation for an image using Cosign
 sast-cosign-verify:
-	@mkdir -p logs/sast
-
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-cosign-verify <image_name>"; \
 		exit 1; \
@@ -456,6 +454,8 @@ sast-cosign-verify:
 		echo "Error: cosign.pub not found. Run 'make sast-cosign-generate-key-pair' first."; \
 		exit 1; \
 	fi
+
+	@mkdir -p logs/sast
 
 	docker run --rm -v "${HOME}/.docker/config.json:/root/.docker/config.json" -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_COSIGN)" verify-attestation --key cosign.pub --type cyclonedx "$(filter-out $@,$(MAKECMDGOALS))" > logs/sbom/sbom.cdx.intoto.jsonl 2> logs/sast/cosign-verify.log
 .PHONY: sast-cosign-verify
