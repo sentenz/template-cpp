@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/sentenz/template-cpp/compare/1.2.0...1.2.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* ensure log directories are created before running scans in Makefile ([55f3f3e](https://github.com/sentenz/template-cpp/commit/55f3f3efa544bb7a0c278d4742f46a5c4d3921f0))
+
 # [1.2.0](https://github.com/sentenz/template-cpp/compare/1.1.1...1.2.0) (2026-01-07)
 
 
