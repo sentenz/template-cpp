@@ -33,6 +33,7 @@ readonly -A APT_PACKAGES=(
   ["ninja-build"]=""
   ["ccache"]=""
   ["sccache"]=""
+  ["doxygen"]=""
 )
 
 # Control Flow Logic
