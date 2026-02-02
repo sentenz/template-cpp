@@ -34,6 +34,7 @@ readonly -A APT_PACKAGES=(
   ["ccache"]=""
   ["sccache"]=""
   ["doxygen"]=""
+  ["graphviz"]=""
 )
 
 # Control Flow Logic

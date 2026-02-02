@@ -459,3 +459,20 @@ sast-cosign-verify:
 
 	docker run --rm -v "${HOME}/.docker/config.json:/root/.docker/config.json" -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_COSIGN)" verify-attestation --key cosign.pub --type cyclonedx "$(filter-out $@,$(MAKECMDGOALS))" > logs/sbom/sbom.cdx.intoto.jsonl 2> logs/sast/cosign-verify.log
 .PHONY: sast-cosign-verify
+
+# ── SSG Manager ────────────────────────────────────────────────────────────────────────────────
+
+## Generate Content using Static Site Generator (SSG) for Doxygen documentation
+ssg-doxygen-generate:
+	@doxygen Doxyfile
+.PHONY: ssg-doxygen-generate
+
+## Serve the generated Static Site Generator (SSG) for Doxygen documentation on a local web server
+ssg-doxygen-serve:
+	@OUT="$$(awk -F'= *' '/^OUTPUT_DIRECTORY/ {gsub(/^[ \t]+|[ \t]+$$/,"",$$2); print $$2; exit}' Doxyfile 2>/dev/null)"; \
+	HTML="$$(awk -F'= *' '/^HTML_OUTPUT/ {gsub(/^[ \t]+|[ \t]+$$/,"",$$2); print $$2; exit}' Doxyfile 2>/dev/null)"; \
+	OUTDIR="$${OUT:+$${OUT}/}$${HTML:-html}"; \
+	if [ ! -d "$$OUTDIR" ]; then echo "error: generated docs not found in $$OUTDIR; run 'make ssg-doxygen-generate' first" >&2; exit 1; fi; \
+	echo "Serving $$OUTDIR at http://localhost:8000"; \
+	python3 -m http.server --directory "$$OUTDIR" 8000
+.PHONY: ssg-doxygen-serve
