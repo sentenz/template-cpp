@@ -1,0 +1,121 @@
+# SPDX-License-Identifier: Apache-2.0
+
+name: Doxygen
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "src/**"
+      - "docs/**"
+      - "Doxyfile"
+      - ".github/workflows/doxygen.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "src/**"
+      - "docs/**"
+      - "Doxyfile"
+      - ".github/workflows/doxygen.yml"
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Doxygen Action - Build Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Install Doxygen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+
+      - name: Verify Doxygen Installation
+        run: |
+          doxygen --version
+          dot -V
+
+      - name: Generate Doxyfile (if not exists)
+        run: |
+          if [ ! -f "Doxyfile" ]; then
+            echo "Generating default Doxyfile..."
+            doxygen -g Doxyfile
+
+            # Configure Doxyfile for the project
+            sed -i 's/^PROJECT_NAME.*=.*/PROJECT_NAME           = "utility-c"/' Doxyfile
+            sed -i 's/^PROJECT_BRIEF.*=.*/PROJECT_BRIEF          = "C Utility Library"/' Doxyfile
+            sed -i 's/^OUTPUT_DIRECTORY.*=.*/OUTPUT_DIRECTORY       = public/' Doxyfile
+            sed -i 's/^INPUT.*=.*/INPUT                  = include src/' Doxyfile
+            sed -i 's/^RECURSIVE.*=.*/RECURSIVE              = YES/' Doxyfile
+            sed -i 's/^EXTRACT_ALL.*=.*/EXTRACT_ALL            = YES/' Doxyfile
+            sed -i 's/^EXTRACT_PRIVATE.*=.*/EXTRACT_PRIVATE        = NO/' Doxyfile
+            sed -i 's/^EXTRACT_STATIC.*=.*/EXTRACT_STATIC         = YES/' Doxyfile
+            sed -i 's/^GENERATE_HTML.*=.*/GENERATE_HTML          = YES/' Doxyfile
+            sed -i 's/^GENERATE_LATEX.*=.*/GENERATE_LATEX         = NO/' Doxyfile
+            sed -i 's/^GENERATE_XML.*=.*/GENERATE_XML           = NO/' Doxyfile
+            sed -i 's/^HTML_OUTPUT.*=.*/HTML_OUTPUT            = .' Doxyfile
+            sed -i 's/^HAVE_DOT.*=.*/HAVE_DOT               = YES/' Doxyfile
+            sed -i 's/^DOT_IMAGE_FORMAT.*=.*/DOT_IMAGE_FORMAT       = svg/' Doxyfile
+            sed -i 's/^INTERACTIVE_SVG.*=.*/INTERACTIVE_SVG        = YES/' Doxyfile
+            sed -i 's/^CALL_GRAPH.*=.*/CALL_GRAPH             = YES/' Doxyfile
+            sed -i 's/^CALLER_GRAPH.*=.*/CALLER_GRAPH           = YES/' Doxyfile
+            sed -i 's/^FILE_PATTERNS.*=.*/FILE_PATTERNS          = *.c *.h *.cc *.hpp *.cpp/' Doxyfile
+            sed -i 's/^EXCLUDE_PATTERNS.*=.*/EXCLUDE_PATTERNS       = *_test.cc *_test.c/' Doxyfile
+            sed -i 's/^SOURCE_BROWSER.*=.*/SOURCE_BROWSER         = YES/' Doxyfile
+            sed -i 's/^INLINE_SOURCES.*=.*/INLINE_SOURCES         = NO/' Doxyfile
+            sed -i 's/^OPTIMIZE_OUTPUT_FOR_C.*=.*/OPTIMIZE_OUTPUT_FOR_C  = YES/' Doxyfile
+            sed -i 's/^TYPEDEF_HIDES_STRUCT.*=.*/TYPEDEF_HIDES_STRUCT   = YES/' Doxyfile
+            sed -i 's/^SORT_MEMBER_DOCS.*=.*/SORT_MEMBER_DOCS       = YES/' Doxyfile
+            sed -i 's/^SORT_BRIEF_DOCS.*=.*/SORT_BRIEF_DOCS        = YES/' Doxyfile
+            sed -i 's/^WARN_IF_UNDOCUMENTED.*=.*/WARN_IF_UNDOCUMENTED   = YES/' Doxyfile
+            sed -i 's/^WARN_NO_PARAMDOC.*=.*/WARN_NO_PARAMDOC       = YES/' Doxyfile
+          fi
+
+      - name: Generate Documentation
+        run: doxygen Doxyfile
+
+      - name: Verify Documentation Output
+        run: |
+          if [ ! -d "public/" ]; then
+            echo "Error: Documentation output directory not found!"
+            exit 1
+          fi
+          echo "Documentation generated successfully."
+          ls -la public/
+
+      - name: Upload Documentation Artifact
+        uses: actions/upload-pages-artifact@v4.0.0
+        with:
+          path: public/
+
+  deploy:
+    name: Doxygen Action - Deploy to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5
