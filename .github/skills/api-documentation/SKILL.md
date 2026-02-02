@@ -2,20 +2,21 @@
 name: api-documentation
 description: Adds Doxygen-compatible documentation comments to C++ header files. Use this skill exclusively for adding or improving API documentation in existing header files (*.hpp, *.h). Do NOT create new resource files such as Doxyfile, scripts, or README files.
 metadata:
-  version: "1.2"
+  version: "1.3.0"
   activation:
     implicit: true
-    priority: 0
+    priority: 2
     triggers:
       - "doxygen"
-      - "api documentation"
+      - "API docs"
+      - "API documentation"
       - "document the API"
       - "add doc comments"
     match:
       # Prefer C/C++ related prompts and repository areas.
       languages: ["cpp", "c", "c++"]
       paths: ["src/**/*.hpp", "src/**/*.h", "include/**/*.hpp", "include/**/*.h"]
-      prompt_regex: "(?i)(api doc|doxygen|document the API|api documentation|doc comments)"
+      prompt_regex: "(?i)(api doc|doxygen|document the API|API docs|doc comments)"
   usage:
     load_on_prompt: true
     autodispatch: true
@@ -30,32 +31,34 @@ Instructions for AI coding agents on adding Doxygen-compatible documentation com
 
 - [1. Benefits](#1-benefits)
 - [2. Principles](#2-principles)
-  - [2.1. Documentation Principles](#21-documentation-principles)
-  - [2.2. Documentation Hierarchy](#22-documentation-hierarchy)
 - [3. Patterns](#3-patterns)
   - [3.1. File Documentation](#31-file-documentation)
-  - [3.2. Class Documentation](#32-class-documentation)
-  - [3.3. Function Documentation](#33-function-documentation)
-  - [3.4. Member Documentation](#34-member-documentation)
-  - [3.5. Grouping and Modules](#35-grouping-and-modules)
+  - [3.2. Namespace Documentation](#32-namespace-documentation)
+  - [3.3. Class Documentation](#33-class-documentation)
+  - [3.4. Function/Method Documentation](#34-functionmethod-documentation)
+  - [3.5. Cross-References](#35-cross-references)
+  - [3.6. Member Documentation](#36-member-documentation)
+  - [3.7. Enumerations](#37-enumerations)
+  - [3.8. Grouping and Modules](#38-grouping-and-modules)
+  - [3.9. Inheritance](#39-inheritance)
+  - [3.10. Formula Documentation](#310-formula-documentation)
 - [4. Workflow](#4-workflow)
 - [5. Style Guide](#5-style-guide)
 - [6. Template](#6-template)
   - [6.1. File Header Template](#61-file-header-template)
-  - [6.2. Class Template](#62-class-template)
-  - [6.3. Function Template](#63-function-template)
-  - [6.4. Member Variable Template](#64-member-variable-template)
-  - [6.5. Enum Template](#65-enum-template)
-  - [6.6. Module/Group Template](#66-modulegroup-template)
+  - [6.2. Namespace Template](#62-namespace-template)
+  - [6.3. Class Template](#63-class-template)
+  - [6.4. Function Template](#64-function-template)
+  - [6.5. Member Variable Template](#65-member-variable-template)
+  - [6.6. Enumeration Template](#66-enumeration-template)
+  - [6.7. Module/Group Template](#67-modulegroup-template)
+  - [6.8. Formula Template](#68-formula-template)
 - [7. References](#7-references)
 
 ## 1. Benefits
 
 - Discoverability
   > Well-documented APIs enable developers to quickly understand and use components without reading implementation details.
-
-- Consistency
-  > Consistent documentation reduces onboarding time and helps maintainers understand design decisions and constraints.
 
 - Maintainability
   > Documentation embedded in source code stays synchronized with implementation, reducing drift between code and documentation.
@@ -65,46 +68,37 @@ Instructions for AI coding agents on adding Doxygen-compatible documentation com
 
 ## 2. Principles
 
-### 2.1. Documentation Principles
-
 Effective API documentation follows these core principles.
 
 - Complete
   > Document all public APIs including classes, functions, parameters, return values, and exceptions. Private implementation details may be omitted.
 
-- Accurate
-  > Documentation must match the actual behavior. Update documentation whenever the implementation changes.
+- Contextual
+  > Documentation provides context about usage patterns, performance characteristics, and thread safety guarantees.
+
+- Consistent
+  > Use a uniform style, format, terminology and structure throughout the API documentation using the patterns defined in this skill.
 
 - Concise
   > Use clear, brief descriptions. Avoid redundant information that restates what is obvious from the signature.
 
+- Concrete
+  > Provide specific details about behavior, edge cases, and error conditions rather than vague statements.
+
+- Convenient
+  > Documentation should be easy to access and navigate, integrated with development tools and workflows.
+
+- Accurate
+  > Documentation must match the actual behavior. Update documentation whenever the implementation changes.
+
 - Actionable
   > Include usage examples, preconditions, postconditions, and error handling to help developers use the API correctly.
-
-- Consistent
-  > Follow the same style and structure throughout the codebase using the patterns defined in this skill.
-
-### 2.2. Documentation Hierarchy
-
-The documentation hierarchy ensures comprehensive coverage at all levels.
-
-- File Level
-  > Every header file should have a file-level comment describing its purpose, author, and license.
-
-- Class Level
-  > Each class or struct should have a brief description explaining its responsibility and usage context.
-
-- Function Level
-  > Public functions require documentation of parameters, return values, exceptions, and preconditions/postconditions.
-
-- Member Level
-  > Non-trivial member variables should have inline comments explaining their purpose.
 
 ## 3. Patterns
 
 ### 3.1. File Documentation
 
-File-level documentation provides context for the entire file.
+File-level documentation provides context for the entire header file.
 
 - Purpose
   > Describes the file's role in the project architecture.
@@ -115,7 +109,17 @@ File-level documentation provides context for the entire file.
 - License
   > Specifies the licensing terms (typically SPDX identifier).
 
-### 3.2. Class Documentation
+### 3.2. Namespace Documentation
+
+Namespace-level documentation describes the purpose of the namespace.
+
+- Brief
+  > A one-line summary of what the namespace contains.
+
+- Details
+  > Extended description of the namespace's role and contents.
+
+### 3.3. Class Documentation
 
 Class-level documentation describes the abstraction.
 
@@ -128,7 +132,7 @@ Class-level documentation describes the abstraction.
 - Template Parameters
   > For template classes, document each template parameter's purpose and constraints.
 
-### 3.3. Function Documentation
+### 3.4. Function/Method Documentation
 
 Function-level documentation describes the contract.
 
@@ -144,13 +148,29 @@ Function-level documentation describes the contract.
 - Exceptions
   > Document thrown exceptions with `@throws` or `@exception`.
 
+- Warnings
+  > Use `@warning` for critical warnings about misuse.
+
+- Notes
+  > Use `@note` for important information.
+
 - Preconditions
   > Document preconditions with `@pre`.
 
 - Postconditions
   > Document postconditions with `@post`.
 
-### 3.4. Member Documentation
+- Code Examples
+  > Use `@code` and `@endcode` blocks for usage examples.
+
+### 3.5. Cross-References
+
+Cross-references link related documentation.
+
+- See Also
+  > Use `@see` to reference related functions, classes, or external resources.
+
+### 3.6. Member Documentation
 
 Member-level documentation clarifies data semantics.
 
@@ -160,7 +180,14 @@ Member-level documentation clarifies data semantics.
 - Block Comments
   > Use `/// description` for preceding documentation.
 
-### 3.5. Grouping and Modules
+### 3.7. Enumerations
+
+Enumerations document possible values and their meanings.
+
+- Values
+  > Document each enumerator with a brief Inline Comments description.
+
+### 3.8. Grouping and Modules
 
 Organize related elements into logical groups.
 
@@ -172,6 +199,35 @@ Organize related elements into logical groups.
 
 - Memberof
   > Use `@memberof` for explicit class membership.
+
+### 3.9. Inheritance
+
+Class hierarchies and inherited documentation.
+
+- Base Classes
+  > Document inherited classes with `@copydoc` or `@copybrief` to reuse base class documentation.
+
+### 3.10. Formula Documentation
+
+Mathematical formulas using **LaTeX** syntax for algorithms and technical documentation.
+
+- Inline Formulas
+  > Use `\f$..\f$` for formulas that appear within running text (opens LaTeX math mode).
+
+- Inline Text-Mode Formulas
+  > Use `\f(...\f)` for LaTeX elements that don't require explicit math mode (e.g., logos like `\LaTeX`).
+
+- Displayed Formulas
+  > Use `\f[...\f]` for centered, unnumbered equations on separate lines.
+
+- Environment Formulas
+  > Use `\f{environment}{...\f}` for specific LaTeX environments (e.g., `eqnarray*`, `align`).
+
+- MathJax Alternative
+  > Enable `USE_MATHJAX` in Doxyfile for client-side formula rendering without requiring LaTeX installation.
+
+- Custom Macros
+  > Use `FORMULA_MACROFILE` configuration to define reusable LaTeX commands with `\newcommand`.
 
 ## 4. Workflow
 
@@ -275,39 +331,51 @@ Use these templates for new documentation. Replace placeholders with actual valu
 
 /**
  * @file <filename>.hpp
- * @brief Brief one-line description of the file's purpose.
+ * @brief One-line description of the file's purpose.
  *
- * Detailed description of the file's contents, design decisions,
- * and any important notes for developers.
+ * Detailed description of the file's contents and design decisions.
  *
- * @author <author>
  * @author <author_name>
  * @copyright Copyright (c) <year> <organization>
- * @license SPDX-License-Identifier: LicenseRef-Proprietary
+ * @license SPDX-License-Identifier: <license_identifier>
  */
 ```
 
-### 6.2. Class Template
+### 6.2. Namespace Template
 
 ```cpp
 /**
- * @brief Brief one-line description of the class.
+ * @brief One-line description of namespace contents.
  *
- * Detailed description of the class including:
- * - Its responsibility and role in the system
- * - Key invariants maintained by the class
- * - Thread safety guarantees
- * - Example usage patterns
+ * Detailed description of the namespace's role, the types of
+ * components it contains, and how they relate to each other.
+ */
+namespace namespace_name {
+
+// Namespace contents
+
+}  // namespace namespace_name
+```
+
+### 6.3. Class Template
+
+```cpp
+/**
+ * @brief One-line description of the class.
  *
- * @code
- * ClassName obj;
- * obj.method(param);
- * @endcode
+ * Detailed description of the class responsibility, key invariants,
+ * and usage patterns.
  *
- * @tparam T Description of template parameter T.
+ * @tparam T Description of template parameter and constraints.
+ *
+ * @note Thread safety: Describe thread safety guarantees.
  *
  * @see RelatedClass
- * @since 1.0
+ *
+ * @code
+ * ClassName<int> obj;
+ * obj.method(param);
+ * @endcode
  */
 template <typename T>
 class ClassName
@@ -316,16 +384,15 @@ class ClassName
 };
 ```
 
-### 6.3. Function Template
+### 6.4. Function Template
 
 ```cpp
 /**
- * @brief Brief one-line description of what the function does.
+ * @brief One-line description of what the function does.
  *
- * Detailed description of the function including algorithm details,
- * edge cases, and usage notes.
+ * Detailed description including algorithm details and edge cases.
  *
- * @param[in] param1 Description of the first input parameter.
+ * @param[in] param1 Description of the input parameter.
  * @param[out] param2 Description of the output parameter.
  * @param[in,out] param3 Description of bidirectional parameter.
  *
@@ -338,76 +405,102 @@ class ClassName
  * @pre Preconditions that must be met before calling.
  * @post Postconditions guaranteed after successful execution.
  *
- * @note Any important notes for users.
- * @warning Any warnings about potential misuse.
- *
- * @complexity O(n) where n is the size of param1.
+ * @note Important information for users.
+ * @warning Critical warnings about potential misuse.
  *
  * @see relatedFunction()
  *
  * @code
  * auto result = functionName(input, output);
  * @endcode
- *
- * @see relatedFunction
  */
 ReturnType functionName(const InputType& param1, OutputType& param2);
 ```
 
-### 6.4. Member Variable Template
+### 6.5. Member Variable Template
 
 ```cpp
 class ClassName
 {
 private:
-  int count_;       ///< Number of items currently stored (inline-line style).
-  bool is_valid_;   ///< Whether the object is in a valid state (inline-line style).
+  int count_;       ///< Number of items currently stored.
+  bool is_valid_;   ///< Whether the object is in a valid state.
 
-  /// Brief description for simple members (single-line style).
+  /// Description for simple members.
   int simple_member_;
 
   /**
    * @brief Buffer for temporary storage.
    *
-   * Detailed explanation of the member's purpose, lifetime,
-   * and any synchronization requirements.
+   * Detailed explanation of the member's purpose and
+   * synchronization requirements.
    */
   std::vector<char> buffer_;
 };
 ```
 
-### 6.5. Enum Template
+### 6.6. Enumeration Template
 
 ```cpp
 /**
- * @brief Brief description of what this enumeration represents.
+ * @brief Description of what this enumeration represents.
  *
  * Detailed description of the enum's purpose and usage context.
  */
 enum class EnumName
 {
-  Success,     ///< Description, e.g. Operation completed successfully.
-  Error,       ///< Description, e.g. Operation failed with an error.
-  Pending,     ///< Description, e.g. Operation is still in progress.
-  NotFound     ///< Description, e.g. Requested item was not found.
+  Success,     ///< Operation completed successfully.
+  Error,       ///< Operation failed with an error.
+  Pending,     ///< Operation is still in progress.
+  NotFound     ///< Requested item was not found.
 };
 ```
 
-### 6.6. Module/Group Template
+### 6.7. Module/Group Template
 
 ```cpp
 /**
  * @defgroup module_name Module Display Name
- * @brief Brief one-line description of the module/group.
+ * @brief One-line description of the module.
  *
- * Detailed description of the module/group purpose, components.
+ * Detailed description of the module purpose and components.
  *
  * @{
  */
 
 // Classes and functions belonging to this group
 
-/** @} */ // End of module_name
+/** @} */  // End of module_name
+```
+
+### 6.8. Formula Template
+
+```cpp
+/**
+ * @brief Calculates the Euclidean distance between two points.
+ *
+ * The distance between \f$(x_1,y_1)\f$ and \f$(x_2,y_2)\f$ is
+ * \f$\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}\f$.
+ *
+ * For complex equations, use displayed formulas:
+ * \f[
+ *   d = \sqrt{\sum_{i=1}^{n}(p_i - q_i)^2}
+ * \f]
+ *
+ * Multi-line equations using eqnarray environment:
+ * \f{eqnarray*}{
+ *   E &=& mc^2 \\
+ *   F &=& ma
+ * \f}
+ *
+ * @param[in] x1 X-coordinate of the first point.
+ * @param[in] y1 Y-coordinate of the first point.
+ * @param[in] x2 X-coordinate of the second point.
+ * @param[in] y2 Y-coordinate of the second point.
+ *
+ * @return The Euclidean distance \f$d \geq 0\f$.
+ */
+double distance(double x1, double y1, double x2, double y2);
 ```
 
 ## 7. References
@@ -415,4 +508,5 @@ enum class EnumName
 - Doxygen [Manual](https://www.doxygen.nl/manual/) guide.
 - Doxygen [Commands](https://www.doxygen.nl/manual/commands.html) reference.
 - Doxygen [Configuration](https://www.doxygen.nl/manual/config.html) reference.
+- Doxygen [Formulas](https://www.doxygen.nl/manual/formulas.html) reference.
 - Google C++ Style Guide [Comments](https://google.github.io/styleguide/cppguide.html#Comments) section.
