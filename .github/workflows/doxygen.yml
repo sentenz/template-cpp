@@ -46,11 +46,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y doxygen graphviz
 
-      - name: Verify Doxygen Installation
-        run: |
-          doxygen --version
-          dot -V
-
       - name: Generate Doxyfile (if not exists)
         run: |
           if [ ! -f "Doxyfile" ]; then
@@ -90,15 +85,6 @@ jobs:
       - name: Generate Documentation
         run: doxygen Doxyfile
 
-      - name: Verify Documentation Output
-        run: |
-          if [ ! -d "public/" ]; then
-            echo "Error: Documentation output directory not found!"
-            exit 1
-          fi
-          echo "Documentation generated successfully."
-          ls -la public/
-
       - name: Upload Documentation Artifact
         uses: actions/upload-pages-artifact@v4.0.0
         with:
@@ -106,7 +92,7 @@ jobs:
 
   deploy:
     name: Doxygen Action - Deploy to GitHub Pages
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:
