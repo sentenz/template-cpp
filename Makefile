@@ -272,6 +272,20 @@ policy-conftest-run:
 	docker run --rm -v "$$(pwd)":/workspace -w /workspace "$(POLICY_IMAGE_CONFTEST)" test "$(filter-out $@,$(MAKECMDGOALS))" > logs/policy/conftest-report.json 2>&1
 .PHONY: policy-conftest-run
 
+# Usage: make policy-regal-lint <filepath>
+#
+## Lint Rego policies using Regal and generate a report
+policy-regal-lint:
+	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+		echo "usage: make policy-regal-lint"; \
+		exit 1; \
+	fi
+
+	@mkdir -p logs/analysis
+
+	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(POLICY_IMAGE_REGAL)" regal lint "$(filter-out $@,$(MAKECMDGOALS))" --format json > logs/analysis/regal.json 2>&1
+.PHONY: policy-regal-lint
+
 # ── SAST Manager ─────────────────────────────────────────────────────────────────────────────────
 
 SAST_IMAGE_TRIVY ?= aquasec/trivy:0.68.2@sha256:05d0126976bdedcd0782a0336f77832dbea1c81b9cc5e4b3a5ea5d2ec863aca7
