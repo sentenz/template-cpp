@@ -9,38 +9,38 @@ A modular C++ project using a component-based architecture, with CMake as the bu
   - [1.1. Prerequisites](#11-prerequisites)
 - [2. Contribute](#2-contribute)
   - [2.1. AI Agents](#21-ai-agents)
-  - [2.2. Task Runner](#22-task-runner)
-    - [2.2.1. Make](#221-make)
-  - [2.3. Bootstrap](#23-bootstrap)
-    - [2.3.1. Scripts](#231-scripts)
-  - [2.4. Dev Containers](#24-dev-containers)
-  - [2.5. Build System](#25-build-system)
-    - [2.5.1. CMake](#251-cmake)
-  - [2.6. Dependency Manager](#26-dependency-manager)
-    - [2.6.1. Conan](#261-conan)
-  - [2.7. Software Testing](#27-software-testing)
-    - [2.7.1. Unit Testing](#271-unit-testing)
-    - [2.7.2. Code Coverage](#272-code-coverage)
-    - [2.7.3. Sanitizers](#273-sanitizers)
-  - [2.8. Cache Manager](#28-cache-manager)
-    - [2.8.1. Compiler Cache](#281-compiler-cache)
-  - [2.9. Release Manager](#29-release-manager)
-    - [2.9.1. Semantic-Release](#291-semantic-release)
-  - [2.10. Update Manager](#210-update-manager)
-    - [2.10.1. Renovate](#2101-renovate)
-    - [2.10.2. Dependabot](#2102-dependabot)
-  - [2.11. Secrets Manager](#211-secrets-manager)
-    - [2.11.1. SOPS](#2111-sops)
-  - [2.12. Container Manager](#212-container-manager)
-    - [2.12.1. Docker](#2121-docker)
-  - [2.13. Policy Manager](#213-policy-manager)
-    - [2.13.1. Conftest](#2131-conftest)
-  - [2.14. Supply Chain Manager](#214-supply-chain-manager)
-    - [2.14.1. Trivy](#2141-trivy)
-  - [2.15. Documentation Generators](#215-documentation-generators)
-    - [2.15.1. Doxygen](#2151-doxygen)
-  - [2.16. Skills Manager](#216-skills-manager)
-    - [2.16.1. Skills CLI](#2161-skills-cli)
+  - [2.2. Skills Manager](#22-skills-manager)
+    - [2.2.1. Skills CLI](#221-skills-cli)
+  - [2.3. Task Runner](#23-task-runner)
+    - [2.3.1. Make](#231-make)
+  - [2.4. Bootstrap](#24-bootstrap)
+    - [2.4.1. Scripts](#241-scripts)
+  - [2.5. Dev Containers](#25-dev-containers)
+  - [2.6. Build System](#26-build-system)
+    - [2.6.1. CMake](#261-cmake)
+  - [2.7. Dependency Manager](#27-dependency-manager)
+    - [2.7.1. Conan](#271-conan)
+  - [2.8. Software Testing](#28-software-testing)
+    - [2.8.1. Unit Testing](#281-unit-testing)
+    - [2.8.2. Code Coverage](#282-code-coverage)
+    - [2.8.3. Sanitizers](#283-sanitizers)
+  - [2.9. Cache Manager](#29-cache-manager)
+    - [2.9.1. Compiler Cache](#291-compiler-cache)
+  - [2.10. Release Manager](#210-release-manager)
+    - [2.10.1. Semantic-Release](#2101-semantic-release)
+  - [2.11. Update Manager](#211-update-manager)
+    - [2.11.1. Renovate](#2111-renovate)
+    - [2.11.2. Dependabot](#2112-dependabot)
+  - [2.12. Secrets Manager](#212-secrets-manager)
+    - [2.12.1. SOPS](#2121-sops)
+  - [2.13. Container Manager](#213-container-manager)
+    - [2.13.1. Docker](#2131-docker)
+  - [2.14. Policy Manager](#214-policy-manager)
+    - [2.14.1. Conftest](#2141-conftest)
+  - [2.15. Supply Chain Manager](#215-supply-chain-manager)
+    - [2.15.1. Trivy](#2151-trivy)
+  - [2.16. Documentation Generators](#216-documentation-generators)
+    - [2.16.1. Doxygen](#2161-doxygen)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
 - [4. References](#4-references)
@@ -71,8 +71,8 @@ AI Agents are automated tools that assist in various development tasks such as c
     - [AGENTS.md](AGENTS.md)
       > Instructions for AI coding agents working with the project.
 
-    - [SKILL.md](.github/skills/README.md)
-      > Instructions for AI agent skills used in the project.
+    - [.agents/skills/](.agents/skills/)
+      > Directory containing AI agent skill definitions and configurations.
 
 2. Usage and Instructions
 
@@ -80,7 +80,7 @@ AI Agents are automated tools that assist in various development tasks such as c
       > AI Agents can be implicitly invoked based on file paths, programming languages, or specific keywords in user prompts.
 
       ```plaintext
-      .github/skills/<skill-name>/SKILL.md
+      .agents/skills/<skill-name>/SKILL.md
       ```
 
     - Explicit Invocation
@@ -90,9 +90,32 @@ AI Agents are automated tools that assist in various development tasks such as c
       @agent <skill-name> <task-description>
       ```
 
-### 2.2. Task Runner
+### 2.2. Skills Manager
 
-#### 2.2.1. Make
+#### 2.2.1. Skills CLI
+
+[Skills CLI](https://skills.sh/) is a command-line tool for managing AI agent skills in development projects.
+
+1. Insights and Details
+
+    - [Sentenz Skills](https://github.com/sentenz/skills)
+      > Reusable AI agent skills for various development tasks.
+
+2. Usage and Instructions
+
+    - Tasks
+
+      ```bash
+      make skills-add
+      ```
+
+      ```bash
+      make skills-update
+      ```
+
+### 2.3. Task Runner
+
+#### 2.3.1. Make
 
 [Make](https://www.gnu.org/software/make/) is a automation tool that defines and manages tasks to streamline development workflows.
 
@@ -126,9 +149,9 @@ AI Agents are automated tools that assist in various development tasks such as c
               teardown          Remove development artifacts and restore the host to its pre-setup state
       ```
 
-### 2.3. Bootstrap
+### 2.4. Bootstrap
 
-#### 2.3.1. Scripts
+#### 2.4.1. Scripts
 
 1. Insights and Details
 
@@ -151,7 +174,7 @@ AI Agents are automated tools that assist in various development tasks such as c
       make teardown
       ```
 
-### 2.4. Dev Containers
+### 2.5. Dev Containers
 
 1. Insights and Details
 
@@ -167,9 +190,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       # make devcontainer-cpp
       ```
 
-### 2.5. Build System
+### 2.6. Build System
 
-#### 2.5.1. CMake
+#### 2.6.1. CMake
 
 [CMake](https://cmake.org/) is a cross-platform, compiler-independent, open-source build system that manages the build process.
 
@@ -202,9 +225,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       make cmake-gcc-release-build
       ```
 
-### 2.6. Dependency Manager
+### 2.7. Dependency Manager
 
-#### 2.6.1. Conan
+#### 2.7.1. Conan
 
 [Conan](https://conan.io/) is a package manager for C and C++ that simplifies the process of managing dependencies and libraries.
 
@@ -224,9 +247,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       meta_conan()
       ```
 
-### 2.7. Software Testing
+### 2.8. Software Testing
 
-#### 2.7.1. Unit Testing
+#### 2.8.1. Unit Testing
 
 [Google Test (GTest)](https://github.com/google/googletest) is a unit testing library for the C++ programming language.
 
@@ -257,7 +280,7 @@ AI Agents are automated tools that assist in various development tasks such as c
     - AI Agents
       > Instruct Agent Skills capabilities to to perform [Unit Testing](.github/skills/unit-testing/SKILL.md) tasks.
 
-#### 2.7.2. Code Coverage
+#### 2.8.2. Code Coverage
 
 [gcovr](https://gcovr.com/en/stable/) is a Python tool that provides a utility for managing and generating code coverage reports.
 
@@ -285,7 +308,7 @@ AI Agents are automated tools that assist in various development tasks such as c
       make cmake-gcc-test-unit-coverage
       ```
 
-#### 2.7.3. Sanitizers
+#### 2.8.3. Sanitizers
 
 [Clang Sanitizers](https://clang.llvm.org/docs/) are a set of runtime tools to detect memory errors (MemorySanitizer), undefined behavior (UndefinedBehaviorSanitizer) or thread issues (ThreadSanitizer) in C/C++ programs.
 
@@ -299,9 +322,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       meta_sanitizers(ENABLE ON)
       ```
 
-### 2.8. Cache Manager
+### 2.9. Cache Manager
 
-#### 2.8.1. Compiler Cache
+#### 2.9.1. Compiler Cache
 
 [Ccache](https://ccache.dev/) and [sccache](https://github.com/mozilla/sccache) are compiler caches that speed up recompilation by caching previous compilations and detecting when the same compilation is being done again.
 
@@ -317,9 +340,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       meta_compiler_cache(ENABLE ON TYPE sccache)
       ```
 
-### 2.9. Release Manager
+### 2.10. Release Manager
 
-#### 2.9.1. Semantic-Release
+#### 2.10.1. Semantic-Release
 
 [Semantic-Release](https://github.com/semantic-release/semantic-release) automates the release process by analyzing commit messages to determine the next version number, generating changelog and release notes, and publishing the release.
 
@@ -336,9 +359,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       uses: sentenz/actions/semantic-release@latest
       ```
 
-### 2.10. Update Manager
+### 2.11. Update Manager
 
-#### 2.10.1. Renovate
+#### 2.11.1. Renovate
 
 [Renovate](https://github.com/renovatebot/renovate) automates dependency updates by creating merge requests for outdated dependencies, libraries and packages.
 
@@ -355,7 +378,7 @@ AI Agents are automated tools that assist in various development tasks such as c
       uses: sentenz/actions/renovate@latest
       ```
 
-#### 2.10.2. Dependabot
+#### 2.11.2. Dependabot
 
 [Dependabot](https://github.com/dependabot/dependabot-core) automates dependency updates by creating pull requests for outdated dependencies, libraries and packages.
 
@@ -364,9 +387,9 @@ AI Agents are automated tools that assist in various development tasks such as c
     - [.github/dependabot.yml](.github/dependabot.yml)
       > Configuration file for Dependabot specifying update rules and schedules.
 
-### 2.11. Secrets Manager
+### 2.12. Secrets Manager
 
-#### 2.11.1. SOPS
+#### 2.12.1. SOPS
 
 [SOPS (Secrets OPerationS)](https://github.com/getsops/sops) is a tool for managing and encrypting sensitive data such as passwords, API keys, and other secrets.
 
@@ -419,9 +442,9 @@ AI Agents are automated tools that assist in various development tasks such as c
         make secrets-sops-decrypt <files>
         ```
 
-### 2.12. Container Manager
+### 2.13. Container Manager
 
-#### 2.12.1. Docker
+#### 2.13.1. Docker
 
 [Docker](https://github.com/docker) containerization tool to run applications in isolated container environments and execute container-based tasks.
 
@@ -444,9 +467,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       # TODO
       ```
 
-### 2.13. Policy Manager
+### 2.14. Policy Manager
 
-#### 2.13.1. Conftest
+#### 2.14.1. Conftest
 
 [Conftest](https://www.conftest.dev/) is a **Policy as Code (PaC)** tool to streamline policy management for improved development, security and audit capability.
 
@@ -480,9 +503,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       make policy-conftest-run <filepath>
       ```
 
-### 2.14. Supply Chain Manager
+### 2.15. Supply Chain Manager
 
-#### 2.14.1. Trivy
+#### 2.15.1. Trivy
 
 [Trivy](https://github.com/aquasecurity/trivy) is a comprehensive security scanner for vulnerabilities, misconfigurations, and compliance issues in container images, filesystems, and source code.
 
@@ -520,9 +543,9 @@ AI Agents are automated tools that assist in various development tasks such as c
       make sast-trivy-sbom-license <sbom_path>
       ```
 
-### 2.15. Documentation Generators
+### 2.16. Documentation Generators
 
-#### 2.15.1. Doxygen
+#### 2.16.1. Doxygen
 
 [Doxygen](https://www.doxygen.nl/) is an **API Documentation Generator** for C++, C programming languages, used to create software reference documentation from annotated source code.
 
@@ -547,32 +570,6 @@ AI Agents are automated tools that assist in various development tasks such as c
 
       ```bash
       make pages-doxygen-server
-      ```
-
-### 2.16. Skills Manager
-
-#### 2.16.1. Skills CLI
-
-[Skills CLI](https://skills.sh/) is a command-line tool for managing AI agent skills in development projects.
-
-1. Insights and Details
-
-    - [.agents/skills/](.agents/skills/)
-      > Directory containing AI agent skill definitions and configurations.
-
-    - [Sentenz SKills](https://github.com/sentenz/skills)
-      > Reusable AI agent skills for various development tasks.
-
-2. Usage and Instructions
-
-    - Tasks
-
-      ```bash
-      make skills-add
-      ```
-
-      ```bash
-      make skills-update
       ```
 
 ## 3. Troubleshoot
