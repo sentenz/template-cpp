@@ -2,7 +2,7 @@
 name: mock-testing
 description: Automates mock test creation for C++ projects using Google Mock (GMock) framework with consistent software testing patterns. Use when creating tests with mocked dependencies, interface mocking, behavior verification, or when the user mentions mocks, stubs, fakes, or GMock.
 metadata:
-  version: "1.1"
+  version: "1.1.0"
   activation:
     implicit: true
     priority: 1
