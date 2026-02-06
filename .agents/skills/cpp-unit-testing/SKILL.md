@@ -1,5 +1,5 @@
 ---
-name: unit-testing
+name: cpp-unit-testing
 description: Automates unit test creation for C++ projects using GoogleTest (GTest) framework with consistent software testing patterns including In-Got-Want, Table-Driven Testing, and AAA patterns. Use when creating, modifying, or reviewing unit tests, or when the user mentions unit tests, test coverage, or GTest.
 metadata:
   version: "1.1.0"
@@ -216,7 +216,7 @@ Test doubles (e.g., mocks, stubs, fakes) are simplified versions of complex obje
   > Include necessary standard library headers (`<vector>`, `<string>`, `<climits>`, etc.) and module-specific headers in a logical order: system headers first, then project headers.
 
   Include necessary headers in this order:
-  1. GMock/GTest headers (`<gmock/gmock.h>`, `<gtest/gtest.h>`)
+  1. GTest/GMock headers (`<gtest/gtest.h>`, `<gmock/gmock.h>`)
   2. Standard library headers (`<memory>`, `<string>`, etc.)
   3. Project interface headers
   4. Project implementation headers
@@ -237,7 +237,7 @@ Test doubles (e.g., mocks, stubs, fakes) are simplified versions of complex obje
   > Focus each `TEST(...)` function on a single function or cohesive behavior. For complex setups, use `TEST_F` fixtures or helper functions to reduce duplication.
 
 - Mocking
-  > Use Google Mock (GMock) for creating test doubles (mocks, stubs, fakes) to isolate the unit under test. See the [mock-testing](../mock-testing/SKILL.md) skill.
+  > Use Google Mock (GMock) for creating test doubles (mocks, stubs, fakes) to isolate the unit under test. See the [cpp-mock-testing](../cpp-mock-testing/SKILL.md) skill.
 
 - Traceability
   > Employ [`SCOPED_TRACE(tc.label)`](https://google.github.io/googletest/reference/testing.html#SCOPED_TRACE) for traceable failures in table-driven tests.

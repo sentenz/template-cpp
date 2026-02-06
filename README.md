@@ -39,6 +39,8 @@ A modular C++ project using a component-based architecture, with CMake as the bu
     - [2.14.1. Trivy](#2141-trivy)
   - [2.15. Documentation Generators](#215-documentation-generators)
     - [2.15.1. Doxygen](#2151-doxygen)
+  - [2.16. Skills Manager](#216-skills-manager)
+    - [2.16.1. Skills CLI](#2161-skills-cli)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
 - [4. References](#4-references)
@@ -545,6 +547,29 @@ AI Agents are automated tools that assist in various development tasks such as c
 
       ```bash
       make pages-doxygen-server
+      ```
+
+### 2.16. Skills Manager
+
+#### 2.16.1. Skills CLI
+
+[Skills CLI](https://skills.sh/) is a command-line tool for managing AI agent skills in development projects.
+
+1. Insights and Details
+
+    - [.agents/skills/](.agents/skills/)
+      > Directory containing AI agent skill definitions and configurations.
+
+2. Usage and Instructions
+
+    - Tasks
+
+      ```bash
+      make skills-add
+      ```
+
+      ```bash
+      make skills-update
       ```
 
 ## 3. Troubleshoot

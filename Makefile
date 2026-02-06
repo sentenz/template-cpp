@@ -490,3 +490,15 @@ pages-doxygen-serve:
 	echo "Serving $$OUTDIR at http://localhost:8000"; \
 	python3 -m http.server --directory "$$OUTDIR" 8000
 .PHONY: pages-doxygen-serve
+
+# ── Skills Manager ──────────────────────────────────────────────────────────────────────────────
+
+## Add sentenz/skills to the project
+skills-add:
+	skills add sentenz/skills
+.PHONY: skills-add
+
+## Update sentenz/skills in the project
+skills-update:
+	skills update sentenz/skills
+.PHONY: skills-update
