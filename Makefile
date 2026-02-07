@@ -256,7 +256,7 @@ secrets-sops-view:
 
 # ── Policy Manager ───────────────────────────────────────────────────────────────────────────────
 
-POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.64.0@sha256:eb634c91bd37e986cfdeaf67a84cffc1b46e302e286113cf9a25d526ea93cbe3
+POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.65.0@sha256:afa510df6d4562ebe24fb3e457da6f6d6924124140a13b51b950cc6cb1d25525
 
 # Usage: make policy-conftest-run <filepath>
 #
@@ -271,6 +271,8 @@ policy-conftest-run:
 
 	docker run --rm -v "$$(pwd)":/workspace -w /workspace "$(POLICY_IMAGE_CONFTEST)" test "$(filter-out $@,$(MAKECMDGOALS))" > logs/policy/conftest-report.json 2>&1
 .PHONY: policy-conftest-run
+
+POLICY_IMAGE_REGAL ?= ghcr.io/openpolicyagent/regal:0.37.0@sha256:a09884658f3c8c9cc30de136b664b3afdb7927712927184ba891a155a9676050
 
 # Usage: make policy-regal-lint <filepath>
 #
@@ -495,10 +497,10 @@ pages-doxygen-serve:
 
 ## Add sentenz/skills to the project
 skills-add:
-	skills add sentenz/skills
+	npx skills add sentenz/skills
 .PHONY: skills-add
 
 ## Update sentenz/skills in the project
 skills-update:
-	skills update sentenz/skills
+	npx skills update sentenz/skills
 .PHONY: skills-update
