@@ -29,8 +29,6 @@ A modular C++ project using a component-based architecture, with CMake as the bu
 
 [CONTRIBUTING.md](CONTRIBUTING.md) provides guidens and instructions for contributing to the project.
 
-1. Guidens and Instructions
-
 - [AI Agents](CONTRIBUTING.md#1-ai-agents)
   > Automated tools that assist in various development tasks such as code generation, testing, and documentation.
 
