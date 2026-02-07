@@ -1,5 +1,7 @@
 {
   "recommendations": [
+    "ms-vscode.cmake-tools",
+    "ms-vscode.cpptools",
     "ms-vscode.makefile-tools",
     "ms-vscode.powershell",
     "ms-python.python",
@@ -28,6 +30,7 @@
     "yzhang.markdown-all-in-one",
     "davidanson.vscode-markdownlint",
     "alefragnani.project-manager",
+    "ryanluker.vscode-coverage-gutters",
     "tsandall.opa"
   ]
 }
