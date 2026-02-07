@@ -1,22 +1,21 @@
 {
   "recommendations": [
-    "ms-vscode.cmake-tools",
-    "ms-vscode.cpptools",
     "ms-vscode.makefile-tools",
     "ms-vscode.powershell",
-    "ms-vscode-remote.remote-ssh",
-    "ms-vscode-remote.remote-containers",
-    "ms-vscode.remote-server",
-    "ms-vscode.remote-explorer",
-    "ms-vscode-remote.remote-wsl",
     "ms-python.python",
     "ms-python.debugpy",
     "ms-python.pylint",
     "ms-python.vscode-pylance",
     "ms-python.black-formatter",
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode.remote-server",
+    "ms-vscode.remote-explorer",
+    "ms-vscode-remote.remote-wsl",
     "ms-kubernetes-tools.vscode-kubernetes-tools",
     "ms-azuretools.vscode-containers",
     "ms-azuretools.vscode-docker",
+    "github.vscode-github-actions",
     "docker.docker",
     "redhat.vscode-yaml",
     "sonarsource.sonarlint-vscode",
@@ -29,6 +28,6 @@
     "yzhang.markdown-all-in-one",
     "davidanson.vscode-markdownlint",
     "alefragnani.project-manager",
-    "ryanluker.vscode-coverage-gutters"
+    "tsandall.opa"
   ]
 }
