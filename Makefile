@@ -497,10 +497,10 @@ pages-doxygen-serve:
 
 ## Add sentenz/skills to the project
 skills-add:
-	npx skills add sentenz/skills
+	skills add sentenz/skills
 .PHONY: skills-add
 
 ## Update sentenz/skills in the project
 skills-update:
-	npx skills update sentenz/skills
+	skills update sentenz/skills
 .PHONY: skills-update
