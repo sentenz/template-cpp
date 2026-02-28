@@ -539,9 +539,9 @@ AI Agents are automated tools that assist in various development tasks such as c
     - Tasks
 
       ```bash
-      make pages-doxygen-generate
+      make pages-doxygen-build
       ```
 
       ```bash
-      make pages-doxygen-server
+      make pages-doxygen-serve
       ```

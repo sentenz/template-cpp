@@ -479,16 +479,16 @@ sast-cosign-verify:
 # ── Documentation Generators ─────────────────────────────────────────────────────────────────────
 
 ## Generate Content using Static Site Generator (SSG) for Doxygen documentation
-pages-doxygen-generate:
+pages-doxygen-build:
 	@doxygen Doxyfile
-.PHONY: pages-doxygen-generate
+.PHONY: pages-doxygen-build
 
 ## Serve the generated Static Site Generator (SSG) for Doxygen documentation on a local web server
 pages-doxygen-serve:
 	@OUT="$$(awk -F'= *' '/^OUTPUT_DIRECTORY/ {gsub(/^[ \t]+|[ \t]+$$/,"",$$2); print $$2; exit}' Doxyfile 2>/dev/null)"; \
 	HTML="$$(awk -F'= *' '/^HTML_OUTPUT/ {gsub(/^[ \t]+|[ \t]+$$/,"",$$2); print $$2; exit}' Doxyfile 2>/dev/null)"; \
 	OUTDIR="$${OUT:+$${OUT}/}$${HTML:-html}"; \
-	if [ ! -d "$$OUTDIR" ]; then echo "error: generated docs not found in $$OUTDIR; run 'make pages-doxygen-generate' first" >&2; exit 1; fi; \
+	if [ ! -d "$$OUTDIR" ]; then echo "error: generated docs not found in $$OUTDIR; run 'make pages-doxygen-build' first" >&2; exit 1; fi; \
 	echo "Serving $$OUTDIR at http://localhost:8000"; \
 	python3 -m http.server --directory "$$OUTDIR" 8000
 .PHONY: pages-doxygen-serve
