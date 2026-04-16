@@ -86,7 +86,7 @@ jobs:
         run: doxygen Doxyfile
 
       - name: Upload Documentation Artifact
-        uses: actions/upload-pages-artifact@v4.0.0
+        uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: public/
 
