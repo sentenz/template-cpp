@@ -381,7 +381,7 @@ AI Agents are automated tools that assist in various development tasks such as c
         > Generate a new key pair to be used with SOPS.
 
         > [!NOTE]
-        > The UID can be customized via the `SECRETS_SOPS_UID` variable (defaults to `sops-dx`).
+        > Customize the UID by providing the `SECRETS_SOPS_UID` variable. Default UID is `sops-<repo>`.
 
         ```bash
         make secrets-gpg-generate SECRETS_SOPS_UID=<uid>
