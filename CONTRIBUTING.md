@@ -35,6 +35,7 @@ Contribution guidelines and project management tools.
   - [15.1. Trivy](#151-trivy)
 - [16. Documentation Generators](#16-documentation-generators)
   - [16.1. Doxygen](#161-doxygen)
+  - [16.2. MkDocs](#162-mkdocs)
 
 ## 1. AI Agents
 
@@ -544,4 +545,35 @@ AI Agents are automated tools that assist in various development tasks such as c
 
       ```bash
       make pages-doxygen-serve
+      ```
+
+### 16.2. MkDocs
+
+[MkDocs](https://www.mkdocs.org/) is a Static Site Generator (SSG) designed for building project documentation using Markdown files.
+
+1. Insights and Details
+
+    - [mkdocs.yml](mkdocs.yml)
+      > Configuration file for MkDocs specifying site settings, theme, plugins, and markdown extensions.
+
+2. Usage and Instructions
+
+    - CI/CD
+
+      ```yaml
+      uses: sentenz/actions/mkdocs@latest
+      ```
+
+    - Tasks
+
+      ```bash
+      make pages-mkdocs-setup
+      ```
+
+      ```bash
+      make pages-mkdocs-build
+      ```
+
+      ```bash
+      make pages-mkdocs-serve
       ```
