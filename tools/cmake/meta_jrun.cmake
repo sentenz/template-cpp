@@ -52,9 +52,13 @@ function(meta_jrun)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Target '${ARG_TARGET}' does not exist.")
     endif()
 
-    # Apply defaults
+    # Apply defaults; DEVICE falls back to the META_JRUN_DEVICE cache variable when not passed directly
     if(NOT ARG_DEVICE)
         set(ARG_DEVICE "${META_JRUN_DEVICE}")
+        if(NOT ARG_DEVICE)
+            message(WARNING "${CMAKE_CURRENT_FUNCTION}: No DEVICE specified and META_JRUN_DEVICE is not set. "
+                "Pass DEVICE <device> or set -DMETA_JRUN_DEVICE=<device> at configure time.")
+        endif()
     endif()
 
     if(NOT ARG_INTERFACE)
@@ -67,11 +71,6 @@ function(meta_jrun)
 
     if(NOT ARG_TIMEOUT)
         set(ARG_TIMEOUT 60)
-    endif()
-
-    if(NOT ARG_DEVICE)
-        message(WARNING "${CMAKE_CURRENT_FUNCTION}: No DEVICE specified and META_JRUN_DEVICE is not set. "
-            "Pass DEVICE <device> or set -DMETA_JRUN_DEVICE=<device> at configure time.")
     endif()
 
     if(NOT ARG_WITH_CTEST)
