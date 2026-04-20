@@ -159,7 +159,7 @@ Conan is selected as the C/C++ dependency manager. It is the only option evaluat
 - Pros:
 
   - Dependency Resolution
-    > Resolves and installs transitive dependencies automatically from a large curated port catalogue (over 2 000 ports).
+    > Resolves and installs transitive dependencies automatically from a large curated port catalogue (over 2,000 ports).
 
   - CMake Integration
     > Toolchain file (`vcpkg.cmake`) enables transparent `find_package()` integration; CMake Presets can reference vcpkg's toolchain directly.
