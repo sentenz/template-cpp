@@ -1,5 +1,6 @@
 meta_gtest(
-    TARGET ${PROJECT_NAME}-test-ontarget
+    ENABLE ${META_BUILD_TESTING_ONTARGET}
+    TARGET ${PROJECT_NAME}-test
     SOURCES
         foo_test.cpp
     LINK
