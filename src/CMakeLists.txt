@@ -22,7 +22,7 @@ meta_gtest(
 
 # ── Subdirectories ───────────────────────────────────────────────────────────────────────────────
 
-if(NOT META_BUILD_TESTING_COLOCATE)
+if(NOT META_BUILD_TESTING)
     add_subdirectory(app)
 endif()
 add_subdirectory(foo)
