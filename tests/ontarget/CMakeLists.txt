@@ -5,7 +5,7 @@ include(meta_jrun)
 # incrementally by each subdirectory using the same TARGET name (meta_gtest is idempotent).
 meta_gtest(
     WITH_MAIN
-    TARGET ${PROJECT_NAME}-ontarget-test
+    TARGET ${PROJECT_NAME}-test
 )
 
 add_subdirectory(foo)
@@ -15,5 +15,5 @@ add_subdirectory(foo)
 # e.g., -DMETA_JRUN_DEVICE=Cortex-M4.
 meta_jrun(
     WITH_CTEST
-    TARGET ${PROJECT_NAME}-ontarget-test
+    TARGET ${PROJECT_NAME}-test
 )

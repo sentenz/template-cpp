@@ -1,5 +1,5 @@
 meta_gtest(
-    TARGET ${PROJECT_NAME}-ontarget-test
+    TARGET ${PROJECT_NAME}-test
     SOURCES
         foo_test.cpp
     LINK
