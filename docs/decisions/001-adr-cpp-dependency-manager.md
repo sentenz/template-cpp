@@ -1,6 +1,6 @@
-# ADR C/C++ Dependency Manager
+# ADR-001: C/C++ Dependency Management
 
-Architectural Decision Records (ADR) on the selection of a dependency manager for C/C++ projects.
+Architectural Decision Records (ADR) on selecting a dependency manager for C/C++ projects.
 
 - [1. State](#1-state)
 - [2. Context](#2-context)
@@ -22,83 +22,77 @@ Architectural Decision Records (ADR) on the selection of a dependency manager fo
 
 ## 2. Context
 
-C and C++ projects lack a universally adopted dependency management solution, resulting in fragmented tooling across teams and platforms. Without a standardized dependency manager, maintaining consistent, reproducible builds across development machines, CI/CD pipelines, and target platforms is error-prone and labour-intensive. A dependency manager must handle both production and development dependencies, enforce pinned versions, support transitive dependency resolution, and integrate cleanly with the CMake-based build system used by this project.
+C and C++ projects lack a standardized package manager in the language ecosystem. Managing third-party and internal libraries across multiple platforms, compiler toolchains, and build configurations introduces significant complexity. Dependencies must be resolved consistently, build artifacts must be reproducible, and the toolchain must integrate cleanly with the CMake build system used within the project.
 
 1. Decision Drivers
 
     - Dependencies and Dev Dependencies
-      > The tool must allow separate declaration of runtime (production) and development-only dependencies (e.g., test frameworks, benchmarking libraries) to keep the production artifact lean.
+      > The manager must allow separate declaration of runtime (production) and development-only dependencies (e.g., test frameworks, benchmarking libraries) to keep the production artifact lean.
 
     - Dependency Resolution
-      > The tool must automatically resolve, download, and configure direct and transitive dependencies, including conflict detection and version negotiation.
+      > The manager must automatically resolve, download, and configure direct and transitive dependencies, including conflict detection and version negotiation.
 
     - Dependency Pinning
-      > The tool must support explicit version pinning for all dependencies to eliminate non-deterministic resolution across environments and over time.
+      > The manager must support explicit version pinning for all dependencies to eliminate non-deterministic resolution across environments.
 
     - Transitive Dependencies
-      > The tool must resolve and manage the full dependency graph, including indirect dependencies pulled in by direct dependencies, and surface conflicts clearly.
-
-    - Immutable Lockfiles
-      > The tool must generate a machine-readable lockfile that captures the exact resolved dependency graph, enabling bit-for-bit reproducible installs.
-
-    - Cross-Platform Support
-      > The tool must run on Linux, macOS, and Windows and support cross-compilation scenarios so that the same dependency declarations work across all target platforms and toolchains.
-
-    - Prebuilt Binary and Build from Source
-      > The tool must support consuming prebuilt binaries when available for speed and fall back to building from source when binaries are unavailable or when custom build options are required.
-
-    - CMake Integration
-      > The tool must generate CMake-compatible artefacts (e.g., `CMakeDeps`, `CMakeToolchain`, or `find_package`-compatible config files) so that downstream CMake targets can consume dependencies without manual path configuration.
-
-    - Reproducibility
-      > Builds performed at any point in time from the same source tree and lockfile must produce identical artefacts, regardless of the state of the upstream package registry.
-
-    - CI/CD
-      > The tool must support headless, non-interactive operation in CI/CD pipelines, expose caching mechanisms for package binaries, and integrate with common CI systems without additional infrastructure.
+      > The manager must automatically resolve and propagate transitive dependencies, making the full dependency graph visible and manageable.
 
     - Private and Public Dependencies
-      > The tool must support both public registries and private or self-hosted package repositories so that proprietary or internal packages can be managed alongside open-source ones.
+      > The manager must support public registries and private or self-hosted package repositories so that proprietary or internal packages can be managed alongside open-source dependencies.
+
+    - Immutable Lockfiles
+      > The manager must generate a machine-readable lockfile that captures the exact resolved dependency graph to guarantee identical builds across environments.
+
+    - Prebuilt Binary and Source Build
+      > The manager must support consuming prebuilt binaries (e.g., central registry) while allowing source builds when custom build options are required.
+
+    - CMake Integration
+      > The manager must generate CMake-compatible artifacts (e.g., `find_package`) to integrate seamlessly with the existing CMake build system without requiring manual path configuration.
+
+    - Cross-Platform Support
+      > The manager must operate across the operating systems (Linux, macOS, Windows), compiler toolchains (GCC, Clang, MSVC) and target platforms used for C and C++ development.
+
+    - CI/CD
+      > The manager must fit automated bootstrap, configure, build, test, and documentation jobs with minimal environment-specific branching.
 
 ## 3. Decision
 
 ### 3.1. Conan
 
-Conan is selected as the C/C++ dependency manager. It is the only option evaluated that fully satisfies all decision drivers: it separates regular from development dependencies via `[requires]` / `[tool_requires]`, generates native CMake integration files (`CMakeDeps`, `CMakeToolchain`), produces an immutable lockfile (`conan.lock`), and supports prebuilt binaries with a fallback to source builds. Its support for private Conan servers (Artifactory, self-hosted) and multi-platform cross-compilation profiles makes it suitable for enterprise and open-source projects alike.
+Conan is selected as the C/C++ dependency manager. It separates regular from development dependencies, generates native CMake integration files, produces an immutable lockfile, and supports prebuilt binaries with a fallback to source builds. Its support for private Conan servers (Artifactory, self-hosted) and multi-platform cross-compilation profiles makes it suitable for enterprise projects.
 
 1. Rationale
 
     - Dependencies and Dev Dependencies
-      > Conan distinguishes production dependencies (`[requires]`) from tool/build-time dependencies (`[tool_requires]`), enabling a clean separation between runtime and development artefacts.
+      > Conan distinguishes production dependencies (`[requires]`) from tool/build-time dependencies (`[tool_requires]`), enabling a clean separation between runtime and development artifacts.
 
     - Dependency Resolution
       > Conan's SAT-solver-based resolver handles complex version graphs, detects conflicts, and supports version ranges and revisions.
 
     - Dependency Pinning
-      > Exact versions are declared in `conanfile.txt` or `conanfile.py`; `conan.lock` pins the entire resolved graph to a specific revision, preventing unexpected upgrades.
+      > Exact versions are declared in `conanfile.txt` or `conanfile.py`, and the resolved package revisions are pinned in `conan.lock`, making dependency updates explicit and reviewable.
 
     - Transitive Dependencies
-      > Conan resolves and manages the full dependency graph, propagating include paths, link flags, and compiler settings through all layers of transitive dependencies.
+      > Conan resolves and manages the full dependency graph, propagating include paths, link flags, and compiler settings of transitive dependencies.
+
+    - Private and Public Dependencies
+      > Conan supports multiple configurable remotes (ConanCenter for public packages, JFrog Artifactory or a self-hosted Conan server for private packages) with per-remote authentication.
 
     - Immutable Lockfiles
-      > `conan.lock` captures the exact package reference (name, version, and revision) for every dependency, ensuring reproducible installs from the same lockfile at any future date.
+      > The committed `conan.lock` can be treated as an immutable CI input until a deliberate lockfile refresh is reviewed and merged.
+
+    - Prebuilt Binary and Source Build
+      > Conan supports binary packages from remotes and can still build dependencies from source when the required binary is unavailable.
+
+    - CMake Integration
+      > The `CMakeDeps` and `CMakeToolchain` generators produce CMake config files and a toolchain file, allowing standard `find_package()` / `target_link_libraries()` usage with no manual path setup.
 
     - Cross-Platform Support
       > Conan profile files abstract compiler, OS, architecture, and standard library settings, enabling the same `conanfile.txt` to target Linux, macOS, Windows, and cross-compilation scenarios without modification.
 
-    - Prebuilt Binary and Build from Source
-      > Conan first checks configured remote(s) for a matching prebuilt binary; if none is found, it transparently builds the package from source using the recipe, without user intervention.
-
-    - CMake Integration
-      > The `CMakeDeps` and `CMakeToolchain` generators produce first-class CMake config files and a toolchain file, allowing standard `find_package()` / `target_link_libraries()` usage with no manual path setup.
-
-    - Reproducibility
-      > Combining pinned versions in `conanfile.txt` with `conan.lock` and Conan's package revision system guarantees that every install produces the same binary artefacts.
-
     - CI/CD
-      > Conan operates fully headlessly; its binary cache is file-system-based and integrates with any CI cache layer (GitHub Actions, GitLab CI, Jenkins). The `--lockfile` flag enforces the recorded graph in pipelines.
-
-    - Private and Public Dependencies
-      > Conan supports multiple configurable remotes (ConanCenter for public packages, JFrog Artifactory or a self-hosted Conan server for private packages) with per-remote authentication.
+      > Conan operates fully headlessly, its binary cache is file-system-based and integrates with any CI cache layer (GitHub Actions, GitLab CI, Jenkins). The `--lockfile` flag enforces the recorded graph in pipelines.
 
 ## 4. Considered
 
@@ -106,7 +100,7 @@ Conan is selected as the C/C++ dependency manager. It is the only option evaluat
 
 [Conan](https://conan.io/) is a decentralized, cross-platform C/C++ package manager focused on reproducible builds and binary distribution.
 
-- Pros:
+- Pros
 
   - Dependencies and Dev Dependencies
     > Supports `[requires]` for runtime dependencies and `[tool_requires]` for build-time / dev-only tools, cleanly separating production from development artefacts.
@@ -115,159 +109,132 @@ Conan is selected as the C/C++ dependency manager. It is the only option evaluat
     > Uses a SAT-solver-based graph resolver that handles version ranges, revisions, conflicts, and complex transitive graphs reliably.
 
   - Dependency Pinning
-    > Version pinning is native; `conanfile.txt` / `conanfile.py` declare exact versions, and `conan.lock` records every resolved revision.
+    > Version pinning is native, `conanfile.txt` / `conanfile.py` declare exact versions, and `conan.lock` records every resolved revision.
 
   - Transitive Dependencies
     > Propagates all settings, options, and link flags through the full dependency graph automatically.
 
   - Immutable Lockfiles
-    > `conan.lock` is a JSON-based lockfile that freezes every package reference and revision, guaranteeing identical installs at any point in time.
+    > `conan.lock` captures the full resolved graph including package revisions, enabling deterministic and reproducible builds.
 
   - Cross-Platform Support
     > Profile system abstracts OS, compiler, architecture, and standard library, enabling multi-platform and cross-compilation workflows from the same recipe.
 
-  - Prebuilt Binary and Build from Source
+  - Prebuilt Binary and Source Build
     > Transparently downloads prebuilt binaries from a remote or builds from source when no matching binary exists, without requiring recipe changes.
 
   - CMake Integration
-    > First-class `CMakeDeps` and `CMakeToolchain` generators produce config files and toolchain files consumed directly by `find_package()` and `cmake --toolchain`.
-
-  - Reproducibility
-    > Combination of pinned versions, lockfiles, and package revisions delivers fully reproducible builds across environments and time.
-
-  - CI/CD
-    > Fully headless; file-system binary cache can be layered with CI caching (e.g., `actions/cache`); `--lockfile` flag enforces the recorded graph in pipelines.
+    > `CMakeDeps` and `CMakeToolchain` generators produce config files and toolchain files consumed directly by `find_package()` and `cmake --toolchain`.
 
   - Private and Public Dependencies
-    > Supports multiple remotes with per-remote authentication; works with ConanCenter (public), JFrog Artifactory, and self-hosted Conan servers.
+    > Supports multiple remotes with per-remote authentication, works with ConanCenter (public), JFrog Artifactory, and self-hosted Conan servers.
 
-- Cons:
+- Cons
 
   - Setup Complexity
     > Requires installing Python and configuring profiles, remotes, and settings before first use, adding initial onboarding friction compared to header-only solutions.
 
   - Ecosystem Size
-    > ConanCenter is smaller than vcpkg's curated port catalogue; some niche packages may not have a Conan recipe and must be authored.
-
-  - Learning Curve
-    > `conanfile.py` is a Python-based DSL that requires familiarity with both Conan concepts and Python for advanced use cases.
+    > ConanCenter is smaller than vcpkg's curated port catalogue. Packages not available on ConanCenter require custom recipe authoring in Python (`conanfile.py`).
 
 ### 4.2. vcpkg
 
-[vcpkg](https://vcpkg.io/) is a Microsoft-maintained C/C++ package manager with deep Visual Studio and CMake integration.
+[vcpkg](https://vcpkg.io/) is a Microsoft-maintained C/C++ package manager with Visual Studio and CMake integration.
 
-- Pros:
+- Pros
 
   - Dependency Resolution
     > Resolves and installs transitive dependencies automatically from a large curated port catalogue (over 2,000 ports).
 
   - CMake Integration
-    > Toolchain file (`vcpkg.cmake`) enables transparent `find_package()` integration; CMake Presets can reference vcpkg's toolchain directly.
+    > Toolchain file (`vcpkg.cmake`) enables transparent `find_package()` integration, CMake Presets can reference vcpkg's toolchain directly.
 
   - Cross-Platform Support
-    > Supports Linux, macOS, and Windows; triplet system expresses target platform, architecture, and linkage type.
+    > Supports Linux, macOS, and Windows triplet system to express target platform, architecture, and linkage type.
 
-  - Prebuilt Binary and Build from Source
-    > Binary caching (local or remote, e.g., GitHub Packages, Azure Artifacts) speeds up CI; falls back to source builds when no cached binary is available.
+  - Prebuilt Binary and Source Build
+    > vcpkg's central registry provides prebuilt binaries for ports. Source build for custom options or platforms is supported.
 
-  - Reproducibility
-    > `vcpkg.json` manifest with a `builtin-baseline` or explicit version overrides ensures reproducible dependency resolution.
+  - Private and Public Dependencies
+    > Supports private registries and overlay ports, allowing internal packages to be managed alongside public ones.
 
-- Cons:
+- Cons
 
   - Dependencies and Dev Dependencies
-    > No first-class distinction between runtime and development-only dependencies; all packages are treated uniformly regardless of usage context.
+    > No distinction between runtime and development-only dependencies within the manifest file.
 
   - Immutable Lockfiles
     > vcpkg generates a `vcpkg.json` manifest and optional `vcpkg-configuration.json` baseline, but does not produce a full lockfile capturing every resolved transitive dependency revision.
 
-  - Private and Public Dependencies
-    > Private registries are supported but require additional registry authoring effort; authentication for private feeds is more complex than Conan's remote configuration.
-
-  - CI/CD
-    > Binary caching with remote backends requires additional CI configuration; cache invalidation can be non-obvious for large dependency graphs.
-
   - Dependency Pinning
-    > Version pinning requires `overrides` entries in `vcpkg.json` and a baseline; the mechanism is less ergonomic than Conan's lockfile for pinning exact revisions.
+    > Version pinning requires `overrides` entries in `vcpkg.json` and a baseline. The mechanism is less ergonomic than Conan exact pinning revisions.
 
 ### 4.3. CPM.cmake
 
-[CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) is a lightweight, zero-install CMake dependency manager built on top of CMake's `FetchContent` module.
+[CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) is a CMake dependency manager built on CMake `FetchContent` module.
 
-- Pros:
+- Pros
 
   - CMake Integration
-    > Pure CMake implementation; no external tooling required—adding a single `CPM.cmake` script to the project is sufficient to begin declaring dependencies.
+    > Packages are declared directly in `CMakeLists.txt` using `CPMAddPackage()`, requiring no external tooling beyond CMake itself.
+
+  - Zero Installation
+    > CPM.cmake is a single CMake script, no additional tools need to be installed in the development environment.
+
+  - Simplicity
+    > Minimal configuration overhead for small projects with few dependencies.
 
   - Cross-Platform Support
-    > Inherits full CMake cross-platform support; works wherever CMake and a network connection are available.
-
-  - Prebuilt Binary and Build from Source
-    > Always builds dependencies from source as part of the CMake configure step, ensuring complete control over build options and compiler flags.
-
-  - Dependencies and Dev Dependencies
-    > Dependencies can be scoped per CMake target using standard CMake `PRIVATE` / `PUBLIC` / `INTERFACE` visibility semantics.
-
-- Cons:
-
-  - Dependency Resolution
-    > No SAT-based conflict resolution; version conflicts between transitive dependencies are not automatically detected and may silently produce incorrect builds.
-
-  - Dependency Pinning
-    > Pinning relies on Git commit SHAs or tags in CMake scripts; there is no centralised manifest file or structured version declaration.
-
-  - Transitive Dependencies
-    > Transitive dependency management is shallow; downstream packages must also use CPM.cmake or expose their dependencies explicitly.
+    > Inherits full CMake cross-platform support.
 
   - Immutable Lockfiles
-    > No lockfile mechanism; reproducibility depends entirely on using immutable Git references (exact commit SHAs) in every `CPMAddPackage` call.
+    > CPM.cmake can generate a `package-lock.cmake` file that captures the exact resolved URLs and commit hashes of dependencies, enabling reproducible builds.
 
-  - Reproducibility
-    > Without a lockfile, reproducibility depends on upstream Git tags remaining immutable and upstream repositories remaining available.
+- Cons
 
-  - CI/CD
-    > Each clean CI run re-downloads all sources; the CPM cache directory must be persisted manually to avoid repeated downloads, adding pipeline complexity.
+  - Prebuilt Binary and Source Build
+    > CPM.cmake always builds dependencies from source, there is no prebuilt binary registry or binary caching mechanism, leading to significantly longer build times.
 
-  - Private and Public Dependencies
-    > Private package support depends on Git repository access; there is no package registry concept, authentication configuration, or binary distribution mechanism.
+  - Dependencies and Dev Dependencies
+    > No formal separation between runtime and development dependencies, all packages are treated uniformly.
+
+  - Transitive Dependencies
+    > Transitive dependency resolution is limited to `CMakeLists.txt` package declarations, conflicts must be resolved manually.
 
 ## 5. Consequences
 
-- Positive Consequences
-  > Conan provides fully reproducible builds via `conan.lock`, enables binary caching to reduce CI build times, and integrates natively with the CMake build system through `CMakeDeps` and `CMakeToolchain`. Developers across different platforms and operating systems can reproduce the exact same dependency graph from a single `conanfile.txt` and lockfile.
+- Positive
 
-- Negative Consequences
-  > Developers must install Python and the Conan client and must create and maintain a Conan profile for each platform or toolchain target. Any new dependency not present on ConanCenter requires authoring a custom Conan recipe, which involves learning the `conanfile.py` DSL.
+  - Conan provides fully reproducible builds via `conan.lock`, enables binary caching to reduce CI build times, and integrates natively with the CMake build system through `CMakeDeps` and `CMakeToolchain`. Developers across different platforms and operating systems can reproduce the exact same dependency graph from a single `conanfile.txt` and lockfile `conan.lock`.
+
+- Negative
+
+  - Developers must install Python and the Conan client and must create and maintain a Conan profile for each platform or toolchain target. Any new dependency not present on ConanCenter requires authoring a custom Conan recipe, which involves learning the `conanfile.py` Domain-specific language (DSL).
 
 - Risks
-  > If a required package is not available on ConanCenter and a custom recipe cannot be maintained, an alternative source strategy (vendoring, system package) must be adopted. Mitigation: audit all required dependencies against ConanCenter before adopting Conan; prefer widely used libraries with existing recipes.
+
+  - If a required package is not available on ConanCenter and a custom recipe cannot be maintained, an alternative source strategy (vendoring, system package) must be adopted. Mitigation: audit all required dependencies against ConanCenter before adopting Conan, prefer widely used libraries with existing recipes.
 
 ## 6. Implementation
 
 1. Install the Conan client (`pip install conan`) and initialise a default profile (`conan profile detect`) on all developer machines and CI runners.
 
-2. Declare all production and development dependencies in `conanfile.txt` using the `[requires]` and `[tool_requires]` sections respectively; specify exact versions for every entry.
+2. Define a `conanfile.txt` at the repository root declaring `[requires]` for runtime dependencies and `[tool_requires]` for development dependencies, with `CMakeDeps` and `CMakeToolchain` listed under `[generators]`.
 
-3. Generate the lockfile by running `conan lock create conanfile.txt --lockfile-out conan.lock` and commit `conan.lock` to version control.
+3. Run `conan install . --lockfile-out=conan.lock` to resolve the dependency graph and generate an immutable lockfile, commit `conan.lock` to version control.
 
-4. Configure `CMakeDeps` and `CMakeToolchain` in the `[generators]` section of `conanfile.txt` so that CMake can consume installed packages via `find_package()`.
+4. Integrate the Conan-generated toolchain file into `CMakePresets.json` via the `CMAKE_TOOLCHAIN_FILE` cache variable so that all CMake presets automatically consume Conan-managed dependencies.
 
-5. Integrate Conan into the CMake build flow via a `meta_conan` CMake helper module that invokes `conan install` before the configure step, passing the lockfile with `--lockfile conan.lock`.
-
-6. Add a CI step to restore and save the Conan package cache (e.g., `~/.conan2/p`) using the CI platform's caching action, keyed on a hash of `conan.lock`.
-
-7. Document the Conan profile format and remote configuration in the project's `CONTRIBUTING.md` so that new contributors can reproduce the build environment.
-
-8. Validate conformance by verifying that `conan.lock` is committed and up to date in CI (fail the pipeline if `conan lock create` produces a diff against the committed lockfile).
+5. Validate integration by confirming that `cmake --preset <preset>` resolves all `find_package()` calls without errors and that CI builds reproduce identically using the committed lockfile.
 
 ## 7. References
 
-- Conan [documentation](https://docs.conan.io/) page.
-- Conan [conanfile.txt reference](https://docs.conan.io/2/reference/conanfile_txt.html) page.
-- Conan [lockfiles](https://docs.conan.io/2/examples/lockfiles.html) documentation.
-- Conan [CMakeDeps generator](https://docs.conan.io/2/reference/tools/cmake/cmakedeps.html) page.
-- Conan [CMakeToolchain generator](https://docs.conan.io/2/reference/tools/cmake/cmaketoolchain.html) page.
-- vcpkg [documentation](https://vcpkg.io/en/docs/README.html) page.
+- Conan [Center Package Index](https://conan.io/center) site.
+- Conan [Official Documentation](https://docs.conan.io/2/) site.
+- Conan [conanfile.txt](https://docs.conan.io/2/reference/conanfile_txt.html) reference.
+- Conan [Lockfiles](https://docs.conan.io/2/tutorial/versioning/lockfiles.html) reference.
+- Conan [CMakeDeps Generator](https://docs.conan.io/2/reference/tools/cmake/cmakedeps.html) reference.
+- Conan [CMakeToolchain Generator](https://docs.conan.io/2/reference/tools/cmake/cmaketoolchain.html) reference.
+- vcpkg [Documentation](https://vcpkg.io/en/docs/README.html) site.
 - vcpkg [manifest mode](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json) page.
-- CPM.cmake [repository](https://github.com/cpm-cmake/CPM.cmake) page.
-- CPM.cmake [usage documentation](https://github.com/cpm-cmake/CPM.cmake/blob/master/README.md) page.
+- GitHub [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) repository.
