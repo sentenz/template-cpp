@@ -1,19 +1,15 @@
 include(meta_gtest)
-include(meta_jrun)
-
-# Create the on-target test executable with a main entry point. Sources are appended
-# incrementally by each subdirectory using the same TARGET name (meta_gtest is idempotent).
 meta_gtest(
+    ENABLE ${META_BUILD_TESTING_ONTARGET}
     WITH_MAIN
     TARGET ${PROJECT_NAME}-test
 )
 
 add_subdirectory(foo)
 
-# Register the fully-linked test executable as a CTest test that is flashed and run
-# on the target hardware via SEGGER J-Run. Set META_JRUN_DEVICE at configure time,
-# e.g., -DMETA_JRUN_DEVICE=Cortex-M4.
+include(meta_jrun)
 meta_jrun(
+    ENABLE ${META_BUILD_TESTING_ONTARGET}
     WITH_CTEST
     TARGET ${PROJECT_NAME}-test
 )
