@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "adr": {
+      "source": "sentenz/skills",
+      "sourceType": "github",
+      "computedHash": "2a9303171d454c99f6665e182b982bf20c67f68b32a5445615dff8466b44652c"
+    },
+    "cpp-api-documentation": {
+      "source": "sentenz/skills",
+      "sourceType": "github",
+      "computedHash": "860269a9c36b77c381ee69cce820f2b35d80df1ecb27f8b133699219c50732b4"
+    },
+    "cpp-benchmark-testing": {
+      "source": "sentenz/skills",
+      "sourceType": "github",
+      "computedHash": "a56fe359beaf037ab2200fca4ec8ec9d853664d1d1677875967a57541cb08c7f"
+    },
+    "cpp-fuzz-testing": {
+      "source": "sentenz/skills",
+      "sourceType": "github",
+      "computedHash": "62412e515dc5a3452eeab171cc22e7dbcf8b477985d34889e71aee82c67bb73f"
+    },
+    "cpp-mock-testing": {
+      "source": "sentenz/skills",
+      "sourceType": "github",
+      "computedHash": "636afbee56f606e82f0e81942ed6562ccd3674e3e4e68e98ac48663e5d97490d"
+    },
+    "cpp-unit-testing": {
+      "source": "sentenz/skills",
+      "sourceType": "github",
+      "computedHash": "d3d2b3cef4a0e216aa98c04e171e1d4bf1b7a17a0eb3ec4767e08db63a577643"
+    }
+  }
+}
