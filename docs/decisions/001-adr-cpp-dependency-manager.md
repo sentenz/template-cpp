@@ -103,7 +103,7 @@ Conan is selected as the C/C++ dependency manager. It separates regular from dev
 - Pros
 
   - Dependencies and Dev Dependencies
-    > Supports `[requires]` for runtime dependencies and `[tool_requires]` for build-time / dev-only tools, cleanly separating production from development artefacts.
+    > Supports `[requires]` for runtime dependencies and `[tool_requires]` for build-time / dev-only tools, cleanly separating production from development artifacts.
 
   - Dependency Resolution
     > Uses a SAT-solver-based graph resolver that handles version ranges, revisions, conflicts, and complex transitive graphs reliably.
