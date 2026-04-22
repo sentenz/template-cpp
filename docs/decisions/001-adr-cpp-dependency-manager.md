@@ -217,7 +217,7 @@ Conan is selected as the C/C++ dependency manager. It separates regular from dev
 
 ## 6. Implementation
 
-1. Install the Conan client (`pip install conan`) and initialise a default profile (`conan profile detect`) on all developer machines and CI runners.
+1. Install the Conan client (`pip install conan`) and initialize a default profile (`conan profile detect`) on all developer machines and CI runners.
 
 2. Define a `conanfile.txt` at the repository root declaring `[requires]` for runtime dependencies and `[tool_requires]` for development dependencies, with `CMakeDeps` and `CMakeToolchain` listed under `[generators]`.
 
