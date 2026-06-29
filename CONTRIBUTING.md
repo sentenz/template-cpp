@@ -256,7 +256,7 @@ AI Agents are automated tools that assist in various development tasks such as c
       ```
 
     - AI Agents
-      > Instruct Agent Skills capabilities to to perform [Unit Testing](.github/skills/cpp-unit-testing/SKILL.md) tasks.
+      > Instruct Agent Skills capabilities to to perform [Unit Testing](.agents/skills/cpp-unit-testing/SKILL.md) tasks.
 
 ### 8.2. Code Coverage
 
