@@ -1,7 +1,6 @@
 include(meta_gtest)
 meta_gtest(
-    ENABLE ${META_BUILD_TESTING_SEPARATE}
-    WITH_CTEST
+    ENABLE ${META_BUILD_TESTING_ONTARGET}
     WITH_MAIN
     TARGET ${PROJECT_NAME}-test
 )

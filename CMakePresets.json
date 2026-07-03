@@ -29,7 +29,6 @@
       "description": "Configuration with debug information",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "META_BUILD_TESTING": false,
         "META_ENABLE_COMPILER_CACHE": true
       },
       "inherits": [
@@ -42,7 +41,6 @@
       "description": "Configuration with release optimization",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "META_BUILD_TESTING": false,
         "META_ENABLE_COMPILER_CACHE": false
       },
       "inherits": [
@@ -51,11 +49,37 @@
     },
     {
       "name": "test",
-      "displayName": "Configure Tests",
-      "description": "Configuration with tests",
+      "displayName": "Configure Tests (Colocate)",
+      "description": "Configuration with colocated tests alongside source files",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "META_BUILD_TESTING": true,
+        "META_BUILD_TESTING_COLOCATE": true,
+        "META_ENABLE_COMPILER_CACHE": true
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "test-separate",
+      "displayName": "Configure Tests (Separate)",
+      "description": "Configuration with tests in a separate directory",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "META_BUILD_TESTING_SEPARATE": true,
+        "META_ENABLE_COMPILER_CACHE": true
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "test-ontarget",
+      "displayName": "Configure Tests (On-Target)",
+      "description": "Configuration with on-target tests for cross-compiled execution on hardware",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "META_BUILD_TESTING_ONTARGET": true,
         "META_ENABLE_COMPILER_CACHE": true
       },
       "inherits": [
@@ -78,18 +102,37 @@
     },
     {
       "name": "test",
-      "displayName": "Build Tests",
-      "description": "Build the project with tests",
+      "displayName": "Build Tests (Colocate)",
+      "description": "Build the project with colocated tests",
       "configurePreset": "test"
+    },
+    {
+      "name": "test-separate",
+      "displayName": "Build Tests (Separate)",
+      "description": "Build the project with separate tests",
+      "configurePreset": "test-separate"
+    },
+    {
+      "name": "test-ontarget",
+      "displayName": "Build Tests (On-Target)",
+      "description": "Build the project with on-target tests",
+      "configurePreset": "test-ontarget"
     }
   ],
   "testPresets": [
     {
       "name": "test",
-      "displayName": "Execute Tests",
-      "description": "Execute all tests from the build",
+      "displayName": "Execute Tests (Colocate)",
+      "description": "Execute colocated tests from the build",
       "configuration": "Debug",
       "configurePreset": "test"
+    },
+    {
+      "name": "test-separate",
+      "displayName": "Execute Tests (Separate)",
+      "description": "Execute separate tests from the build",
+      "configuration": "Debug",
+      "configurePreset": "test-separate"
     }
   ]
 }
