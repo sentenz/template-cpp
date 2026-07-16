@@ -29,7 +29,6 @@
       "description": "Configuration with debug information",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "META_BUILD_TESTING": false,
         "META_ENABLE_COMPILER_CACHE": true
       },
       "inherits": [
@@ -42,7 +41,6 @@
       "description": "Configuration with release optimization",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "META_BUILD_TESTING": false,
         "META_ENABLE_COMPILER_CACHE": false
       },
       "inherits": [
@@ -52,11 +50,24 @@
     {
       "name": "test",
       "displayName": "Configure Tests",
-      "description": "Configuration with tests",
+      "description": "Configuration with unit tests in tests/unit/",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "META_BUILD_TESTING": true,
+        "META_BUILD_TESTING_SEPARATE": true,
         "META_ENABLE_COMPILER_CACHE": true
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "test-ontarget",
+      "displayName": "Configure On-Target Tests",
+      "description": "Configuration with on-target tests cross-compiled for the target microcontroller",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "META_BUILD_TESTING_ONTARGET": true,
+        "META_ENABLE_COMPILER_CACHE": false
       },
       "inherits": [
         "base"
@@ -79,17 +90,30 @@
     {
       "name": "test",
       "displayName": "Build Tests",
-      "description": "Build the project with tests",
+      "description": "Build the project with unit tests",
       "configurePreset": "test"
+    },
+    {
+      "name": "test-ontarget",
+      "displayName": "Build On-Target Tests",
+      "description": "Build the project with on-target tests",
+      "configurePreset": "test-ontarget"
     }
   ],
   "testPresets": [
     {
       "name": "test",
       "displayName": "Execute Tests",
-      "description": "Execute all tests from the build",
+      "description": "Execute all unit tests from the build",
       "configuration": "Debug",
       "configurePreset": "test"
+    },
+    {
+      "name": "test-ontarget",
+      "displayName": "Execute On-Target Tests",
+      "description": "Execute all on-target tests via SEGGER J-Run",
+      "configuration": "Debug",
+      "configurePreset": "test-ontarget"
     }
   ]
 }
