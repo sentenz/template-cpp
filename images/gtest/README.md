@@ -1,6 +1,6 @@
 # GoogleTest container image
 
-This image provides the compiler, CMake, Ninja, ccache, Conan, gcovr, and GoogleTest environment required by the repository test workflow.
+This project-specific image provides the compiler, CMake, Ninja, ccache, Conan, gcovr, and dependency cache required by the repository test workflow.
 
 The default container command runs:
 
@@ -10,28 +10,38 @@ make cmake-gcc-test-unit-run
 
 That target configures the CMake `test` preset, builds the test executable, executes CTest, and writes JUnit output to `logs/test/junit.xml`.
 
+## Dependency model
+
+The image installs dependencies from the repository-root `conanfile.txt` and explicitly applies `conan.lock`. This keeps the pre-populated Conan cache aligned with the complete project dependency graph, including GoogleTest and nlohmann/json, without duplicating dependency versions in the Dockerfile.
+
+Changes to either manifest invalidate the dependency installation layer and rebuild the cache deterministically from the updated graph.
+
 ## Build
+
+Run the build from the repository root so the dependency manifests are available in the Docker build context:
 
 ```bash
 docker build \
-  --build-arg GTEST_VERSION=1.17.0 \
+  -f images/gtest/Dockerfile \
   -t sentenz/gtest:1.17.0 \
-  images/gtest
+  .
 ```
 
-The image pins the Alpine base image by digest, pins the Python tooling versions used by the repository setup script, and pre-populates the Conan cache with the selected Debug GoogleTest package.
+`images/gtest/Dockerfile.dockerignore` limits the root context to `conanfile.txt` and `conan.lock`, avoiding transmission of source, build, log, and Git data that are not needed to construct the image.
+
+The image pins the Alpine base image by digest and pins the Python tooling versions used by `scripts/setup.sh`.
 
 ## Multi-platform publication
 
-GoogleTest is resolved for the target platform during each Buildx build, so the same Dockerfile supports `linux/amd64` and `linux/arm64`.
+Conan resolves the locked dependency graph independently for each target platform, so the same Dockerfile supports `linux/amd64` and `linux/arm64`:
 
 ```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  --build-arg GTEST_VERSION=1.17.0 \
+  -f images/gtest/Dockerfile \
   -t sentenz/gtest:1.17.0 \
   --push \
-  images/gtest
+  .
 ```
 
 ## Run the unit tests
@@ -45,6 +55,8 @@ docker run --rm \
   -w /workspace \
   sentenz/gtest:1.17.0
 ```
+
+At runtime, the repository CMake configuration invokes Conan again. The packages already present in `/opt/conan` satisfy the locked graph without downloading or rebuilding them unless the mounted repository manifests differ from those used to build the image.
 
 Because `make` is the image entrypoint, another repository target can be selected directly. For example, to run the unit tests and generate coverage reports:
 
