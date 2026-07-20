@@ -281,7 +281,7 @@ secrets-gpg-show:
 
 # Usage: make secrets-sops-encrypt <files>
 #
-## Encrypt specified SOPS-encrypted files with GPG keys
+## Encrypt specified files using SOPS with GPG keys
 secrets-sops-encrypt:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make secrets-sops-encrypt <files>" >&2; \
