@@ -281,7 +281,7 @@ secrets-gpg-show:
 
 # Usage: make secrets-sops-encrypt <files>
 #
-## Encrypt specified files using SOPS with GPG keys
+## Encrypt specified SOPS-encrypted files with GPG keys
 secrets-sops-encrypt:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make secrets-sops-encrypt <files>" >&2; \
@@ -329,7 +329,7 @@ POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.65.0@sha256:afa51
 
 # Usage: make policy-conftest-run <filepath>
 #
-## Run Conftest container in REPL (Read-Eval-Print Loop) to evaluate policies against input data and generate a report
+## Run Conftest container in REPL (Read-Eval-Print-Loop) to evaluate policies against input data and generate a report
 policy-conftest-run:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make policy-conftest-run <filepath>"; \
@@ -529,7 +529,7 @@ sast-cosign-attest:
 
 # Usage: make sast-cosign-verify <image_name>
 #
-## Verify SBOM attestation for an image
+## Verify SBOM attestation for an image using Cosign
 sast-cosign-verify:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-cosign-verify <image_name>"; \
