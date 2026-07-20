@@ -154,6 +154,39 @@ cmake-gcc-test-unit-coverage:
 	$(MAKE) analysis-dynamic-coverage
 .PHONY: cmake-gcc-test-unit-coverage
 
+# ── Container Manager ────────────────────────────────────────────────────────────────────────────
+
+GTEST_IMAGE ?= sentenz/gtest:1.17.0
+GTEST_DOCKERFILE ?= images/gtest/Dockerfile
+GTEST_BUILD_CONTEXT ?= .
+
+## Build the project-specific GoogleTest container image
+container-gtest-build:
+	docker build \
+		--file "$(GTEST_DOCKERFILE)" \
+		--tag "$(GTEST_IMAGE)" \
+		"$(GTEST_BUILD_CONTEXT)"
+.PHONY: container-gtest-build
+
+## Run the unit tests in the project-specific GoogleTest container image
+container-gtest-test: container-gtest-build
+	docker run --rm \
+		--user "$$(id -u):$$(id -g)" \
+		--volume "$(CURDIR):/workspace" \
+		--workdir /workspace \
+		"$(GTEST_IMAGE)"
+.PHONY: container-gtest-test
+
+## Run the unit tests and generate coverage in the project-specific GoogleTest container image
+container-gtest-coverage: container-gtest-build
+	docker run --rm \
+		--user "$$(id -u):$$(id -g)" \
+		--volume "$(CURDIR):/workspace" \
+		--workdir /workspace \
+		"$(GTEST_IMAGE)" \
+		cmake-gcc-test-unit-coverage
+.PHONY: container-gtest-coverage
+
 # ── Software Analysis ────────────────────────────────────────────────────────────────────────────
 
 LOGS_PATH_COVERAGE := logs/coverage
@@ -296,7 +329,7 @@ POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.65.0@sha256:afa51
 
 # Usage: make policy-conftest-run <filepath>
 #
-## Run Conftest container in REPL (Read-Eval-Print-Loop) to evaluate policies against input data and generate a report
+## Run Conftest container in REPL (Read-Eval-Print Loop) to evaluate policies against input data and generate a report
 policy-conftest-run:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make policy-conftest-run <filepath>"; \
@@ -496,7 +529,7 @@ sast-cosign-attest:
 
 # Usage: make sast-cosign-verify <image_name>
 #
-## Verify SBOM attestation for an image using Cosign
+## Verify SBOM attestation for an image
 sast-cosign-verify:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make sast-cosign-verify <image_name>"; \
