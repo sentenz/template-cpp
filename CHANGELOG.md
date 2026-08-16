@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2](https://github.com/sentenz/template-cpp/compare/1.2.1...1.2.2) (2026-08-16)
+
+### Bug Fixes
+
+* **deps:** update dependency gtest to v1.18.0 ([#73](https://github.com/sentenz/template-cpp/issues/73)) ([b07d46d](https://github.com/sentenz/template-cpp/commit/b07d46d9b5dbe519432fa21d5bd34adc1e2eb1a5))
+
 ## [1.2.1](https://github.com/sentenz/template-cpp/compare/1.2.0...1.2.1) (2026-01-28)
 
 
