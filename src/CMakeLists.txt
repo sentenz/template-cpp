@@ -14,7 +14,7 @@ add_library(${PROJECT_NAME}::interface ALIAS ${PROJECT_NAME}-interface)
 
 include(meta_gtest)
 meta_gtest(
-    ENABLE ${META_BUILD_TESTING}
+    ENABLE ${META_BUILD_TESTING_COLOCATE}
     WITH_CTEST
     WITH_MAIN
     TARGET ${PROJECT_NAME}-test
