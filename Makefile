@@ -292,7 +292,7 @@ secrets-sops-view:
 
 # ── Policy Manager ───────────────────────────────────────────────────────────────────────────────
 
-POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.69.0@sha256:a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558
+POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.70.0@sha256:1d5b939a6310fbc18a66165f436f763c57a568822bfe449cb0b9d89a70a0334b
 
 # Usage: make policy-conftest-run <filepath>
 #
