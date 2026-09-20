@@ -1,0 +1,7 @@
+misconfigurations:
+  - id: AVD-DS-0002
+    paths:
+      - ".devcontainer/dotnet/Dockerfile"
+      - ".devcontainer/go/Dockerfile"
+      - ".devcontainer/python/Dockerfile"
+    statement: "The Dev Containers provision the non-root vscode user through the common-utils feature and connect with remoteUser set to vscode."
