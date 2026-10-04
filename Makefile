@@ -292,7 +292,7 @@ secrets-sops-view:
 
 # ── Policy Manager ───────────────────────────────────────────────────────────────────────────────
 
-POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.70.1@sha256:82f23e0e1f3faf2f3798f4b1974676c1aed96b05c6656ec6820435c31867c532
+POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.71.0@sha256:3ec6dad358db08acecda56b7a3184037cd810394a65046fafa4f33c7750141b1
 
 # Usage: make policy-conftest-run <filepath>
 #
@@ -326,7 +326,7 @@ policy-regal-lint:
 
 # ── SAST Manager ─────────────────────────────────────────────────────────────────────────────────
 
-SAST_IMAGE_TRIVY ?= aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969
+SAST_IMAGE_TRIVY ?= aquasec/trivy:0.75.0@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa
 SAST_IMAGE_COSIGN ?= cgr.dev/chainguard/cosign:3.0.0@sha256:b6bc266358e9368be1b3d01fca889b78d5ad5a47832986e14640c34a237ef638
 
 ## Scan Infrastructure-as-Code (IaC) files for misconfigurations using Trivy and generate a report
