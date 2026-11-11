@@ -154,6 +154,27 @@ cmake-gcc-test-unit-coverage:
 	$(MAKE) analysis-dynamic-coverage
 .PHONY: cmake-gcc-test-unit-coverage
 
+## Generate a CMake project configured for on-target tests
+cmake-gcc-test-ontarget-configure:
+	cmake --preset test-ontarget
+.PHONY: cmake-gcc-test-ontarget-configure
+
+## Compile the on-target tests
+cmake-gcc-test-ontarget-build: cmake-gcc-test-ontarget-configure
+	cmake --build --preset test-ontarget
+.PHONY: cmake-gcc-test-ontarget-build
+
+## Flash and run on-target tests via SEGGER J-Run
+cmake-gcc-test-ontarget-run: cmake-gcc-test-ontarget-build
+	@mkdir -p "$(CURDIR)/${LOGS_PATH_TEST}"
+	ctest --preset test-ontarget --output-junit "$(CURDIR)/${LOGS_PATH_TEST}/junit-ontarget.xml"
+.PHONY: cmake-gcc-test-ontarget-run
+
+## Clean the on-target test build artifacts
+cmake-gcc-test-ontarget-clean:
+	cmake --build --preset test-ontarget --target clean
+.PHONY: cmake-gcc-test-ontarget-clean
+
 # ── Software Analysis ────────────────────────────────────────────────────────────────────────────
 
 LOGS_PATH_COVERAGE := logs/coverage
