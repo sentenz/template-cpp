@@ -1,97 +1,89 @@
 # SPDX-License-Identifier: Apache-2.0
 
-ifneq (,$(wildcard .env))
-	include .env
+# Load Dotenv Files
+
+DOTENV_FILES := $(filter-out %.enc,$(wildcard .env .env.*))
+ifneq ($(strip $(DOTENV_FILES)),)
+	include $(DOTENV_FILES)
 	export
 endif
 
 # Define Variables
 
-IS_WINDOWS := $(findstring Windows_NT,$(OS))
-POWERSHELL := powershell
-
-ifeq ($(IS_WINDOWS),Windows_NT)
-	PIP_VENV := .venv/Scripts
-else
-	PIP_VENV := .venv/bin
-endif
-
 SHELL := bash
 .SHELLFLAGS := -euo pipefail -c
 .ONESHELL:
 
-# Define Targets
+# ─── General ─────────────────────────────────────────────────────────────────────────────────────
 
 default: help
 
 # NOTE Targets MUST have a leading comment line starting with `##` to be included in the list. See the targets below for examples.
+#
+## Display help message with a list of available tasks and their descriptions
 help:
-ifeq ($(IS_WINDOWS),Windows_NT)
-	@echo "TODO Implement Windows help script"
-else
 	@awk 'BEGIN {printf "Tasks\n\tA collection of tasks used in the current project.\n\n"}'
 	@awk 'BEGIN {printf "Usage\n\tmake $(shell tput -Txterm setaf 6)<task>$(shell tput -Txterm sgr0)\n\n"}' $(MAKEFILE_LIST)
 	@awk '/^##/{c=substr($$0,3);next}c&&/^[[:alpha:]][[:alnum:]_-]+:/{print "$(shell tput -Txterm setaf 6)\t" substr($$1,1,index($$1,":")) "$(shell tput -Txterm sgr0)",c}1{c=0}' $(MAKEFILE_LIST) | column -s: -t
-endif
 .PHONY: help
 
-# ── Setup & Teardown ─────────────────────────────────────────────────────────────────────────────
+# ─── Setup & Teardown ────────────────────────────────────────────────────────────────────────────
 
+# NOTE Privileged task may require elevated permissions (e.g., sudo) to execute.
+#
 ## Initialize a software development workspace with requisites
 bootstrap:
-ifeq ($(IS_WINDOWS),Windows_NT)
-	$(POWERSHELL) -File ./scripts/Bootstrap.ps1
-else
-	@cd ./scripts/ && bash ./bootstrap.sh
-endif
+	cd $(@D)/scripts && ./bootstrap.sh
 .PHONY: bootstrap
 
+# NOTE Privileged task may require elevated permissions (e.g., sudo) to execute.
+#
 ## Install and configure all dependencies essential for development
 setup:
-ifeq ($(IS_WINDOWS),Windows_NT)
-	@echo "TODO Implement Windows setup task"
-else
-	@cd ./scripts/ && bash ./setup.sh
-endif
+	cd $(@D)/scripts && ./setup.sh
 .PHONY: setup
 
+# NOTE Privileged task may require elevated permissions (e.g., sudo) to execute.
+#
 ## Remove development artifacts and restore the host to its pre-setup state
 teardown:
-ifeq ($(IS_WINDOWS),Windows_NT)
-	@echo "TODO Implement Windows teardown task"
-else
-	@cd ./scripts/ && bash ./teardown.sh
-endif
+	cd $(@D)/scripts && ./teardown.sh
 .PHONY: teardown
 
-# TODO Migrate to Setup.ps1
-## Install the PSScriptAnalyzer PowerShell module on a Windows system
-install-pwsh-analyzer:
-ifeq ($(IS_WINDOWS),Windows_NT)
-	$(POWERSHELL) -Command "Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -AllowClobber"
-else
-	@echo "TODO Implement Linux install-pwsh-analyzer task"
-endif
-.PHONY: install-pwsh-analyzer
+# ─── Git Hooks Manager ───────────────────────────────────────────────────────────────────────────
 
-# TODO Migrate to Setup.ps1
-## Use PSScriptAnalyzer to lint PowerShell scripts and modules on Windows
-lint-pwsh-analyze:
-ifeq ($(IS_WINDOWS),Windows_NT)
-	$(POWERSHELL) -Command "Invoke-ScriptAnalyzer -Path $(@D) -Recurse -Severity Warning,Error | Out-String"
-else
-	@echo "TODO Implement Linux lint-pwsh-analyze task"
-endif
-.PHONY: lint-pwsh-analyze
+## Initialize Lefthook Git hooks in the local repository
+githooks-lefthook-initialize:
+	lefthook install --force
+.PHONY: githooks-lefthook-initialize
+
+## Deinitialize Lefthook Git hooks from the local repository
+githooks-lefthook-deinitialize:
+	lefthook uninstall
+.PHONY: githooks-lefthook-deinitialize
+
 
 # ── Dependency Manager ───────────────────────────────────────────────────────────────────────────
 
 # NOTE Conan install is performed automatically by `meta_conan()`
+#
 ## Initialize Conan for package management
 pkg-conan-initialize:
 	conan profile detect --force
 	conan install . -s build_type=Debug --output-folder=build/test/conan --build=missing
 .PHONY: pkg-conan-initialize
+
+# ─── Dependency Manager ──────────────────────────────────────────────────────────────────────────
+
+DEPENDENCY_RENOVATE_IMAGE ?= docker.io/renovate/renovate:44.166.0@sha256:510b885a90cd70437816c5c2da1d0c3beff513d3979497b2db1d37c84adfbc2b
+DEPENDENCY_RENOVATE_ALIAS := docker run --rm -v "${PWD}:/workspace" -w /workspace -e LOG_LEVEL=debug -e RENOVATE_REPOSITORIES -e RENOVATE_TOKEN=$(RENOVATE_TOKEN) "$(DEPENDENCY_RENOVATE_IMAGE)"
+
+## Update project dependencies locally using Renovate and generate a report
+dependency-renovate-update:
+	@mkdir -p logs/dependency
+
+	$(DEPENDENCY_RENOVATE_ALIAS) renovate --platform=local --repository-cache=reset > logs/dependency/renovate.log 2>&1
+.PHONY: dependency-renovate-update
 
 # ── Build System ─────────────────────────────────────────────────────────────────────────────────
 
@@ -151,22 +143,24 @@ cmake-gcc-test-unit-clean:
 ## Run the GCC unit tests and generate code coverage report
 cmake-gcc-test-unit-coverage:
 	$(MAKE) cmake-gcc-test-unit-run || true
-	$(MAKE) analysis-dynamic-coverage
+	$(MAKE) static-analysis-coverage
 .PHONY: cmake-gcc-test-unit-coverage
 
-# ── Software Analysis ────────────────────────────────────────────────────────────────────────────
+# ── Static Analysis ──────────────────────────────────────────────────────────────────────────────
 
 LOGS_PATH_COVERAGE := logs/coverage
 
-## Generate code coverage report from dynamic analysis
-analysis-dynamic-coverage:
+##
+static-analysis-coverage:
 	@mkdir -p "$(CURDIR)/${LOGS_PATH_COVERAGE}"
 	gcovr --xml-pretty --print-summary --cobertura --output "$(CURDIR)/${LOGS_PATH_COVERAGE}/cobertura.xml" --html="$(CURDIR)/${LOGS_PATH_COVERAGE}/" --filter "src/" --exclude-unreachable-branches
-.PHONY: analysis-dynamic-coverage
+.PHONY: static-analysis-coverage
 
-# ── Secrets Manager ──────────────────────────────────────────────────────────────────────────────
+# ─── Secrets Manager ─────────────────────────────────────────────────────────────────────────────
 
-SECRETS_SOPS_UID ?= sops-c++
+SECRETS_SOPS_IMAGE ?= ghcr.io/getsops/sops:v3.13.3@sha256:857f5a151ac0b2bfc55c1e4e5581d66fb8e268e4d106b38e74191f3bac9d58ea
+SECRETS_SOPS_ALIAS ?= docker run --rm --user "$(shell id -u):$(shell id -g)" -e GNUPGHOME=/tmp/.gnupg -v "${PWD}:/workspace" -v "$${HOME}/.gnupg:/tmp/.gnupg" -w /workspace "$(SECRETS_SOPS_IMAGE)"
+SECRETS_SOPS_UID ?= sops-$(notdir $(CURDIR))
 
 # Usage: make secrets-gpg-generate SECRETS_SOPS_UID=<uid>
 #
@@ -248,7 +242,7 @@ secrets-gpg-show:
 
 # Usage: make secrets-sops-encrypt <files>
 #
-## Encrypt specified files using SOPS with GPG keys
+## Encrypt specified files using SOPS with GPG keys, writing output to <file>.enc
 secrets-sops-encrypt:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make secrets-sops-encrypt <files>" >&2; \
@@ -257,14 +251,16 @@ secrets-sops-encrypt:
 
 	@for file in $(filter-out $@,$(MAKECMDGOALS)); do \
 		if [ -f "$$file" ]; then \
-			sops --encrypt --in-place "$$file"; \
+			$(SECRETS_SOPS_ALIAS) encrypt --output "$$file.enc" "$$file"; \
+		else \
+			echo "file not found: $$file" >&2; \
 		fi; \
 	done
 .PHONY: secrets-sops-encrypt
 
 # Usage: make secrets-sops-decrypt <files>
 #
-## Decrypt specified SOPS-encrypted files using GPG keys
+## Decrypt specified SOPS-encrypted files (expects <file>.enc), writing output to <file>
 secrets-sops-decrypt:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "usage: make secrets-sops-decrypt <files>" >&2; \
@@ -272,9 +268,14 @@ secrets-sops-decrypt:
 	fi
 
 	@for file in $(filter-out $@,$(MAKECMDGOALS)); do \
-		if [ -f "$$file" ]; then \
-			sops --decrypt --in-place "$$file"; \
-		fi; \
+		case "$$file" in \
+			*.enc) \
+				$(SECRETS_SOPS_ALIAS) decrypt --filename-override "$${file%.enc}" --output "$${file%.enc}" "$$file"; \
+				;;
+			*) \
+				$(SECRETS_SOPS_ALIAS) decrypt --in-place "$$file"; \
+				;;
+		esac; \
 	done
 .PHONY: secrets-sops-decrypt
 
@@ -287,60 +288,75 @@ secrets-sops-view:
 		exit 1; \
 	fi
 
-	sops --decrypt "$(filter-out $@,$(MAKECMDGOALS))"
+	$(SECRETS_SOPS_ALIAS) decrypt "$(filter-out $@,$(MAKECMDGOALS))"
 .PHONY: secrets-sops-view
 
-# ── Policy Manager ───────────────────────────────────────────────────────────────────────────────
+# ─── Policy Manager ──────────────────────────────────────────────────────────────────────────────
 
-POLICY_IMAGE_CONFTEST ?= docker.io/openpolicyagent/conftest:v0.71.1@sha256:0e77cdf7c1fcde035f3c579e4aaa6664ee2a8be5777eaa9af9f520cdd02280c0
+POLICY_CONFTEST_IMAGE ?= docker.io/openpolicyagent/conftest:v0.71.1@sha256:0e77cdf7c1fcde035f3c579e4aaa6664ee2a8be5777eaa9af9f520cdd02280c0
+POLICY_CONFTEST_ALIAS := docker run --rm -v "${PWD}:/workspace" -w /workspace "$(POLICY_CONFTEST_IMAGE)"
 
-# Usage: make policy-conftest-run <filepath>
+# Usage: make policy-conftest-test <filepath>
 #
 ## Run Conftest container in REPL (Read-Eval-Print-Loop) to evaluate policies against input data and generate a report
-policy-conftest-run:
+policy-conftest-test:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
-		echo "usage: make policy-conftest-run <filepath>"; \
+		echo "usage: make policy-conftest-test <filepath>"; \
 		exit 1; \
 	fi
 
 	@mkdir -p logs/policy
 
-	docker run --rm -v "$$(pwd)":/workspace -w /workspace "$(POLICY_IMAGE_CONFTEST)" test "$(filter-out $@,$(MAKECMDGOALS))" > logs/policy/conftest-report.json 2>&1
-.PHONY: policy-conftest-run
+	$(POLICY_CONFTEST_ALIAS) test "$(filter-out $@,$(MAKECMDGOALS))" > logs/policy/conftest-report.json 2>&1
+.PHONY: policy-conftest-test
 
-POLICY_IMAGE_REGAL ?= ghcr.io/openpolicyagent/regal:0.37.0@sha256:a09884658f3c8c9cc30de136b664b3afdb7927712927184ba891a155a9676050
+POLICY_REGAL_IMAGE ?= ghcr.io/open-policy-agent/regal:0.43.0@sha256:29460f0ec1340d37f6c0c74bcbd88dd232fd8382c7a2337f0684415bd4c46da1
+POLICY_REGAL_ALIAS := docker run --rm -v "${PWD}:/workspace" -w /workspace "$(POLICY_REGAL_IMAGE)"
 
 # Usage: make policy-regal-lint <filepath>
 #
 ## Lint Rego policies using Regal and generate a report
 policy-regal-lint:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
-		echo "usage: make policy-regal-lint"; \
+		echo "usage: make policy-regal-lint <filepath>"; \
 		exit 1; \
 	fi
 
-	@mkdir -p logs/analysis
+	@mkdir -p logs/policy
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(POLICY_IMAGE_REGAL)" regal lint "$(filter-out $@,$(MAKECMDGOALS))" --format json > logs/analysis/regal.json 2>&1
+	$(POLICY_REGAL_ALIAS) lint "$(filter-out $@,$(MAKECMDGOALS))" --format json > logs/policy/regal.json 2>&1
 .PHONY: policy-regal-lint
 
-# ── SAST Manager ─────────────────────────────────────────────────────────────────────────────────
+# ─── SAST Manager ────────────────────────────────────────────────────────────────────────────────
 
-SAST_IMAGE_TRIVY ?= aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
-SAST_IMAGE_COSIGN ?= cgr.dev/chainguard/cosign:3.0.0@sha256:b6bc266358e9368be1b3d01fca889b78d5ad5a47832986e14640c34a237ef638
+SAST_SEMGREP_IMAGE ?= semgrep/semgrep:1.181.0@sha256:81474464c1f07483ba0682a44787fd93c91397419762a04abe2bafaae396304b
+SAST_SEMGREP_ALIAS := docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_SEMGREP_IMAGE)"
+SAST_SEMGREP_FILES ?= .
+SAST_SEMGREP_FILTER = $(if $(strip $(SAST_SEMGREP_FILES)),$(SAST_SEMGREP_FILES),.)
+
+## Scan source code for security issues using Semgrep and generate a report
+sast-semgrep-scan:
+	@mkdir -p logs/sast
+
+	$(SAST_SEMGREP_ALIAS) semgrep scan --config auto --error --json --output logs/sast/semgrep.json $(SAST_SEMGREP_FILTER) 2> logs/sast/semgrep.log
+.PHONY: sast-semgrep-scan
+
+SAST_TRIVY_IMAGE ?= aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222
+SAST_TRIVY_ALIAS := docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_TRIVY_IMAGE)"
+SAST_TRIVY_FILES ?= .
 
 ## Scan Infrastructure-as-Code (IaC) files for misconfigurations using Trivy and generate a report
 sast-trivy-misconfig:
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" config --output logs/sast/trivy-misconfig.json /workspace 2>&1
+	$(SAST_TRIVY_ALIAS) config --output logs/sast/trivy-misconfig.json $(SAST_TRIVY_FILES) 2>&1
 .PHONY: sast-trivy-misconfig
 
 ## Scan local filesystem for vulnerabilities and misconfigurations using Trivy
 sast-trivy-fs:
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" filesystem --output logs/sast/trivy-filesystem.json /workspace 2>&1
+	$(SAST_TRIVY_ALIAS) filesystem --output logs/sast/trivy-filesystem.json /workspace 2>&1
 .PHONY: sast-trivy-fs
 
 # Usage: make sast-trivy-image <image_name>
@@ -354,7 +370,7 @@ sast-trivy-image:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" image --output logs/sast/trivy-image.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}:/workspace" -w /workspace "$(SAST_TRIVY_IMAGE)" image --output logs/sast/trivy-image.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-image
 
 # Usage: make sast-trivy-image-license <image_name>
@@ -368,7 +384,7 @@ sast-trivy-image-license:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" image --scanners license --format table --output logs/sast/trivy-image-license.txt "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	$(SAST_TRIVY_ALIAS) image --scanners license --format table --output logs/sast/trivy-image-license.txt "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-image-license
 
 # Usage: make sast-trivy-repository <repo_url>
@@ -382,7 +398,7 @@ sast-trivy-repository:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" repository --output logs/sast/trivy-repository.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	$(SAST_TRIVY_ALIAS) repository --output logs/sast/trivy-repository.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-repository
 
 # Usage: make sast-trivy-rootfs <path>
@@ -396,7 +412,7 @@ sast-trivy-rootfs:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" rootfs --output logs/sast/trivy-rootfs.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	$(SAST_TRIVY_ALIAS) rootfs --output logs/sast/trivy-rootfs.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-rootfs
 
 # Usage: make sast-trivy-sbom-scan <sbom_path>
@@ -410,7 +426,7 @@ sast-trivy-sbom-scan:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" sbom --output logs/sast/trivy-sbom.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	$(SAST_TRIVY_ALIAS) sbom --output logs/sast/trivy-sbom.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-scan
 
 # Usage: make sast-trivy-sbom-cyclonedx-image <image_name>
@@ -424,7 +440,7 @@ sast-trivy-sbom-cyclonedx-image:
 
 	@mkdir -p logs/sbom
 
-	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" image --format cyclonedx --output logs/sbom/sbom-image.cdx.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}:/workspace" -w /workspace "$(SAST_TRIVY_IMAGE)" image --format cyclonedx --output logs/sbom/sbom-image.cdx.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-cyclonedx-image
 
 # Usage: make sast-trivy-sbom-cyclonedx-fs <path>
@@ -438,7 +454,7 @@ sast-trivy-sbom-cyclonedx-fs:
 
 	@mkdir -p logs/sbom
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" filesystem --format cyclonedx --output logs/sbom/sbom-fs.cdx.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	$(SAST_TRIVY_ALIAS) filesystem --format cyclonedx --output logs/sbom/sbom-fs.cdx.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-cyclonedx-fs
 
 # Usage: make sast-trivy-sbom-license <sbom_path>
@@ -452,7 +468,7 @@ sast-trivy-sbom-license:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" sbom --scanners license --format table --output logs/sast/trivy-sbom-license.txt "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+	$(SAST_TRIVY_ALIAS) sbom --scanners license --format table --output logs/sast/trivy-sbom-license.txt "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
 .PHONY: sast-trivy-sbom-license
 
 # Usage: make sast-trivy-sbom-attestation <intoto_sbom_path>
@@ -466,12 +482,89 @@ sast-trivy-sbom-attestation:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRIVY)" sbom "$(filter-out $@,$(MAKECMDGOALS))"
+	$(SAST_TRIVY_ALIAS) sbom "$(filter-out $@,$(MAKECMDGOALS))"
 .PHONY: sast-trivy-sbom-attestation
+
+# Usage: make sast-trivy-vm <vm_image_path>
+#
+## [EXPERIMENTAL] Scan a virtual machine image using Trivy
+sast-trivy-vm:
+	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+		echo "usage: make sast-trivy-vm <vm_image_path>"; \
+		exit 1; \
+	fi
+
+	@mkdir -p logs/sast
+
+	$(SAST_TRIVY_ALIAS) vm --output logs/sast/trivy-vm.json "$(filter-out $@,$(MAKECMDGOALS))" 2>&1
+.PHONY: sast-trivy-vm
+
+# Usage: make sast-trivy-kubernetes [target]
+#
+## [EXPERIMENTAL] Scan kubernetes cluster using Trivy (default `cluster`)
+sast-trivy-kubernetes:
+	@echo "Note: This requires KUBECONFIG to be mounted or available to the container. Assuming ~/.kube/config is mounted to /root/.kube/config"
+
+	@mkdir -p logs/sast
+
+	docker run --rm -v "${HOME}/.kube/config:/root/.kube/config" -v "${PWD}:/workspace" -w /workspace "$(SAST_TRIVY_IMAGE)" kubernetes --output logs/sast/trivy-kubernetes.json $(if $(filter-out $@,$(MAKECMDGOALS)),$(filter-out $@,$(MAKECMDGOALS)),cluster) 2>&1
+.PHONY: sast-trivy-kubernetes
+
+SAST_TRIVY_KBOM_FILE ?= logs/sbom/kbom.cdx.json
+
+## Generate a CycloneDX KBOM (Kubernetes Bill of Materials) from the selected Kubernetes cluster
+sast-trivy-kbom:
+	@test -s "$(K8S_KUBECONFIG)" || { \
+		echo "error: kubeconfig not found: $(K8S_KUBECONFIG)" >&2; \
+		exit 1; \
+	}
+
+	@mkdir -p "$(dir $(SAST_TRIVY_KBOM_FILE))"
+
+	docker run --rm --user root --network host --volume /var/run/docker.sock:/var/run/docker.sock --volume "$(CURDIR):/workspace" --workdir /workspace \
+		"$(SAST_TRIVY_IMAGE)" k8s --kubeconfig "$(K8S_KUBECONFIG)" --format cyclonedx --output "/workspace/$(SAST_TRIVY_KBOM_FILE)"
+.PHONY: sast-trivy-kbom
+
+SAST_IMAGE_GITLEAKS ?= ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+
+## Scan git repository history for leaked secrets using Gitleaks and generate a report
+sast-gitleaks-detect:
+	@mkdir -p logs/sast
+
+	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_GITLEAKS)" detect --redact --source /workspace --report-format json --report-path logs/sast/gitleaks-detect.json 2>&1
+.PHONY: sast-gitleaks-detect
+
+## Scan staged git changes for leaked secrets using Gitleaks and generate a report
+sast-gitleaks-staged:
+	@mkdir -p logs/sast
+
+	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_GITLEAKS)" protect --redact --staged --source /workspace --report-format json --report-path logs/sast/gitleaks-protect.json 2>&1
+.PHONY: sast-gitleaks-staged
+
+SAST_IMAGE_TRUFFLEHOG ?= trufflesecurity/trufflehog:3.99.2@sha256:47a84bc18a0d04a165498bbbd3bacfd84176661cbc91f8e0f85467f6a771e99a
+
+## Scan local filesystem for leaked secrets using TruffleHog and generate a report
+sast-trufflehog-fs:
+	@mkdir -p logs/sast
+
+	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRUFFLEHOG)" filesystem . --no-update --json > logs/sast/trufflehog-filesystem.json 2> logs/sast/trufflehog-filesystem.log
+.PHONY: sast-trufflehog-fs
+
+## Scan git repository history for leaked secrets using TruffleHog and generate a report
+sast-trufflehog-git:
+	@mkdir -p logs/sast
+
+	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_TRUFFLEHOG)" git file:///workspace --no-update --json > logs/sast/trufflehog-git.json 2> logs/sast/trufflehog-git.log
+.PHONY: sast-trufflehog-git
+
+# ─── Software Supply Chain Security (SSCS) ───────────────────────────────────────────────────────
+
+SSCS_COSIGN_IMAGE ?= cgr.dev/chainguard/cosign:3.0.0@sha256:b6bc266358e9368be1b3d01fca889b78d5ad5a47832986e14640c34a237ef638
+SSCS_COSIGN_ALIAS := docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SSCS_COSIGN_IMAGE)"
 
 ## Generate Cosign key pair
 sast-cosign-generate-key-pair:
-	docker run --rm -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_COSIGN)" generate-key-pair
+	$(SSCS_COSIGN_ALIAS) generate-key-pair
 .PHONY: sast-cosign-generate-key-pair
 
 # Usage: make sast-cosign-attest <image_name>
@@ -491,7 +584,7 @@ sast-cosign-attest:
 		exit 1; \
 	fi
 
-	docker run --rm -v "${HOME}/.docker/config.json:/root/.docker/config.json" -v "${PWD}:/workspace" -w /workspace -e COSIGN_PASSWORD "$(SAST_IMAGE_COSIGN)" attest --key cosign.key --type cyclonedx --predicate logs/sbom/sbom.cdx.json "$(filter-out $@,$(MAKECMDGOALS))"
+	$(SSCS_COSIGN_ALIAS) attest --key cosign.key --type cyclonedx --predicate logs/sbom/sbom.cdx.json "$(filter-out $@,$(MAKECMDGOALS))"
 .PHONY: sast-cosign-attest
 
 # Usage: make sast-cosign-verify <image_name>
@@ -509,34 +602,85 @@ sast-cosign-verify:
 
 	@mkdir -p logs/sast
 
-	docker run --rm -v "${HOME}/.docker/config.json:/root/.docker/config.json" -v "${PWD}:/workspace" -w /workspace "$(SAST_IMAGE_COSIGN)" verify-attestation --key cosign.pub --type cyclonedx "$(filter-out $@,$(MAKECMDGOALS))" > logs/sbom/sbom.cdx.intoto.jsonl 2> logs/sast/cosign-verify.log
+	$(SSCS_COSIGN_ALIAS) verify-attestation --key cosign.pub --type cyclonedx "$(filter-out $@,$(MAKECMDGOALS))" > logs/sbom/sbom.cdx.intoto.jsonl 2> logs/sast/cosign-verify.log
 .PHONY: sast-cosign-verify
 
-# ── Documentation Generators ─────────────────────────────────────────────────────────────────────
+# ─── Certificate Manager ─────────────────────────────────────────────────────────────────────────
 
-## Generate Content using Static Site Generator (SSG) for Doxygen documentation
-pages-doxygen-build:
-	@doxygen Doxyfile
-.PHONY: pages-doxygen-build
+CERT_HOSTNAME ?=
+CERT_DIR ?= $(K8S_CLUSTER_PATH)
+CERT_DAYS ?= 365
 
-## Serve the generated Static Site Generator (SSG) for Doxygen documentation on a local web server
-pages-doxygen-serve:
-	@OUT="$$(awk -F'= *' '/^OUTPUT_DIRECTORY/ {gsub(/^[ \t]+|[ \t]+$$/,"",$$2); print $$2; exit}' Doxyfile 2>/dev/null)"; \
-	HTML="$$(awk -F'= *' '/^HTML_OUTPUT/ {gsub(/^[ \t]+|[ \t]+$$/,"",$$2); print $$2; exit}' Doxyfile 2>/dev/null)"; \
-	OUTDIR="$${OUT:+$${OUT}/}$${HTML:-html}"; \
-	if [ ! -d "$$OUTDIR" ]; then echo "error: generated docs not found in $$OUTDIR; run 'make pages-doxygen-build' first" >&2; exit 1; fi; \
-	echo "Serving $$OUTDIR at http://localhost:8000"; \
-	python3 -m http.server --directory "$$OUTDIR" 8000
-.PHONY: pages-doxygen-serve
+# Usage: make cert-certificate-generate CERT_HOSTNAME=<hostname-or-url> [CERT_DIR=<directory>] [CERT_DAYS=<days>]
+#
+## Generate a self-signed TLS certificate for a local hostname or URL
+cert-certificate-generate:
+	@raw_hostname="$(strip $(CERT_HOSTNAME))"
+	if [[ -z "$$raw_hostname" ]]; then
+		echo "usage: make cert-certificate-generate CERT_HOSTNAME=<hostname-or-url> [CERT_DIR=<directory>] [CERT_DAYS=<days>]" >&2
+		exit 1
+	fi
 
-# ── Skills Manager ──────────────────────────────────────────────────────────────────────────────
+	hostname="$$raw_hostname"
+	hostname="$${hostname#*://}"
+	hostname="$${hostname%%/*}"
+	hostname="$${hostname%%\?*}"
+	hostname="$${hostname%%\#*}"
+	hostname="$${hostname%%:*}"
 
-## Add sentenz/skills to the project
-skills-add:
-	skills add sentenz/skills
-.PHONY: skills-add
+	if (( $${#hostname} > 253 )) || [[ ! "$$hostname" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$$ ]] || [[ "$$hostname" == *..* ]]; then
+		echo "error: invalid hostname derived from '$(CERT_HOSTNAME)': $$hostname" >&2
+		exit 1
+	fi
+	if [[ ! "$(CERT_DAYS)" =~ ^[1-9][0-9]*$$ ]]; then
+		echo "error: CERT_DAYS must be a positive integer" >&2
+		exit 1
+	fi
+	if ! command -v openssl >/dev/null 2>&1; then
+		echo "error: openssl is required to generate a self-signed certificate" >&2
+		exit 1
+	fi
 
-## Update sentenz/skills in the project
-skills-update:
-	skills update sentenz/skills
-.PHONY: skills-update
+	output_dir="$(CERT_DIR)"
+	certificate_path="$$output_dir/$$hostname+1.pem"
+	private_key_path="$$output_dir/$$hostname+1-key.pem"
+	mkdir -p "$$output_dir"
+
+	umask 077
+	openssl req \
+		-x509 \
+		-nodes \
+		-newkey rsa:2048 \
+		-sha256 \
+		-days "$(CERT_DAYS)" \
+		-keyout "$$private_key_path" \
+		-out "$$certificate_path" \
+		-subj "/CN=$$hostname" \
+		-addext "subjectAltName=DNS:$$hostname"
+	chmod 0644 "$$certificate_path"
+
+	printf 'Generated self-signed certificate for %s\n  certificate: %s\n  private key: %s\n' \
+		"$$hostname" "$$certificate_path" "$$private_key_path"
+.PHONY: cert-certificate-generate
+
+# ─── Skills Manager ──────────────────────────────────────────────────────────────────────────────
+
+## Provision new Agent Skills into the project environment
+agent-skills-add:
+	DISABLE_TELEMETRY=1 \
+	npx skills@latest add sentenz/skills
+.PHONY: agent-skills-add
+
+## Synchronize and update existing Agent Skills in the project environment
+agent-skills-update:
+	DISABLE_TELEMETRY=1 \
+	npx skills@latest update sentenz/skills \
+		--skills adr \
+		--skills cpp-api-documentation \
+		--skills cpp-benchmark-testing \
+		--skills cpp-fuzz-testing \
+		--skills cpp-mock-testing \
+		--skills cpp-unit-testing \
+		--skills google-cpp-style-guide \
+		-y
+.PHONY: agent-skills-update
