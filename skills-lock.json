@@ -1,35 +1,42 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
     "adr": {
       "source": "sentenz/skills",
       "sourceType": "github",
-      "computedHash": "2a9303171d454c99f6665e182b982bf20c67f68b32a5445615dff8466b44652c"
+      "computedHash": "3d5e2af82564b6a6c694b8d846be612617e1e6737392d85733aef5eab3d8ea84"
     },
     "cpp-api-documentation": {
       "source": "sentenz/skills",
       "sourceType": "github",
-      "computedHash": "860269a9c36b77c381ee69cce820f2b35d80df1ecb27f8b133699219c50732b4"
+      "computedHash": "881081c49403c77134c5c572766aaee002c18907477660c34e3f727826098e40"
     },
     "cpp-benchmark-testing": {
       "source": "sentenz/skills",
       "sourceType": "github",
-      "computedHash": "a56fe359beaf037ab2200fca4ec8ec9d853664d1d1677875967a57541cb08c7f"
+      "computedHash": "b5c849eebaa9f51e864e284f81acbfac5d3b7d0c0de152a6ea215cf2b4c67128"
     },
     "cpp-fuzz-testing": {
       "source": "sentenz/skills",
       "sourceType": "github",
-      "computedHash": "62412e515dc5a3452eeab171cc22e7dbcf8b477985d34889e71aee82c67bb73f"
+      "computedHash": "a3490d7ec363e93ed902c96cc214179585c78d45f843677ff3b02ecaeff24e78"
     },
     "cpp-mock-testing": {
       "source": "sentenz/skills",
       "sourceType": "github",
-      "computedHash": "636afbee56f606e82f0e81942ed6562ccd3674e3e4e68e98ac48663e5d97490d"
+      "computedHash": "39bdc6ddfddb48054705584f9a041686c419316e62f41ac50b26f1c00d2a1b91"
     },
     "cpp-unit-testing": {
       "source": "sentenz/skills",
       "sourceType": "github",
-      "computedHash": "d3d2b3cef4a0e216aa98c04e171e1d4bf1b7a17a0eb3ec4767e08db63a577643"
+      "computedHash": "1ed789114cb3e663bb6ab65d2ea192b44e7b9e70e68c77851631b4408bc073b6"
+    },
+    "google-cpp-style-guide": {
+      "source": "sentenz/skills",
+      "commit": "45838ccf5a3e0266b8a8f15f90d09ea66e0a1b9a",
+      "sourceType": "github",
+      "skillPath": "skills/google-cpp-style-guide/SKILL.md",
+      "computedHash": "742511bd1545bbd13f6f88029c385ce7d236d91929a8d5fd1032c2e45c671038"
     }
   }
 }
