@@ -11,12 +11,14 @@ include_guard(GLOBAL)
 #
 # Arguments:
 #   Options
+#     WITH_GTEST       - Send a Google Test filter for each suite (or * for the whole binary).
 #     WITH_RTT         - Use SEGGER RTT for test output communication (default if no output method specified).
 #     WITH_SEMIHOSTING - Use semihosting for test output communication.
 #   One-Value
 #     TARGET           - Required: CMake target name (executable) to flash and test.
 #     DEVICE           - Required: Target device name for J-Run (e.g., LPC55S16).
 #     ENABLE           - Optional: Boolean flag to enable/disable registration (default: ON).
+#     USB / IP         - Optional: select a probe by USB serial/nickname or IP address/hostname.
 #     SPEED            - Optional: Interface speed in kHz (default: 4000).
 #     TIMEOUT          - Optional: CTest timeout in seconds per test (default: 60).
 #     INTERFACE        - Optional: Debug interface type (SWD or JTAG, default: SWD).
@@ -29,10 +31,11 @@ include_guard(GLOBAL)
 #   NONE
 #
 # Usage:
-#   meta_jrun([WITH_RTT] [WITH_SEMIHOSTING]
+#   meta_jrun([WITH_GTEST] [WITH_RTT] [WITH_SEMIHOSTING]
 #             TARGET <name>
 #             [ENABLE <bool>]
 #             DEVICE <device>
+#             [USB <serial>|IP <host>]
 #             [INTERFACE <SWD|JTAG>]
 #             [SPEED <kHz>]
 #             [TIMEOUT <seconds>]
@@ -47,8 +50,8 @@ include_guard(GLOBAL)
 #     TIMEOUT   60
 #     SUITES    test_leds test_sensors)
 function(meta_jrun)
-    set(options WITH_RTT WITH_SEMIHOSTING)
-    set(one_value_args TARGET ENABLE DEVICE INTERFACE SPEED TIMEOUT)
+    set(options WITH_GTEST WITH_RTT WITH_SEMIHOSTING)
+    set(one_value_args TARGET ENABLE DEVICE INTERFACE SPEED TIMEOUT USB IP)
     set(multi_value_args SUITES)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${options}" "${one_value_args}" "${multi_value_args}")
 
@@ -86,7 +89,7 @@ function(meta_jrun)
 
     # Find J-Run executable (idempotent)
     if(NOT meta_jrun_exe)
-        find_program(meta_jrun_exe NAMES JRun jrun HINTS "$ENV{SEGGER_PATH}")
+        find_program(meta_jrun_exe NAMES JRun JRunExe jrun HINTS "$ENV{SEGGER_PATH}" NO_CMAKE_FIND_ROOT_PATH)
     endif()
     if(NOT meta_jrun_exe)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: 'JRun' not found. Consider setting the 'SEGGER_PATH' environment variable.")
@@ -102,14 +105,14 @@ function(meta_jrun)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Invalid argument of 'INTERFACE' with '${ARG_INTERFACE}'. Allowed values are '${_meta_jrun_allowed_interfaces}'.")
     endif()
 
-    if(NOT ARG_SPEED)
+    if(NOT DEFINED ARG_SPEED)
         set(ARG_SPEED 4000)
     endif()
     if(NOT ARG_SPEED MATCHES "^[1-9][0-9]*$")
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: 'SPEED' must be a positive integer in kHz, but got '${ARG_SPEED}'.")
     endif()
 
-    if(NOT ARG_TIMEOUT)
+    if(NOT DEFINED ARG_TIMEOUT)
         set(ARG_TIMEOUT 60)
     endif()
     if(NOT ARG_TIMEOUT MATCHES "^[1-9][0-9]*$")
@@ -118,14 +121,23 @@ function(meta_jrun)
 
     # Build J-Run arguments
     set(_meta_jrun_args
+        --nogui
         --device "${ARG_DEVICE}"
         --if "${ARG_INTERFACE}"
         --speed "${ARG_SPEED}"
     )
 
+    if(ARG_USB AND ARG_IP)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Select either USB or IP for the J-Link connection.")
+    elseif(ARG_USB)
+        list(APPEND _meta_jrun_args --usb "${ARG_USB}")
+    elseif(ARG_IP)
+        list(APPEND _meta_jrun_args --ip "${ARG_IP}")
+    endif()
+
     # Add output method flag, RTT is the default if no method is specified
     if(ARG_WITH_SEMIHOSTING)
-        list(APPEND _meta_jrun_args --semihosting)
+        list(APPEND _meta_jrun_args --semihost)
     else()
         list(APPEND _meta_jrun_args --rtt)
     endif()
@@ -133,21 +145,28 @@ function(meta_jrun)
     # Resolve ELF path from the build target via a generator expression
     set(_meta_jrun_elf "$<TARGET_FILE:${ARG_TARGET}>")
 
-    if(ARG_SUITES)
-        # De-duplicate and strip empty suite entries
-        set(_meta_jrun_suites ${ARG_SUITES})
-        list(REMOVE_DUPLICATES _meta_jrun_suites)
-        list(REMOVE_ITEM _meta_jrun_suites "")
-
-        # Register each suite as a separate CTest test, the suite name is forwarded
-        # to the firmware via J-Run --args so the test dispatcher can select only that suite
-        foreach(_meta_jrun_suite IN LISTS _meta_jrun_suites)
-            add_test(NAME "${ARG_TARGET}.${_meta_jrun_suite}" COMMAND "${meta_jrun_exe}" ${_meta_jrun_args} --args "${_meta_jrun_suite}" "${_meta_jrun_elf}")
-            set_tests_properties("${ARG_TARGET}.${_meta_jrun_suite}" PROPERTIES TIMEOUT "${ARG_TIMEOUT}")
-        endforeach()
-    else()
-        # Register a single CTest test for the entire firmware binary
-        add_test(NAME "${ARG_TARGET}" COMMAND "${meta_jrun_exe}" ${_meta_jrun_args} "${_meta_jrun_elf}")
-        set_tests_properties("${ARG_TARGET}" PROPERTIES TIMEOUT "${ARG_TIMEOUT}")
+    # Use a single probe lock across firmware images, including Unity tests.
+    set(_meta_jrun_suites ${ARG_SUITES})
+    list(REMOVE_DUPLICATES _meta_jrun_suites)
+    list(REMOVE_ITEM _meta_jrun_suites "")
+    if(NOT _meta_jrun_suites)
+        set(_args)
+        if(ARG_WITH_GTEST)
+            set(_args --args "gtest --gtest_filter=*")
+        endif()
+        add_test(NAME "${ARG_TARGET}" COMMAND "${meta_jrun_exe}" ${_meta_jrun_args} ${_args} "${_meta_jrun_elf}")
+        set_tests_properties("${ARG_TARGET}" PROPERTIES TIMEOUT "${ARG_TIMEOUT}" RESOURCE_LOCK jlink)
+        return()
     endif()
+
+    foreach(_suite IN LISTS _meta_jrun_suites)
+        set(_arg "${_suite}")
+        if(ARG_WITH_GTEST)
+            # newlib treats the first token from SYS_GET_CMDLINE as argv[0].
+            set(_arg "gtest --gtest_filter=${_suite}.*")
+        endif()
+        set(_name "${ARG_TARGET}.${_suite}")
+        add_test(NAME "${_name}" COMMAND "${meta_jrun_exe}" ${_meta_jrun_args} --args "${_arg}" "${_meta_jrun_elf}")
+        set_tests_properties("${_name}" PROPERTIES TIMEOUT "${ARG_TIMEOUT}" RESOURCE_LOCK jlink)
+    endforeach()
 endfunction()

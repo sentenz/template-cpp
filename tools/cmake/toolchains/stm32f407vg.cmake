@@ -1,0 +1,15 @@
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
+
+set(board_dir "${CMAKE_CURRENT_LIST_DIR}/../../../tests/ontarget/gtest/stm32f407vg")
+set(META_DEVICE_NAME STM32F407VG)
+set(META_ONTARGET_STARTUP "${board_dir}/startup.c")
+set(META_ONTARGET_LINKER_SCRIPT "${board_dir}/flash.ld")
+
+set(cpu_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=soft")
+set(CMAKE_C_FLAGS_INIT "${cpu_flags} -ffunction-sections -fdata-sections")
+set(CMAKE_CXX_FLAGS_INIT "${cpu_flags} -ffunction-sections -fdata-sections")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "--specs=rdimon.specs -Wl,--gc-sections -T\"${META_ONTARGET_LINKER_SCRIPT}\"")

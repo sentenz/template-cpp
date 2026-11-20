@@ -24,6 +24,19 @@
       }
     },
     {
+      "name": "ontarget",
+      "displayName": "Configure STM32F407VG Google Test firmware",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "toolchainFile": "${sourceDir}/tools/cmake/toolchains/stm32f407vg.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "META_PROJECT_NAME": "cpp-concept",
+        "META_ENABLE_COMPILER_CACHE": false,
+        "META_BUILD_TESTING_ONTARGET": true
+      }
+    },
+    {
       "name": "debug",
       "displayName": "Configure Debug",
       "description": "Configuration with debug information",
@@ -65,6 +78,10 @@
   ],
   "buildPresets": [
     {
+      "name": "ontarget",
+      "configurePreset": "ontarget"
+    },
+    {
       "name": "debug",
       "displayName": "Build Debug",
       "description": "Build the project with debug information",
@@ -84,6 +101,17 @@
     }
   ],
   "testPresets": [
+    {
+      "name": "ontarget",
+      "configurePreset": "ontarget",
+      "output": {
+        "outputOnFailure": true,
+        "outputJUnitFile": "${sourceDir}/build/ontarget/results.xml"
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
     {
       "name": "test",
       "displayName": "Execute Tests",

@@ -7,6 +7,7 @@ A modular C++ project using a component-based architecture, with CMake as the bu
 
 - [1. Details](#1-details)
   - [1.1. Prerequisites](#11-prerequisites)
+  - [1.2. On-target tests](#12-on-target-tests)
 - [2. Contribute](#2-contribute)
 - [3. Troubleshoot](#3-troubleshoot)
   - [3.1. TODO](#31-todo)
@@ -37,6 +38,10 @@ A modular C++ project using a component-based architecture, with CMake as the bu
   ```bash
   sudo apt install make
   ```
+
+### 1.2. On-target tests
+
+The `ontarget` preset cross-compiles Google Test for STM32F407VG. CTest invokes SEGGER J-Run to flash the board, run each suite and write a JUnit report. See the [hardware setup and commands](tools/cmake/README.md#on-target-google-test).
 
 ## 2. Contribute
 
