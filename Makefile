@@ -154,6 +154,48 @@ cmake-gcc-test-unit-coverage:
 	$(MAKE) analysis-dynamic-coverage
 .PHONY: cmake-gcc-test-unit-coverage
 
+## Generate a CMake project configured for separate unit tests
+cmake-gcc-test-separate-configure:
+	cmake --preset test-separate
+.PHONY: cmake-gcc-test-separate-configure
+
+## Compile the separate unit tests
+cmake-gcc-test-separate-build: cmake-gcc-test-separate-configure
+	cmake --build --preset test-separate
+.PHONY: cmake-gcc-test-separate-build
+
+## Run the separate unit tests
+cmake-gcc-test-separate-run: cmake-gcc-test-separate-build
+	@mkdir -p "$(CURDIR)/${LOGS_PATH_TEST}"
+	ctest --preset test-separate --output-junit "$(CURDIR)/${LOGS_PATH_TEST}/junit.xml"
+.PHONY: cmake-gcc-test-separate-run
+
+## Clean the separate unit test build artifacts
+cmake-gcc-test-separate-clean:
+	cmake --build --preset test-separate --target clean
+.PHONY: cmake-gcc-test-separate-clean
+
+## Run the separate unit tests and generate code coverage report
+cmake-gcc-test-separate-coverage:
+	$(MAKE) cmake-gcc-test-separate-run || true
+	$(MAKE) analysis-dynamic-coverage
+.PHONY: cmake-gcc-test-separate-coverage
+
+## Generate a CMake project configured for on-target tests
+cmake-gcc-test-ontarget-configure:
+	cmake --preset test-ontarget
+.PHONY: cmake-gcc-test-ontarget-configure
+
+## Compile the on-target tests
+cmake-gcc-test-ontarget-build: cmake-gcc-test-ontarget-configure
+	cmake --build --preset test-ontarget
+.PHONY: cmake-gcc-test-ontarget-build
+
+## Clean the on-target test build artifacts
+cmake-gcc-test-ontarget-clean:
+	cmake --build --preset test-ontarget --target clean
+.PHONY: cmake-gcc-test-ontarget-clean
+
 # ── Software Analysis ────────────────────────────────────────────────────────────────────────────
 
 LOGS_PATH_COVERAGE := logs/coverage

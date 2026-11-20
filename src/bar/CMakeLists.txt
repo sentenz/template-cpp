@@ -21,7 +21,7 @@ add_library(${PROJECT_NAME}::bar ALIAS ${PROJECT_NAME}-bar)
 # ── Unit Tests ───────────────────────────────────────────────────────────────────────────────────
 
 meta_gtest(
-    ENABLE ${META_BUILD_TESTING}
+    ENABLE ${META_BUILD_TESTING_COLOCATE}
     TARGET ${PROJECT_NAME}-test
     SOURCES
         bar_test.cpp
