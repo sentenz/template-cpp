@@ -1,0 +1,66 @@
+name: Embedded Google Test / J-Run reference
+
+on:
+  pull_request:
+    paths:
+      - "examples/ontarget-gtest/**"
+      - "tools/cmake/meta_gtest.cmake"
+      - "tools/cmake/meta_jrun.cmake"
+      - "tools/jrun_gtest_runner.py"
+      - "tests/tooling/**"
+      - ".github/workflows/gtest-jrun-example.yml"
+  push:
+    paths:
+      - "examples/ontarget-gtest/**"
+      - "tools/cmake/meta_gtest.cmake"
+      - "tools/cmake/meta_jrun.cmake"
+      - "tools/jrun_gtest_runner.py"
+      - "tests/tooling/**"
+  workflow_dispatch:
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+      - name: Unit-test J-Run result contract
+        run: python3 -m unittest discover -s tests/tooling -p 'test_*.py' -v
+      - name: Configure native Google Test
+        working-directory: examples/ontarget-gtest
+        run: cmake --preset host
+      - name: Build native tests
+        working-directory: examples/ontarget-gtest
+        run: cmake --build --preset host --parallel
+      - name: Execute host tests
+        working-directory: examples/ontarget-gtest
+        run: ctest --preset host --output-on-failure
+
+  hardware:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: [self-hosted, linux, arm-embedded, jlink-stm32f407]
+    concurrency:
+      group: stm32f407-single-probe
+      cancel-in-progress: false
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure cross-compilation and SEGGER JRun
+        working-directory: examples/ontarget-gtest
+        run: cmake --preset stm32f407
+      - name: Cross-compile MCU test firmware
+        working-directory: examples/ontarget-gtest
+        run: cmake --build --preset stm32f407 --parallel
+      - name: Flash and execute tests with JRun/CTest
+        working-directory: examples/ontarget-gtest
+        run: ctest --preset stm32f407 --verbose
+      - name: Archive RTT and CTest logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stm32f407-jrun-logs
+          path: |
+            examples/ontarget-gtest/build/stm32f407/jrun-logs/
+            examples/ontarget-gtest/build/stm32f407/Testing/Temporary/LastTest.log
+          if-no-files-found: warn
