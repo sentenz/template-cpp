@@ -326,7 +326,7 @@ policy-regal-lint:
 
 # ── SAST Manager ─────────────────────────────────────────────────────────────────────────────────
 
-SAST_IMAGE_TRIVY ?= aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+SAST_IMAGE_TRIVY ?= aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
 SAST_IMAGE_COSIGN ?= cgr.dev/chainguard/cosign:3.0.0@sha256:b6bc266358e9368be1b3d01fca889b78d5ad5a47832986e14640c34a237ef638
 
 ## Scan Infrastructure-as-Code (IaC) files for misconfigurations using Trivy and generate a report
