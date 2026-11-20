@@ -154,6 +154,39 @@ cmake-gcc-test-unit-coverage:
 	$(MAKE) analysis-dynamic-coverage
 .PHONY: cmake-gcc-test-unit-coverage
 
+# ── Container Manager ────────────────────────────────────────────────────────────────────────────
+
+GTEST_IMAGE ?= sentenz/gtest:1.17.0
+GTEST_DOCKERFILE ?= images/gtest/Dockerfile
+GTEST_BUILD_CONTEXT ?= .
+
+## Build the project-specific GoogleTest container image
+container-gtest-build:
+	docker build \
+		--file "$(GTEST_DOCKERFILE)" \
+		--tag "$(GTEST_IMAGE)" \
+		"$(GTEST_BUILD_CONTEXT)"
+.PHONY: container-gtest-build
+
+## Run the unit tests in the project-specific GoogleTest container image
+container-gtest-test: container-gtest-build
+	docker run --rm \
+		--user "$$(id -u):$$(id -g)" \
+		--volume "$(CURDIR):/workspace" \
+		--workdir /workspace \
+		"$(GTEST_IMAGE)"
+.PHONY: container-gtest-test
+
+## Run the unit tests and generate coverage in the project-specific GoogleTest container image
+container-gtest-coverage: container-gtest-build
+	docker run --rm \
+		--user "$$(id -u):$$(id -g)" \
+		--volume "$(CURDIR):/workspace" \
+		--workdir /workspace \
+		"$(GTEST_IMAGE)" \
+		cmake-gcc-test-unit-coverage
+.PHONY: container-gtest-coverage
+
 # ── Software Analysis ────────────────────────────────────────────────────────────────────────────
 
 LOGS_PATH_COVERAGE := logs/coverage
