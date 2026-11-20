@@ -21,13 +21,14 @@ if(META_BUILD_TESTING)
     include(meta_conan)
     meta_conan()
 
-    include(meta_sanitizers)
-    meta_sanitizers(ENABLE ${META_BUILD_TESTING})
+    if(NOT META_BUILD_TESTING_ONTARGET)
+        include(meta_sanitizers)
+        meta_sanitizers(ENABLE ${META_BUILD_TESTING})
 
-    include(meta_coverage)
-    meta_coverage(ENABLE ${META_BUILD_TESTING})
-
-    # add_subdirectory(tests)
+        include(meta_coverage)
+        meta_coverage(ENABLE ${META_BUILD_TESTING})
+    endif()
 endif()
 
 add_subdirectory(src)
+add_subdirectory(tests)

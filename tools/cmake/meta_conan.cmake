@@ -33,7 +33,7 @@ include_guard(GLOBAL)
 #   meta_conan(AUTO_INSTALL ON CREATE_INSTALL_TARGET)
 
 ### Helper: ensure conan executable is available (optionally install via pip)
-function(z_meta_conan_ensure_executable auto_install out_var)
+function(_meta_conan_ensure_executable auto_install out_var)
     find_program(meta_conan_exe NAMES conan)
     if(NOT meta_conan_exe)
         if(auto_install)
@@ -72,7 +72,7 @@ endfunction()
 
 ### Helper: build the conan CLI arguments list
 function(
-    z_meta_conan_build_install_args
+    _meta_conan_build_install_args
     src_dir
     install_folder
     gens
@@ -107,7 +107,7 @@ function(
 endfunction()
 
 ### Helper: create optional conan-install custom target
-function(z_meta_conan_maybe_create_install_target create_install_target meta_conan_exe install_folder src_dir)
+function(_meta_conan_maybe_create_install_target create_install_target meta_conan_exe install_folder src_dir)
     if(NOT create_install_target)
         return()
     endif()
@@ -139,7 +139,7 @@ function(z_meta_conan_maybe_create_install_target create_install_target meta_con
 endfunction()
 
 ### Helper: remove repo-root CMakeUserPresets.json if it references generated output
-function(z_meta_conan_cleanup_root_user_presets install_folder)
+function(_meta_conan_cleanup_root_user_presets install_folder)
     set(root_user_presets "${CMAKE_SOURCE_DIR}/CMakeUserPresets.json")
     if(EXISTS "${root_user_presets}")
         file(READ "${root_user_presets}" cup_contents)
@@ -153,7 +153,7 @@ function(z_meta_conan_cleanup_root_user_presets install_folder)
 endfunction()
 
 ### Helper: locate generated conan_toolchain.cmake under various common locations
-function(z_meta_conan_find_generated_toolchain install_folder out_toolchain_var)
+function(_meta_conan_find_generated_toolchain install_folder out_toolchain_var)
     set(candidates)
     list(APPEND candidates "${install_folder}/conan_toolchain.cmake")
     list(APPEND candidates "${install_folder}/generators/conan_toolchain.cmake")
@@ -193,7 +193,7 @@ function(z_meta_conan_find_generated_toolchain install_folder out_toolchain_var)
 endfunction()
 
 ### Helper: include found toolchain and expose generator dirs for find_package
-function(z_meta_conan_configure_toolchain found_toolchain install_folder)
+function(_meta_conan_configure_toolchain found_toolchain install_folder)
     if(found_toolchain AND (NOT DEFINED CMAKE_TOOLCHAIN_FILE OR NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}"))
         set(CMAKE_TOOLCHAIN_FILE "${found_toolchain}" CACHE FILEPATH "Conan generated toolchain file" FORCE)
         message(STATUS "Setting CMAKE_TOOLCHAIN_FILE to ${CMAKE_TOOLCHAIN_FILE}")
@@ -298,7 +298,7 @@ function(meta_conan)
     endif()
 
     # Ensure conan CLI is available (or install it)
-    z_meta_conan_ensure_executable("${ARG_AUTO_INSTALL}" meta_conan_exe)
+    _meta_conan_ensure_executable("${ARG_AUTO_INSTALL}" meta_conan_exe)
 
     # Ensure a default conan profile exists (helpful in CI where no profile is present)
     if(NOT EXISTS "$ENV{HOME}/.conan2/profiles/default")
@@ -318,10 +318,10 @@ function(meta_conan)
     endif()
 
     # Build arguments for conan install
-    z_meta_conan_build_install_args("${ARG_SOURCE_DIR}" "${ARG_INSTALL_FOLDER}" "${ARG_GENS}" "${ARG_USER_PRESETS_PATH}" conan_args)
+    _meta_conan_build_install_args("${ARG_SOURCE_DIR}" "${ARG_INSTALL_FOLDER}" "${ARG_GENS}" "${ARG_USER_PRESETS_PATH}" conan_args)
 
     # Create custom target if requested
-    z_meta_conan_maybe_create_install_target("${ARG_CREATE_INSTALL_TARGET}" "${meta_conan_exe}" "${ARG_INSTALL_FOLDER}" "${ARG_SOURCE_DIR}" ${conan_args})
+    _meta_conan_maybe_create_install_target("${ARG_CREATE_INSTALL_TARGET}" "${meta_conan_exe}" "${ARG_INSTALL_FOLDER}" "${ARG_SOURCE_DIR}" ${conan_args})
 
     # Run conan install
     file(MAKE_DIRECTORY "${ARG_INSTALL_FOLDER}")
@@ -340,13 +340,13 @@ function(meta_conan)
     endif()
 
     # Cleanup root user presets if needed
-    z_meta_conan_cleanup_root_user_presets("${ARG_INSTALL_FOLDER}")
+    _meta_conan_cleanup_root_user_presets("${ARG_INSTALL_FOLDER}")
 
     # Find generated toolchain
-    z_meta_conan_find_generated_toolchain("${ARG_INSTALL_FOLDER}" found_toolchain)
+    _meta_conan_find_generated_toolchain("${ARG_INSTALL_FOLDER}" found_toolchain)
 
     # Configure toolchain
-    z_meta_conan_configure_toolchain("${found_toolchain}" "${ARG_INSTALL_FOLDER}")
+    _meta_conan_configure_toolchain("${found_toolchain}" "${ARG_INSTALL_FOLDER}")
 
     # Expose install folder to parent scope
     set(CONAN_INSTALL_FOLDER "${ARG_INSTALL_FOLDER}" PARENT_SCOPE)
