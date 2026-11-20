@@ -11,6 +11,11 @@ Reusable CMake helper modules for build configuration, testing, and toolchain in
   - [1.6. Meta GTest](#16-meta-gtest)
   - [1.7. Meta Unity](#17-meta-unity)
   - [1.8. Meta JRun](#18-meta-jrun)
+    - [1.8.1. Execution Modes](#181-execution-modes)
+    - [1.8.2. Prerequisites](#182-prerequisites)
+    - [1.8.3. CMake Interface](#183-cmake-interface)
+    - [1.8.4. Examples](#184-examples)
+    - [1.8.5. Google Test Result Contract](#185-google-test-result-contract)
 - [2. References](#2-references)
 
 ## 1. Modules
@@ -187,7 +192,7 @@ Reusable CMake helper modules for build configuration, testing, and toolchain in
       ```txt
       # conanfile.txt
       [requires]
-      gtest/1.17.0
+      gtest/1.18.0
       ```
 
 3. Usage
@@ -205,7 +210,7 @@ Reusable CMake helper modules for build configuration, testing, and toolchain in
 4. Example
 
     ```cmake
-    meta_gtest(WITH_CTEST TARGET my_tests SOURCES test_foo.cpp test_bar.cpp LINK my_lib)
+    meta_gtest(WITH_CTEST WITH_MAIN TARGET my_tests SOURCES test_foo.cpp test_bar.cpp LINK my_lib)
     ```
 
 ### 1.7. Meta Unity
@@ -262,77 +267,136 @@ Reusable CMake helper modules for build configuration, testing, and toolchain in
 
 ### 1.8. Meta JRun
 
-1. Details
+The [`meta_jrun.cmake`](meta_jrun.cmake) module registers an existing CMake executable target with CTest and delegates execution to [SEGGER J-Run](https://kb.segger.com/J-Run). J-Run loads the ELF onto hardware through J-Link, starts the application, captures its output and exits when the target signals completion.
 
-    - [meta_jrun.cmake](meta_jrun.cmake)
-      > Registers a pre-built firmware executable as CTest test(s) via SEGGER J-Run. J-Run flashes the ELF to the connected embedded target and captures output over RTT or semihosting. When SUITES are provided, each suite is registered as a separate namespaced CTest test with the suite name forwarded via J-Run --args. When no SUITES are specified, a single CTest test is registered for the entire binary.
+#### 1.8.1. Execution Modes
 
-    - [SEGGER J-Run](https://kb.segger.com/J-Run) Documentation
-      > Reference for J-Run command-line options and usage.
+The module supports two registration models distinguished by their test selection and result-processing behavior.
 
-2. Prerequisites
+- **Existing Firmware or Unity Mode**
+  > When `SUITES` is specified, `meta_jrun()` registers one CTest case per suite and forwards the suite name using `--args`. Without `SUITES`, the module registers one CTest case for the complete executable. Existing Unity configuration remains unchanged.
 
-    - [SEGGER J-Run](https://kb.segger.com/J-Run)
-      > J-Run CLI v8.10 or later for automated on-target testing via J-Link.
+- **Google Test RTT Mode**
+  > When `WITH_GTEST` is set, `meta_jrun()` registers one CTest case per `GTEST_FILTERS` entry (default `*`) and invokes the [Python J-Run result validator](../jrun_gtest_runner.py). The firmware must implement SEGGER RTT argument retrieval, emit a machine-readable Google Test summary and return an application exit code.
 
-      ```bash
-      # Download and install from https://www.segger.com/downloads/jlink/
-      ```
+The embedded mode does not call `gtest_discover_tests()`. That CMake function queries an executable for test names and normally requires executable host access or a configured cross-compiling emulator. Explicit filter registration avoids executing an Arm ELF as part of host-side discovery.
 
-3. Usage
+#### 1.8.2. Prerequisites
 
-    ```cmake
+- **SEGGER J-Run**
+  > Install the J-Link software distribution containing J-Run and ensure that it can access the target debug probe. Refer to the official [J-Run documentation](https://kb.segger.com/J-Run) for supported command-line options and the installed version.
+
+- **Cross-Compiled Executable**
+  > Provide an ELF executable with board-appropriate startup code, memory layout and target runtime. The CMake toolchain and linker configuration are the caller's responsibility.
+
+- **Python Interpreter**
+  > Python 3 is required when `WITH_GTEST` is enabled. The runner handles subprocess execution, output validation, timeout classification and log retention.
+
+- **CTest**
+  > Include `CTest` in the top-level build and enable testing before registration. Each target invocation requires an accessible J-Link device and appropriate device configuration.
+
+#### 1.8.3. CMake Interface
+
+Example:
+
+~~~cmake
+include(meta_jrun)
+
+meta_jrun([WITH_RTT] [WITH_SEMIHOSTING] [WITH_GTEST]
+          TARGET <name>
+          [ENABLE <bool>]
+          DEVICE <device>
+          [INTERFACE <SWD|JTAG>]
+          [SPEED <kilohertz>]
+          [TIMEOUT <seconds>]
+          [SUITES <suite>...]
+          [GTEST_FILTERS <filter>...])
+~~~
+
+| Argument | Role | Constraint |
+| --- | --- | --- |
+| `TARGET` | Existing CMake executable to load | Required |
+| `DEVICE` | J-Link device name | Required |
+| `ENABLE` | Enable or skip registration | Defaults to enabled |
+| `WITH_RTT` | Request RTT transport | Exclusive with `WITH_SEMIHOSTING` |
+| `WITH_SEMIHOSTING` | Request semihosting transport | Not permitted with `WITH_GTEST` |
+| `WITH_GTEST` | Register Google Test filters using the Python runner | Requires RTT protocol in target firmware |
+| `INTERFACE` | JTAG or SWD interface | Default `SWD` |
+| `SPEED` | Debug clock in kHz | Default `4000` |
+| `TIMEOUT` | J-Run timeout in seconds | Default `60` |
+| `SUITES` | Suite names for the original registration model | Not permitted with `WITH_GTEST` |
+| `GTEST_FILTERS` | Google Test filter expressions | Only permitted with `WITH_GTEST` |
+
+The module resolves `JRUN_EXECUTABLE` when supplied or searches for `JRun`/`jrun` using the executable search path and `SEGGER_PATH`. In Google Test mode, the Python runner stores logs in the build tree and the CTest entries use a shared `jlink_probe` resource lock.
+
+#### 1.8.4. Examples
+
+1. Unity-style firmware registration
+
+    Example:
+
+    ~~~cmake
+    include(meta_unity)
     include(meta_jrun)
 
-    meta_jrun([WITH_RTT] [WITH_SEMIHOSTING]
-              TARGET <name>
-              [ENABLE <bool>]
-              DEVICE <device>
-              [INTERFACE <SWD|JTAG>]
-              [SPEED <kHz>]
-              [TIMEOUT <seconds>]
-              [SUITES <suite>...])
-    ```
+    meta_unity(
+      TARGET device_unity_tests
+      SOURCES test_leds.c test_sensors.c
+      LINK firmware::drivers)
 
-4. Example
-
-    ```cmake
     meta_jrun(
-      TARGET    my_firmware-test
-      DEVICE    LPC55S16
+      TARGET device_unity_tests
+      DEVICE LPC55S16
       INTERFACE SWD
-      SPEED     4000
-      TIMEOUT   60
-      SUITES    test_leds test_sensors)
-    ```
+      SPEED 4000
+      TIMEOUT 60
+      SUITES test_leds test_sensors)
+    ~~~
 
-### 1.8.1. Google Test on physical targets
+    This registration expects firmware-side suite dispatch when `--args` is provided.
 
-`meta_jrun(WITH_GTEST ...)` registers GTest filters as CTest cases without
-executing a cross-compiled ELF during CMake test discovery. Each case invokes
-`tools/jrun_gtest_runner.py`, which verifies the target's RTT
-`GTEST_SUMMARY selected=N failed=N skipped=N` record **and** J-Run exit code.
-Tests that hang, crash, fail assertions, select zero cases or never emit a
-summary fail CTest. The Python tool is tested without hardware by
-`tests/tooling/test_jrun_gtest_runner.py`.
+2. Google Test firmware registration
 
-```cmake
-meta_gtest(TARGET firmware_gtest SOURCES main.cpp test_peripherals.cpp)
-meta_jrun(
-  WITH_RTT WITH_GTEST
-  TARGET firmware_gtest
-  DEVICE STM32F407VG
-  GTEST_FILTERS "Peripherals.*" "Hardware.*"
-  TIMEOUT 60)
-```
+    Example:
 
-The target `main()` must implement the SEGGER RTT `*ARGS*` handshake,
-set `GTEST_FLAG_SET(filter, ...)`, emit the `GTEST_SUMMARY` footer,
-and finish with `*STOP*<integer>`. See the full
-[STM32F407 on-target GTest example](../../examples/ontarget-gtest/README.md)
-for the runtime, linker script, board setup and presets.
+    ~~~cmake
+    include(meta_gtest)
+    include(meta_jrun)
+
+    # The target must provide a board-specific RTT-aware main().
+    meta_gtest(
+      TARGET on_target_gtest
+      SOURCES main.cpp test_arithmetic.cpp
+      LINK target_runtime)
+
+    meta_jrun(
+      WITH_RTT WITH_GTEST
+      TARGET on_target_gtest
+      DEVICE STM32F407VG
+      INTERFACE SWD
+      TIMEOUT 60
+      GTEST_FILTERS "Arithmetic.*")
+    ~~~
+
+    The example is schematic: `target_runtime` represents the required board startup, linker, and RTT support. The complete buildable layout is documented in the [STM32F407VG Google Test example](../../examples/ontarget-gtest/README.md).
+
+#### 1.8.5. Google Test Result Contract
+
+The Google Test execution path uses SEGGER RTT channel 0 and two [J-Run application-side wildcards](https://kb.segger.com/J-Run):
+
+1. The target emits `*ARGS*` to request the filter supplied by the J-Run `--args` option.
+2. The firmware executes the selected Google Test cases and emits `GTEST_SUMMARY selected=N failed=N skipped=N`.
+3. The firmware sends `*STOP*0` for success or `*STOP*<positive-code>` for failure.
+4. J-Run terminates and propagates the application result to the Python wrapper.
+5. The wrapper accepts success only when J-Run exits with zero, a summary is present, `selected>0`, and `failed=0`.
+
+A nonzero process exit, missing summary, empty selection, assertion failure or timeout causes CTest to fail. For a detailed classification and hardware acceptance checklist, see the [validation record](../../examples/ontarget-gtest/docs/VALIDATION.md).
 
 ## 2. References
 
 - CMake [Documentation](https://cmake.org/documentation/) page.
-- CMake [Modules](https://cmake.org/cmake/help/latest/manual/cmake-modules.7.html) page.
+- CMake [Modules](https://cmake.org/cmake/help/latest/manual/cmake-modules.7.html) documentation.
+- CMake [GoogleTest](https://cmake.org/cmake/help/latest/module/GoogleTest.html) module documentation.
+- CMake [RESOURCE_LOCK](https://cmake.org/cmake/help/latest/prop_test/RESOURCE_LOCK.html) property documentation.
+- SEGGER [J-Run](https://kb.segger.com/J-Run) documentation.
+- SEGGER [Passing Command-Line Arguments in C for Embedded Targets](https://kb.segger.com/Passing_Command-line_arguments_in_C_for_Embedded_Targets) documentation.
