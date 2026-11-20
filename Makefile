@@ -146,6 +146,13 @@ cmake-gcc-test-unit-coverage:
 	$(MAKE) static-analysis-coverage
 .PHONY: cmake-gcc-test-unit-coverage
 
+## Cross-compile Google Test firmware and run the suites on hardware via SEGGER J-Run
+cmake-gcc-test-ontarget-run:
+	cmake --preset ontarget
+	cmake --build --preset ontarget
+	ctest --preset ontarget
+.PHONY: cmake-gcc-test-ontarget-run
+
 # ── Static Analysis ──────────────────────────────────────────────────────────────────────────────
 
 LOGS_PATH_COVERAGE := logs/coverage
