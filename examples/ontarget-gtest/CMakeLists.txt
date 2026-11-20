@@ -63,7 +63,7 @@ if(BUILD_EMBEDDED)
       INTERFACE "${JRUN_INTERFACE}"
       SPEED "${JRUN_SPEED_KHZ}"
       TIMEOUT "${JRUN_TIMEOUT_SECONDS}"
-      GTEST_FILTERS "Arithmetic.*" "RingBuffer.*" "Sensor.*" "Hardware.*"
+      GTEST_FILTERS "Arithmetic.*" "HostAndTarget/AddCases.*" "RingBuffer.*" "Sensor.*" "Hardware.*"
     )
   endif()
 else()
