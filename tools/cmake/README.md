@@ -306,6 +306,32 @@ Reusable CMake helper modules for build configuration, testing, and toolchain in
       SUITES    test_leds test_sensors)
     ```
 
+### 1.8.1. Google Test on physical targets
+
+`meta_jrun(WITH_GTEST ...)` registers GTest filters as CTest cases without
+executing a cross-compiled ELF during CMake test discovery. Each case invokes
+`tools/jrun_gtest_runner.py`, which verifies the target's RTT
+`GTEST_SUMMARY selected=N failed=N skipped=N` record **and** J-Run exit code.
+Tests that hang, crash, fail assertions, select zero cases or never emit a
+summary fail CTest. The Python tool is tested without hardware by
+`tests/tooling/test_jrun_gtest_runner.py`.
+
+```cmake
+meta_gtest(TARGET firmware_gtest SOURCES main.cpp test_peripherals.cpp)
+meta_jrun(
+  WITH_RTT WITH_GTEST
+  TARGET firmware_gtest
+  DEVICE STM32F407VG
+  GTEST_FILTERS "Peripherals.*" "Hardware.*"
+  TIMEOUT 60)
+```
+
+The target `main()` must implement the SEGGER RTT `*ARGS*` handshake,
+set `GTEST_FLAG_SET(filter, ...)`, emit the `GTEST_SUMMARY` footer,
+and finish with `*STOP*<integer>`. See the full
+[STM32F407 on-target GTest example](../../examples/ontarget-gtest/README.md)
+for the runtime, linker script, board setup and presets.
+
 ## 2. References
 
 - CMake [Documentation](https://cmake.org/documentation/) page.

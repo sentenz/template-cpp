@@ -13,6 +13,7 @@ include_guard(GLOBAL)
 #   Options
 #     WITH_RTT         - Use SEGGER RTT for test output communication (default if no output method specified).
 #     WITH_SEMIHOSTING - Use semihosting for test output communication.
+#     WITH_GTEST      - Use the RTT Google Test result contract and a Python CTest runner.
 #   One-Value
 #     TARGET           - Required: CMake target name (executable) to flash and test.
 #     DEVICE           - Required: Target device name for J-Run (e.g., LPC55S16).
@@ -21,6 +22,7 @@ include_guard(GLOBAL)
 #     TIMEOUT          - Optional: CTest timeout in seconds per test (default: 60).
 #     INTERFACE        - Optional: Debug interface type (SWD or JTAG, default: SWD).
 #   Multi-Value
+#     GTEST_FILTERS    - Optional: Google Test filter strings when WITH_GTEST is enabled.
 #     SUITES           - Optional: Test suite names to register as individual CTest tests.
 #                        Each suite name is forwarded to the firmware via J-Run --args.
 #                        If omitted, a single CTest test is registered for the entire binary.
@@ -29,14 +31,14 @@ include_guard(GLOBAL)
 #   NONE
 #
 # Usage:
-#   meta_jrun([WITH_RTT] [WITH_SEMIHOSTING]
+#   meta_jrun([WITH_RTT] [WITH_SEMIHOSTING] [WITH_GTEST]
 #             TARGET <name>
 #             [ENABLE <bool>]
 #             DEVICE <device>
 #             [INTERFACE <SWD|JTAG>]
 #             [SPEED <kHz>]
 #             [TIMEOUT <seconds>]
-#             [SUITES <suite>...])
+#             [SUITES <suite>...] [GTEST_FILTERS <filter>...])
 #
 # Example:
 #   meta_jrun(
@@ -47,9 +49,9 @@ include_guard(GLOBAL)
 #     TIMEOUT   60
 #     SUITES    test_leds test_sensors)
 function(meta_jrun)
-    set(options WITH_RTT WITH_SEMIHOSTING)
+    set(options WITH_RTT WITH_SEMIHOSTING WITH_GTEST)
     set(one_value_args TARGET ENABLE DEVICE INTERFACE SPEED TIMEOUT)
-    set(multi_value_args SUITES)
+    set(multi_value_args SUITES GTEST_FILTERS)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${options}" "${one_value_args}" "${multi_value_args}")
 
     if(DEFINED ARG_UNPARSED_ARGUMENTS)
@@ -62,6 +64,15 @@ function(meta_jrun)
 
     if(ARG_WITH_RTT AND ARG_WITH_SEMIHOSTING)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: 'WITH_RTT' and 'WITH_SEMIHOSTING' are mutually exclusive.")
+    endif()
+    if(ARG_WITH_GTEST AND ARG_WITH_SEMIHOSTING)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Google Test RTT protocol requires WITH_RTT, not WITH_SEMIHOSTING.")
+    endif()
+    if(ARG_WITH_GTEST AND ARG_SUITES)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: Use GTEST_FILTERS, not SUITES, with WITH_GTEST.")
+    endif()
+    if(ARG_GTEST_FILTERS AND NOT ARG_WITH_GTEST)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: GTEST_FILTERS requires WITH_GTEST.")
     endif()
 
     if(NOT ARG_TARGET)
@@ -84,6 +95,13 @@ function(meta_jrun)
         enable_testing()
     endif()
 
+    # Allow an explicit JRun location in CI or on non-standard SEGGER installations.
+    if(JRUN_EXECUTABLE)
+        if(NOT EXISTS "${JRUN_EXECUTABLE}")
+            message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}: JRUN_EXECUTABLE does not exist: ${JRUN_EXECUTABLE}")
+        endif()
+        set(meta_jrun_exe "${JRUN_EXECUTABLE}")
+    endif()
     # Find J-Run executable (idempotent)
     if(NOT meta_jrun_exe)
         find_program(meta_jrun_exe NAMES JRun jrun HINTS "$ENV{SEGGER_PATH}")
@@ -132,6 +150,44 @@ function(meta_jrun)
 
     # Resolve ELF path from the build target via a generator expression
     set(_meta_jrun_elf "$<TARGET_FILE:${ARG_TARGET}>")
+
+    if(ARG_WITH_GTEST)
+        # Host-side test discovery cannot execute ARM firmware. Instead, each
+        # filter becomes a distinct CTest case using the target RTT handshake.
+        find_package(Python3 REQUIRED COMPONENTS Interpreter)
+        if(NOT ARG_GTEST_FILTERS)
+            set(ARG_GTEST_FILTERS "*")
+        endif()
+        set(_runner "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../jrun_gtest_runner.py")
+        set(_filters ${ARG_GTEST_FILTERS})
+        list(REMOVE_DUPLICATES _filters)
+        foreach(_filter IN LISTS _filters)
+            string(REGEX REPLACE "[^A-Za-z0-9_]+" "_" _name "${_filter}")
+            string(REGEX REPLACE "^_|_$" "" _name "${_name}")
+            if(NOT _name)
+                set(_name all)
+            endif()
+            set(_test_name "${ARG_TARGET}.gtest.${_name}")
+            add_test(NAME "${_test_name}"
+                COMMAND "${Python3_EXECUTABLE}" "${_runner}"
+                    --jrun "${meta_jrun_exe}"
+                    --device "${ARG_DEVICE}"
+                    --interface "${ARG_INTERFACE}"
+                    --speed "${ARG_SPEED}"
+                    --timeout "${ARG_TIMEOUT}"
+                    --log-dir "${CMAKE_BINARY_DIR}/jrun-logs"
+                    --filter "${_filter}"
+                    --elf "${_meta_jrun_elf}"
+            )
+            math(EXPR _ctest_timeout "${ARG_TIMEOUT} + 15")
+            set_tests_properties("${_test_name}" PROPERTIES
+                TIMEOUT "${_ctest_timeout}"
+                RESOURCE_LOCK "jlink_probe"
+                LABELS "hardware;gtest;on-target"
+            )
+        endforeach()
+        return()
+    endif()
 
     if(ARG_SUITES)
         # De-duplicate and strip empty suite entries
